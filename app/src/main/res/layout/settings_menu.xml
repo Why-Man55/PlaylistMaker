@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="UseSwitchCompatOrMaterialXml"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <Button
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FFFFFF"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:icon="@drawable/ic_back_arrow"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="#1A1B22"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FFFFFF"
+            android:layout_marginStart="52dp"
+            android:layout_marginVertical="4dp"
+            android:layout_marginEnd="100dp"
+            android:paddingTop="8dp"
+            android:text="@string/settings_setting"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#1A1B22"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/ys_display_medium"/>
+
+        <Button
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FFFFFF"
+            android:layout_gravity="end"
+            android:layout_marginEnd="4dp"
+            android:layout_marginVertical="4dp"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/setting_text"
+            android:layout_marginTop="101dp"
+            android:text="@string/Т_Темная_тема"/>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="101dp"
+            android:layout_marginEnd="18dp"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/light_mode"
+            style="@style/setting_but"/>
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/Т_Поделиться_приложением"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/ic_group"
+            style="@style/setting_but"/>
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/Т_Написать_в_поддержку"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/T_Пользоватеьское_соглашение"/>
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/ic_arrow"
+            style="@style/setting_but"/>
+    </FrameLayout>
+</LinearLayout>
