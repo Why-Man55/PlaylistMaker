@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         val searchButton = findViewById<Button>(R.id.Poisk_but)
         val mediaButton = findViewById<Button>(R.id.Media_but)
+        val settingsButton = findViewById<Button>(R.id.Set_but)
 
         searchButton.setOnClickListener {
             val displayIntent = Intent(this, SearchActivity::class.java)
@@ -24,6 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         mediaButton.setOnClickListener {
             val displayIntent = Intent(this, MediatekActivity::class.java)
+            startActivity(displayIntent)
+        }
+
+        settingsButton.setOnClickListener {
+            val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)
         }
     }

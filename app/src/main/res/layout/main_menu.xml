@@ -4,24 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#3772E7"
+    android:background="@color/back_blue"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="@dimen/_56dp">
 
         <Button
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="@dimen/_56dp"
             android:layout_gravity="top"
-            android:backgroundTint="#3772E7"
-            android:layout_marginBottom="4dp"
-            android:text="@string/ampty_but"
-            android:textColor="#3772E7"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="52dp"
+            android:background="@color/back_blue"
+            android:layout_marginBottom="@dimen/_4dp"
+            android:layout_marginTop="@dimen/_4dp"
+            android:layout_marginStart="@dimen/_4dp"
+            android:layout_marginEnd="@dimen/_52dp"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
         <TextView
@@ -29,43 +27,29 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="@string/playlist_maker"
-            android:textColor="#ffffff"
-            android:textSize="26sp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_26sp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/ys_display_medium"/>
     </FrameLayout>
 
-    <FrameLayout
-        style="@style/main_frames">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/Poisk_but"
+        style="@style/main_buttons"
+        android:layout_marginTop="@dimen/_24dp"
+        android:text="@string/Poisk"
+        app:icon="@drawable/ic_poisk"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/Poisk_but"
-            style="@style/main_buttons"
-            android:layout_marginTop="24dp"
-            android:text="@string/Poisk"
-            app:icon="@drawable/ic_poisk"/>
-    </FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/Media_but"
+        style="@style/main_buttons"
+        android:text="@string/Media"
+        app:icon="@drawable/ic_media"/>
 
-    <FrameLayout
-        style="@style/main_frames">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/Media_but"
-            style="@style/main_buttons"
-            android:text="@string/Media"
-            app:icon="@drawable/ic_media" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        style="@style/main_frames">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/Set_but"
-            style="@style/main_buttons"
-            android:text="@string/settings"
-            app:icon="@drawable/ic_settings"
-            android:layout_marginTop="4dp"/>
-    </FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/Set_but"
+        style="@style/main_buttons"
+        android:text="@string/settings"
+        app:icon="@drawable/ic_settings"/>
 </LinearLayout>
