@@ -1,14 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/message"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/hello"/>
+        android:layout_height="@dimen/_48dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:layout_marginStart="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="@dimen/_12dp"
+            android:text="@string/Poisk"
+            android:textSize="@dimen/_26sp"
+            android:textColor="?attr/colorOnSecondary"
+            android:fontFamily="@font/ys_display_medium"
+            android:fontWeight="500"/>
+
+        <Button
+            style="@style/quite_but"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48dp"
+            android:id="@+id/search_bar"
+            android:inputType="text"
+            android:layout_marginHorizontal="@dimen/_16dp"
+            android:layout_marginVertical="@dimen/_8dp"
+            android:paddingEnd="40dp"
+            android:paddingStart="18dp"
+            android:hint="@string/Poisk"
+            android:background="@drawable/search_bg"
+            android:textColorHint="?attr/colorSecondary"
+            android:textSize="19sp"
+            android:fontFamily="@font/ys_display_medium"
+            android:lines="1"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/_8dp"/>
+
+        <Button
+            android:layout_width="@dimen/_48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:id="@+id/clear_text"
+            android:layout_marginTop="@dimen/_8dp"
+            android:layout_marginEnd="@dimen/_16dp"
+            android:background=""
+            app:icon="@drawable/dark_mode"
+            app:iconGravity="end"
+            app:iconTint="?attr/colorSecondary"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+</LinearLayout>

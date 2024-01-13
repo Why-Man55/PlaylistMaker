@@ -4,7 +4,7 @@
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">match_parent</item>
     <item name="android:layout_weight">1</item>
-    <item name="android:backgroundTint">?attr/colorSecondary</item>
+    <item name="android:backgroundTint">@color/white</item>
     <item name="android:layout_gravity">center</item>
     <item name="android:layout_marginHorizontal">@dimen/_16dp</item>
     <item name="android:layout_marginTop">@dimen/_8dp</item>
@@ -52,5 +52,17 @@
 
     <style name="but_arrow" parent="Widget.MaterialComponents.Button.UnelevatedButton">
 
+    </style>
+
+    <style name="quite_but" parent="but_arrow">
+        <item name="android:layout_width">@dimen/_48dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:backgroundTint">?attr/colorPrimaryVariant</item>
+        <item name="android:layout_marginStart">@dimen/_4dp</item>
+        <item name="android:layout_marginVertical">@dimen/_4dp</item>
+        <item name="icon">@drawable/ic_back_arrow</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">?attr/colorOnSecondary</item>
     </style>
 </resources>

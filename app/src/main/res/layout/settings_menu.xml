@@ -13,17 +13,7 @@
         android:layout_height="@dimen/_56dp">
 
         <Button
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:backgroundTint="?attr/colorPrimaryVariant"
-            android:layout_marginStart="@dimen/_4dp"
-            android:layout_marginTop="@dimen/_4dp"
-            android:layout_marginBottom="@dimen/_4dp"
-            app:icon="@drawable/ic_back_arrow"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconTint="?attr/colorOnSecondary"
-            style="@style/but_arrow"/>
+            style="@style/quite_but"/>
         
         <TextView
             android:layout_width="wrap_content"
@@ -66,7 +56,8 @@
 
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/light_mode"
-            style="@style/setting_but"/>
+            style="@style/setting_but"
+            android:id="@+id/Share_but"/>
 
         <TextView
             style="@style/setting_text"
@@ -79,7 +70,8 @@
 
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/ic_group"
-            style="@style/setting_but"/>
+            style="@style/setting_but"
+            android:id="@+id/Help_but"/>
 
         <TextView
             style="@style/setting_text"
@@ -96,6 +88,7 @@
 
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/ic_arrow"
-            style="@style/setting_but"/>
+            style="@style/setting_but"
+            android:id="@+id/Agreement_but"/>
     </FrameLayout>
 </LinearLayout>

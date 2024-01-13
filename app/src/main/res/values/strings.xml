@@ -20,4 +20,5 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="hello">Привет, Android разработка — это круто!</string>
+    <string name="my_mail">GalimovKamil452@gmail.com</string>
 </resources>
