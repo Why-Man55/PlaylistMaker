@@ -14,23 +14,37 @@ class SettingsActivity : AppCompatActivity() {
         val shareButton = findViewById<Button>(R.id.Share_but)
         val helpButton = findViewById<Button>(R.id.Help_but)
         val agreeButton = findViewById<Button>(R.id.Agreement_but)
+        val backButton = findViewById<Button>(R.id.Set_back_but)
+
+        val adress = getString(R.string.and_dev_go)
+
+        val email = getString(R.string.my_mail)
+        val title = getString(R.string.title)
+        val text = getString(R.string.text)
+
+        val agree = getString(R.string.agree_adress)
+
+        backButton.setOnClickListener {
+            val displayIntent = Intent(this, MainActivity::class.java)
+            startActivity(displayIntent)
+        }
 
         shareButton.setOnClickListener{
             val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "https://practicum.yandex.ru/profile/android-developer/")
+            shareIntent.putExtra(Intent.EXTRA_TEXT, adress)
             startActivity(shareIntent)
         }
 
         helpButton.setOnClickListener{
             val helpIntent = Intent(Intent.ACTION_SENDTO)
-            helpIntent.putExtra(Intent.EXTRA_EMAIL, "Galimivkamil452@gmail.com")
-            helpIntent.putExtra(Intent.EXTRA_SUBJECT, "Сообщение разработчикам и разработчицам приложения Playlist Maker")
-            helpIntent.putExtra(Intent.EXTRA_TEXT, "Спасибо разработчикам и разработчицам за крутое приложение!")
+            helpIntent.putExtra(Intent.EXTRA_EMAIL, email)
+            helpIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+            helpIntent.putExtra(Intent.EXTRA_TEXT, text)
             startActivity(helpIntent)
         }
 
         agreeButton.setOnClickListener{
-            val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://yandex.ru/legal/practicum_offer/"))
+            val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agree))
             startActivity(agreeIntent)
         }
     }
