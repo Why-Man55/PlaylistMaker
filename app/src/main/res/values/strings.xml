@@ -21,4 +21,8 @@
     <string name="login_failed">"Login failed"</string>
     <string name="hello">Привет, Android разработка — это круто!</string>
     <string name="my_mail">GalimovKamil452@gmail.com</string>
+    <string name="and_dev_go">https://practicum.yandex.ru/profile/android-developer/</string>
+    <string name="title">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="agree_adress">https://yandex.ru/legal/practicum_offer/</string>
 </resources>

@@ -1,12 +1,14 @@
 package com.example.playlistmaker
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 
 class SearchActivity : AppCompatActivity() {
     var searchText = TEXT_DEF
@@ -16,9 +18,20 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         val clearButton = findViewById<Button>(R.id.clear_text)
+        val backButton = findViewById<Button>(R.id.Search_back)
+
+        backButton.setOnClickListener {
+            val displayIntent = Intent(this, MainActivity::class.java)
+            startActivity(displayIntent)
+        }
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(
+                currentFocus!!.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
         }
 
         val simpleTextWatcher = object : TextWatcher {
