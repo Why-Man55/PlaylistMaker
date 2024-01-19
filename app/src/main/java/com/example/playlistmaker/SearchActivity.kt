@@ -11,8 +11,11 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
 class SearchActivity : AppCompatActivity() {
-    var searchText = TEXT_DEF
-    val inputEditText = findViewById<EditText>(R.id.search_bar)
+    private var searchText = TEXT_DEF
+
+    private val inputEditText: EditText by lazy {
+        findViewById<EditText>(R.id.search_bar)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -21,8 +24,7 @@ class SearchActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.Search_back)
 
         backButton.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
-            startActivity(displayIntent)
+            onBackPressed()
         }
 
         clearButton.setOnClickListener {
@@ -42,8 +44,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 clearButton.visibility = clearButtonVisibility(s)
-                searchText = inputEditText.getText().toString()
-
+                searchText = inputEditText.text.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -55,6 +56,13 @@ class SearchActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
@@ -74,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val TEXT_DEF = ""
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
+        private const val TEXT_DEF = ""
     }
 }
