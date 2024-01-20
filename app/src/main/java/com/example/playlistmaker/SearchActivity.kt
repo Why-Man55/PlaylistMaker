@@ -24,7 +24,7 @@ class SearchActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.Search_back)
 
         backButton.setOnClickListener {
-            onBackPressed()
+            finish()
         }
 
         clearButton.setOnClickListener {
@@ -55,12 +55,6 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
 
-    }
-
-    override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

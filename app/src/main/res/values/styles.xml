@@ -33,7 +33,7 @@
         <item name="android:layout_gravity">start</item>
         <item name="android:layout_marginTop">21dp</item>
         <item name="android:layout_marginStart">@dimen/_16dp</item>
-        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingTop">20dp</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textSize">19sp</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
@@ -47,7 +47,7 @@
         <item name="android:layout_marginTop">@dimen/_24dp</item>
         <item name="android:layout_marginEnd">12dp</item>
         <item name="android:backgroundTint">?attr/colorPrimaryVariant</item>
-        <item name="iconTint">?attr/colorOnSecondary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
 
     <style name="but_arrow" parent="Widget.MaterialComponents.Button.UnelevatedButton">

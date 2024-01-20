@@ -27,7 +27,7 @@ class SettingsActivity : AppCompatActivity() {
         val agree = getString(R.string.agree_adress)
 
         backButton.setOnClickListener {
-            onBackPressed()
+            finish()
         }
 
         shareButton.setOnClickListener{
@@ -61,11 +61,5 @@ class SettingsActivity : AppCompatActivity() {
             val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agree))
             startActivity(agreeIntent)
         }
-    }
-
-    override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }
