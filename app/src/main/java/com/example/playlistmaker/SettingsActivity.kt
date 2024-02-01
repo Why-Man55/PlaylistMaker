@@ -1,10 +1,12 @@
 package com.example.playlistmaker
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,22 +27,34 @@ class SettingsActivity : AppCompatActivity() {
         val agree = getString(R.string.agree_adress)
 
         backButton.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
-            startActivity(displayIntent)
+            finish()
         }
 
         shareButton.setOnClickListener{
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, adress)
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, adress)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
         }
 
         helpButton.setOnClickListener{
-            val helpIntent = Intent(Intent.ACTION_SENDTO)
-            helpIntent.putExtra(Intent.EXTRA_EMAIL, email)
-            helpIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-            helpIntent.putExtra(Intent.EXTRA_TEXT, text)
-            startActivity(helpIntent)
+
+            val mailto = "mailto:$email" +
+                    "?subject=" + Uri.encode(title) +
+                    "&body=" + Uri.encode(text)
+
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+            emailIntent.data = Uri.parse(mailto)
+
+            try {
+                startActivity(emailIntent)
+            } catch (e: ActivityNotFoundException) {
+                //TODO: Handle case where no email app is available
+            }
         }
 
         agreeButton.setOnClickListener{

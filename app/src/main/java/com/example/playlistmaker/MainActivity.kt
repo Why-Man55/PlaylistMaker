@@ -1,22 +1,18 @@
 package com.example.playlistmaker
 
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_menu)
 
-        val searchButton = findViewById<Button>(R.id.Poisk_but)
-        val mediaButton = findViewById<Button>(R.id.Media_but)
-        val settingsButton = findViewById<Button>(R.id.Set_but)
+        val searchButton = findViewById<MaterialButton>(R.id.Poisk_but)
+        val mediaButton = findViewById<MaterialButton>(R.id.Media_but)
+        val settingsButton = findViewById<MaterialButton>(R.id.Set_but)
 
         searchButton.setOnClickListener {
             val displayIntent = Intent(this, SearchActivity::class.java)
