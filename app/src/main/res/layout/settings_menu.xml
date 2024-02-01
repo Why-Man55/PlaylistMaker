@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="UseSwitchCompatOrMaterialXml"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimaryVariant"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_56dp">
+
+        <Button
+            style="@style/quite_but"
+            android:id="@+id/Set_back_but"/>
+        
+        <TextView
+            style="@style/activities_name"
+            android:text="@string/settings_setting"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/setting_text"
+            android:layout_marginTop="@dimen/_24dp"
+            android:text="@string/Т_Темная_тема"/>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_61dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_24dp"
+            android:layout_marginEnd="18dp"
+            android:colorControlActivated="@color/back_blue"
+            android:colorControlNormal="@color/yp_gray"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/light_mode"
+            style="@style/setting_but"
+            android:id="@+id/Share_but"/>
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/Т_Поделиться_приложением"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/ic_group"
+            style="@style/setting_but"
+            android:id="@+id/Help_but"/>
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/Т_Написать_в_поддержку"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/setting_text"
+            android:text="@string/T_Пользоватеьское_соглашение"/>
+
+        <com.google.android.material.button.MaterialButton
+            app:icon="@drawable/ic_arrow"
+            style="@style/setting_but"
+            android:id="@+id/Agreement_but"/>
+    </FrameLayout>
+</LinearLayout>
