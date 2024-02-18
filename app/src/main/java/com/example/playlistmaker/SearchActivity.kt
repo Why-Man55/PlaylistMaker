@@ -67,6 +67,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                         else
                         {
+                            rVTrack.visibility = View.VISIBLE
                             tracks = response.body()
                         }
                     }
