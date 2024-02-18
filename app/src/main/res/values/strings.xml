@@ -37,4 +37,9 @@
     <string name="track5_time">5:03</string>
     <string name="track5_url">https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg</string>
     <string name="empty">Empty</string>
+    <string name="iTunes">https://itunes.apple.com</string>
+    <string name="null_search">Ничего не нашлось</string>
+    <string name="internet_error">Проблемы со связью</string>
+    <string name="massage">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="reload_but">Обновить</string>
 </resources>
