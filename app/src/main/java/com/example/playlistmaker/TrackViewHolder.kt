@@ -19,7 +19,7 @@ class TrackViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(LayoutInf
     private val url = itemView.findViewById<ImageView>(R.id.url)
 
     private val radius: Float = 2 * itemView.resources.displayMetrics.density
-    fun bind(model: TrackResponse) {
+    fun bind(model: Track) {
         name.text = model.trackNameItem
         artist.text = model.artistNameItem
         time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeItem)

@@ -42,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
 
         val iTunes = retrofit.create(ITunesApi::class.java)
 
-        var tracks: List<TrackResponse>? = listOf()
+        var tracks: TrackResponse? = TrackResponse(0, listOf())
 
         val clearButton = findViewById<Button>(R.id.clear_text)
         val backButton = findViewById<Button>(R.id.search_back)
@@ -52,62 +52,45 @@ class SearchActivity : AppCompatActivity() {
         val internetError = findViewById<LinearLayout>(R.id.internet_error_view)
 
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
-        rVTrack.layoutManager = LinearLayoutManager(this)
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<List<TrackResponse>>{
-                    override fun onResponse(
-                        call: Call<List<TrackResponse>>,
-                        response: Response<List<TrackResponse>>
-                    ) {
-                        if (response.code() != 200)
-                        {
-                            searchError.visibility = View.VISIBLE
-                            rVTrack.visibility = View.GONE
-                        }
-                        else
-                        {
-                            rVTrack.visibility = View.VISIBLE
-                            tracks = response.body()
-                        }
-                    }
 
-                    override fun onFailure(call: Call<List<TrackResponse>>, t: Throwable) {
-                        internetError.visibility = View.VISIBLE
-                        rVTrack.visibility = View.GONE
-                    }
-                })
-
-                rVTrack.adapter = TrackAdapter(tracks!!.toList())
-                true
-            }
-            false
-        }
-
-        reloadButton.setOnClickListener {
-            iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<List<TrackResponse>>{
+        fun searchTrack(){
+            iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
-                    call: Call<List<TrackResponse>>,
-                    response: Response<List<TrackResponse>>
+                    call: Call<TrackResponse>,
+                    response: Response<TrackResponse>
                 ) {
-                    if (response.code() != 200)
+                    if (response.code() != 0)
                     {
                         searchError.visibility = View.VISIBLE
                         rVTrack.visibility = View.GONE
                     }
                     else
                     {
+                        rVTrack.visibility = View.VISIBLE
                         tracks = response.body()
                     }
                 }
 
-                override fun onFailure(call: Call<List<TrackResponse>>, t: Throwable) {
+                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                     internetError.visibility = View.VISIBLE
                     rVTrack.visibility = View.GONE
                 }
             })
 
-            rVTrack.adapter = TrackAdapter(tracks!!.toList())
+            rVTrack.adapter = TrackAdapter(tracks)
+        }
+
+        rVTrack.layoutManager = LinearLayoutManager(this)
+        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                searchTrack()
+                true
+            }
+            false
+        }
+
+        reloadButton.setOnClickListener {
+            searchTrack()
         }
 
         backButton.setOnClickListener {
@@ -140,9 +123,6 @@ class SearchActivity : AppCompatActivity() {
 
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
-
-
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
