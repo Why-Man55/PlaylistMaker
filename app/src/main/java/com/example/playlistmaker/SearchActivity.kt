@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -59,7 +60,7 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    if (response.code() != 0)
+                    if (response.code() != 200)
                     {
                         searchError.visibility = View.VISIBLE
                         rVTrack.visibility = View.GONE
@@ -68,6 +69,7 @@ class SearchActivity : AppCompatActivity() {
                     {
                         rVTrack.visibility = View.VISIBLE
                         tracks = response.body()
+                        Log.d("MY_TAG", "${response.body()!!.trackCount}")
                     }
                 }
 
