@@ -43,8 +43,6 @@ class SearchActivity : AppCompatActivity() {
 
         val iTunes = retrofit.create(ITunesApi::class.java)
 
-        var tracks: TrackResponse? = TrackResponse(0, listOf())
-
         val clearButton = findViewById<Button>(R.id.clear_text)
         val backButton = findViewById<Button>(R.id.search_back)
         val reloadButton = findViewById<MaterialButton>(R.id.reload_but)
@@ -68,8 +66,9 @@ class SearchActivity : AppCompatActivity() {
                     else
                     {
                         rVTrack.visibility = View.VISIBLE
-                        tracks = response.body()
-                        Log.d("MY_TAG", "${response.body()!!.trackCount}")
+                        internetError.visibility = View.GONE
+                        searchError.visibility = View.GONE
+                        rVTrack.adapter = TrackAdapter(response.body())
                     }
                 }
 
@@ -78,8 +77,6 @@ class SearchActivity : AppCompatActivity() {
                     rVTrack.visibility = View.GONE
                 }
             })
-
-            rVTrack.adapter = TrackAdapter(tracks)
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)

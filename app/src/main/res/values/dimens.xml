@@ -18,4 +18,6 @@
    <dimen name="_120dp">120dp</dimen>
    <dimen name="_102dp">102dp</dimen>
     <dimen name="_19sp">19sp</dimen>
+    <dimen name="_34dp">34dp</dimen>
+    <dimen name="_42dp">42dp</dimen>
 </resources>
