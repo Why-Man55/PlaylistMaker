@@ -3,13 +3,11 @@ package com.example.playlistmaker
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-
     private var searchText = TEXT_DEF
 
     private val inputEditText: EditText by lazy {
@@ -34,10 +31,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val translateBaseUrl = getString(R.string.iTunes)
+        val baseUrl = getString(R.string.iTunes)
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(translateBaseUrl)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -58,17 +55,25 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    if (response.code() != 200)
+                    if (response.isSuccessful)
                     {
-                        searchError.visibility = View.VISIBLE
-                        rVTrack.visibility = View.GONE
+                        if(response.body()?.resultCount == ZERO_COUNT)
+                        {
+                            searchError.visibility = View.VISIBLE
+                            rVTrack.visibility = View.GONE
+                        }
+                        else
+                        {
+                            rVTrack.visibility = View.VISIBLE
+                            internetError.visibility = View.GONE
+                            searchError.visibility = View.GONE
+                            rVTrack.adapter = TrackAdapter(response.body())
+                        }
                     }
                     else
                     {
-                        rVTrack.visibility = View.VISIBLE
-                        internetError.visibility = View.GONE
-                        searchError.visibility = View.GONE
-                        rVTrack.adapter = TrackAdapter(response.body())
+                        searchError.visibility = View.VISIBLE
+                        rVTrack.visibility = View.GONE
                     }
                 }
 
@@ -103,6 +108,9 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
+            rVTrack.visibility = View.GONE
+            internetError.visibility = View.GONE
+            searchError.visibility = View.GONE
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -142,10 +150,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
-
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
+        private const val ZERO_COUNT = 0
     }
 }
