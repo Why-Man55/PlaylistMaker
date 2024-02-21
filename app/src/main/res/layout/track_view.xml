@@ -19,9 +19,10 @@
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
             android:layout_marginStart="@dimen/_66dp"
+            android:layout_marginEnd="@dimen/_42dp"
             android:layout_marginTop="14dp"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/empty"
@@ -46,11 +47,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_66dp"
             android:layout_marginTop="34dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginEnd="@dimen/_42dp">
 
             <TextView
                 android:id="@+id/artist"
                 style="@style/track"
+                android:layout_height="wrap_content"
                 android:text="@string/empty" />
 
             <ImageView
@@ -64,7 +67,8 @@
             <TextView
                 android:id="@+id/time"
                 style="@style/track"
-                android:text="@string/empty" />
+                android:text="@string/empty"
+                android:layout_width="64dp" />
         </LinearLayout>
     </FrameLayout>
 

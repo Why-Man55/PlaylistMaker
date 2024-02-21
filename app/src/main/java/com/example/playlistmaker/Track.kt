@@ -1,6 +1,9 @@
 package com.example.playlistmaker
 
-data class Track(val trackName:String,
-    val trackArtist:String,
-    val trackTime:String,
-    val trackAvatar:String)
+import com.google.gson.annotations.SerializedName
+
+data class Track(
+    @SerializedName("trackName")val trackNameItem:String,
+    @SerializedName("artistName")val artistNameItem:String,
+    @SerializedName("trackTimeMillis")val trackTimeItem:Int,
+    @SerializedName("artworkUrl100")val trackAvatarItem:String)
