@@ -42,4 +42,7 @@
     <string name="internet_error">Проблемы со связью</string>
     <string name="massage">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="reload_but">Обновить</string>
+    <string name="massage_for_editText">Вводите название фильма на английском языке. Можно указать год для более точного поиска</string>
+    <string name="Вы_искали">Вы искали</string>
+    <string name="очистить_историю">Очистить историю</string>
 </resources>

@@ -9,10 +9,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +34,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         val baseUrl = getString(R.string.iTunes)
+        val eTMassage = findViewById<TextView>(R.id.searchHint)
 
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -43,11 +46,35 @@ class SearchActivity : AppCompatActivity() {
         val clearButton = findViewById<Button>(R.id.clear_text)
         val backButton = findViewById<Button>(R.id.search_back)
         val reloadButton = findViewById<MaterialButton>(R.id.reload_but)
+        val historyMas = findViewById<TextView>(R.id.history_main)
+        val historyClearBut = findViewById<MaterialButton>(R.id.history_clear_but)
 
         val searchError = findViewById<LinearLayout>(R.id.search_error_view)
         val internetError = findViewById<LinearLayout>(R.id.internet_error_view)
 
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
+
+        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+        if (historySP.getString(HISTORY_KEY, "") == "") historySP.edit()
+            .putString(HISTORY_KEY, Gson().toJson(listOf<Track>()))
+            .apply()
+        val searchHistory = SearchHistory(historySP)
+
+        if(historySP.getString(HISTORY_KEY, null).isNullOrEmpty()){
+            historyMas.visibility = View.GONE
+            historyClearBut.visibility = View.GONE
+            rVTrack.visibility = View.GONE
+        }
+        else
+        {
+            historyMas.visibility = View.VISIBLE
+            historyClearBut.visibility = View.VISIBLE
+            rVTrack.visibility = View.VISIBLE
+            if (inputEditText.text.isNotEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            historyClearBut.setOnClickListener {
+                searchHistory.clearHistory()
+            }
+        }
 
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
@@ -67,7 +94,7 @@ class SearchActivity : AppCompatActivity() {
                             rVTrack.visibility = View.VISIBLE
                             internetError.visibility = View.GONE
                             searchError.visibility = View.GONE
-                            rVTrack.adapter = TrackAdapter(response.body())
+                            rVTrack.adapter = TrackAdapter(response.body(), historySP)
                         }
                     }
                     else
@@ -82,6 +109,13 @@ class SearchActivity : AppCompatActivity() {
                     rVTrack.visibility = View.GONE
                 }
             })
+        }
+
+        inputEditText.setOnFocusChangeListener { view, hasFocus ->
+            eTMassage.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
+            historyMas.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
+            historyClearBut.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
+            rVTrack.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)
@@ -122,6 +156,7 @@ class SearchActivity : AppCompatActivity() {
 
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = inputEditText.text.toString()
+                eTMassage.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -154,5 +189,6 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
         private const val ZERO_COUNT = 0
+        private const val HISTORY_KEY = "key_for_historySP"
     }
 }
