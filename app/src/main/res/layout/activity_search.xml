@@ -103,12 +103,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_0dp"
             android:id="@+id/rv_tracks"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="vertical"
             tools:listitem="@layout/track_view"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_weight="1"/>
         
         <com.google.android.material.button.MaterialButton
             android:layout_width="@dimen/_148dp"
@@ -124,7 +125,7 @@
             android:padding="0dp"
             android:textColor="?attr/colorPrimaryVariant"
             android:visibility="gone"
-            android:id="@+id/history_clear_but"/>
+            android:id="@+id/history_clear_but" />
 
 
     </LinearLayout>

@@ -5,16 +5,16 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class SearchHistory(private val sP: SharedPreferences) {
-    private val jSon = sP.getString(HISTORY_KEY, "")
+    private val jSon = sP.getString(HISTORY_KEY, null)
     class Token : TypeToken<ArrayList<Track>>()
-    private val list: ArrayList<Track> = Gson().fromJson(Gson().toJson(jSon), Token().type)
+    private val list: ArrayList<Track> = if (jSon == null) ArrayList() else Gson().fromJson(jSon, Token().type)
     fun load(): List<Track>{
         return list.reversed()
     }
 
     fun save(trackForSave: Track){
         list.add(trackForSave)
-        if (list.count() > 10)
+        if (list.count() > MAX_SIZE)
         {
             list.removeAt(0)
         }
@@ -34,5 +34,6 @@ class SearchHistory(private val sP: SharedPreferences) {
 
     companion object{
         private const val HISTORY_KEY = "key_for_historySP"
+        private const val MAX_SIZE = 10
     }
 }

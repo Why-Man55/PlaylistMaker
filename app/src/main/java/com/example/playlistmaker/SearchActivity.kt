@@ -55,9 +55,11 @@ class SearchActivity : AppCompatActivity() {
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
 
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        var searchHistory: SearchHistory
+        val searchHistory: SearchHistory
 
-        if(historySP.getString(HISTORY_KEY, null).isNullOrEmpty()){
+
+
+        if(historySP.getString(HISTORY_KEY, null) == Gson().toJson(listOf<Track>())){
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
@@ -74,10 +76,15 @@ class SearchActivity : AppCompatActivity() {
             searchHistory = SearchHistory(historySP)
             historyClearBut.setOnClickListener {
                 searchHistory.clearHistory()
+                if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+                historyMas.visibility = View.GONE
+                historyClearBut.visibility = View.GONE
+                rVTrack.visibility = View.GONE
             }
         }
 
         if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+
 
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
