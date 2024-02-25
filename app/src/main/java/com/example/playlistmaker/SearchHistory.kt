@@ -14,15 +14,14 @@ class SearchHistory(private val sP: SharedPreferences) {
 
     fun save(trackForSave: Track){
         list.add(trackForSave)
-        val addJSon = Gson().toJson(list)
-        sP.edit()
-            .putString(HISTORY_KEY, addJSon)
-            .apply()
         if (list.count() > 10)
         {
             list.removeAt(0)
         }
-        load()
+        val addJSon = Gson().toJson(list)
+        sP.edit()
+            .putString(HISTORY_KEY, addJSon)
+            .apply()
     }
 
     fun clearHistory(){
