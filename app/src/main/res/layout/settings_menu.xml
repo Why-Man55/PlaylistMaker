@@ -25,11 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/setting_text"
-            android:layout_marginTop="@dimen/_24dp"
-            android:text="@string/Т_Темная_тема"/>
-
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/themeSwitcher"
             android:text="@string/Т_Темная_тема"
@@ -37,7 +32,13 @@
             android:layout_marginHorizontal="60dp"
             android:layout_gravity="start"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="@style/setting_text"
+            android:layout_marginEnd="@dimen/_20dp"
+            android:gravity="center_vertical"
+            android:paddingTop="@dimen/_0dp"
+            android:colorControlActivated="@color/back_blue"
+            android:colorControlNormal="@color/yp_gray"/>
     </FrameLayout>
 
     <FrameLayout
