@@ -13,10 +13,20 @@ class SearchHistory(private val sP: SharedPreferences) {
     }
 
     fun save(trackForSave: Track){
-        list.add(trackForSave)
-        if (list.count() > MAX_SIZE)
-        {
-            list.removeAt(0)
+        var isContains = false
+        for(i in list){
+            if (trackForSave.trackID == i.trackID){
+                list.remove(i)
+                list.add(0, i)
+                isContains = true
+            }
+        }
+        if(!isContains){
+            list.add(trackForSave)
+            if (list.count() > MAX_SIZE)
+            {
+                list.removeAt(0)
+            }
         }
         val addJSon = Gson().toJson(list)
         sP.edit()
