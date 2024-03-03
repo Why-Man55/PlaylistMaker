@@ -37,8 +37,8 @@
             android:layout_marginEnd="@dimen/_20dp"
             android:gravity="center_vertical"
             android:paddingTop="@dimen/_0dp"
-            android:colorControlActivated="@color/back_blue"
-            android:colorControlNormal="@color/yp_gray"/>
+            app:thumbTint="?attr/colorOnSurface"
+            app:trackTint="?attr/colorSurface"/>
     </FrameLayout>
 
     <FrameLayout

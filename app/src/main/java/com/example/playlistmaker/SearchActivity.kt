@@ -59,12 +59,12 @@ class SearchActivity : AppCompatActivity() {
 
 
 
-        if(historySP.getString(HISTORY_KEY, null) == Gson().toJson(listOf<Track>())){
+        if(historySP.getString(HISTORY_KEY, "").isNullOrEmpty()){
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
             historySP.edit()
-                .putString(HISTORY_KEY, Gson().toJson(listOf<Track>()))
+                .putString(HISTORY_KEY, "")
                 .apply()
             searchHistory = SearchHistory(historySP)
         }
@@ -74,16 +74,7 @@ class SearchActivity : AppCompatActivity() {
             historyClearBut.visibility = View.VISIBLE
             rVTrack.visibility = View.VISIBLE
             searchHistory = SearchHistory(historySP)
-            historyClearBut.setOnClickListener {
-                searchHistory.clearHistory()
-                if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
-                historyMas.visibility = View.GONE
-                historyClearBut.visibility = View.GONE
-                rVTrack.visibility = View.GONE
-            }
         }
-
-        if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
 
 
         fun searchTrack(){
@@ -121,11 +112,18 @@ class SearchActivity : AppCompatActivity() {
             })
         }
 
+        historyClearBut.setOnClickListener {
+            searchHistory.clearHistory()
+            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            historyMas.visibility = View.GONE
+            historyClearBut.visibility = View.GONE
+            rVTrack.visibility = View.GONE
+        }
+
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
             eTMassage.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
-            historyMas.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
-            historyClearBut.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
-            rVTrack.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.GONE else View.VISIBLE
+            if (inputEditText.text.isEmpty() && !hasFocus) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)

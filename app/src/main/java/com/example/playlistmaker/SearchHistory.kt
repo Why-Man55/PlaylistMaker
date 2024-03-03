@@ -5,28 +5,25 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class SearchHistory(private val sP: SharedPreferences) {
-    private val jSon = sP.getString(HISTORY_KEY, null)
+    private val jSon = sP.getString(HISTORY_KEY, "")
     class Token : TypeToken<ArrayList<Track>>()
-    private val list: ArrayList<Track> = if (jSon == null) ArrayList() else Gson().fromJson(jSon, Token().type)
+    private val list: ArrayList<Track> = if (jSon.isNullOrEmpty()) ArrayList() else Gson().fromJson(jSon, Token().type)
     fun load(): List<Track>{
         return list.reversed()
     }
 
     fun save(trackForSave: Track){
-        var isContains = false
-        for(i in list){
-            if (trackForSave.trackID == i.trackID){
-                list.remove(i)
-                list.add(0, i)
-                isContains = true
-            }
-        }
-        if(!isContains){
+        val isContains = list.any { trackForSave.trackID == it.trackID }
+        if(isContains){
+            list.removeIf { trackForSave.trackID == it.trackID }
             list.add(trackForSave)
-            if (list.count() > MAX_SIZE)
-            {
-                list.removeAt(0)
-            }
+        }
+        else{
+            list.add(trackForSave)
+        }
+        if (list.count() > MAX_SIZE)
+        {
+            list.removeAt(0)
         }
         val addJSon = Gson().toJson(list)
         sP.edit()
@@ -36,7 +33,7 @@ class SearchHistory(private val sP: SharedPreferences) {
 
     fun clearHistory(){
         list.clear()
-        val emptyJSon = Gson().toJson(list)
+        val emptyJSon = ""
         sP.edit()
             .putString(HISTORY_KEY, emptyJSon)
             .apply()
