@@ -5,9 +5,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class SearchHistory(private val sP: SharedPreferences) {
-    private val jSon = sP.getString(HISTORY_KEY, "")
+    private val jSon = sP.getString(HISTORY_KEY, Gson().toJson(null))
     class Token : TypeToken<ArrayList<Track>>()
-    private val list: ArrayList<Track> = if (jSon.isNullOrEmpty()) ArrayList() else Gson().fromJson(jSon, Token().type)
+    private val list: ArrayList<Track> = if (jSon == Gson().toJson(null)) ArrayList() else Gson().fromJson(jSon, Token().type)
     fun load(): List<Track>{
         return list.reversed()
     }
@@ -26,14 +26,21 @@ class SearchHistory(private val sP: SharedPreferences) {
             list.removeAt(0)
         }
         val addJSon = Gson().toJson(list)
-        sP.edit()
-            .putString(HISTORY_KEY, addJSon)
-            .apply()
+        if(list.isEmpty()){
+            sP.edit()
+                .putString(HISTORY_KEY, null)
+                .apply()
+        }
+        else{
+            sP.edit()
+                .putString(HISTORY_KEY, addJSon)
+                .apply()
+        }
     }
 
     fun clearHistory(){
         list.clear()
-        val emptyJSon = ""
+        val emptyJSon = null
         sP.edit()
             .putString(HISTORY_KEY, emptyJSon)
             .apply()

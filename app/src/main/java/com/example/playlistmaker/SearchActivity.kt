@@ -55,25 +55,21 @@ class SearchActivity : AppCompatActivity() {
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
 
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        val searchHistory: SearchHistory
+        val searchHistory = SearchHistory(historySP)
 
 
 
-        if(historySP.getString(HISTORY_KEY, "").isNullOrEmpty()){
+        if(searchHistory.load().isEmpty()){
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
-            historySP.edit()
-                .putString(HISTORY_KEY, "")
-                .apply()
-            searchHistory = SearchHistory(historySP)
         }
         else
         {
             historyMas.visibility = View.VISIBLE
             historyClearBut.visibility = View.VISIBLE
             rVTrack.visibility = View.VISIBLE
-            searchHistory = SearchHistory(historySP)
+            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
         }
 
 
@@ -114,7 +110,6 @@ class SearchActivity : AppCompatActivity() {
 
         historyClearBut.setOnClickListener {
             searchHistory.clearHistory()
-            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
