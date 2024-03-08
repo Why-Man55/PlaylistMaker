@@ -25,47 +25,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_48dp"
-                android:id="@+id/search_bar"
-                android:inputType="text"
-                android:layout_marginHorizontal="@dimen/_16dp"
-                android:layout_marginVertical="@dimen/_8dp"
-                android:paddingEnd="@dimen/_40dp"
-                android:paddingStart="@dimen/_18dp"
-                android:hint="@string/hint"
-                android:background="@drawable/search_bg"
-                android:textColorHint="?attr/colorSecondary"
-                android:textColor="@color/yp_black"
-                android:textSize="@dimen/_19sp"
-                android:fontFamily="@font/ys_display_medium"
-                android:lines="1"
-                android:drawableStart="@drawable/search_icon"
-                android:drawablePadding="@dimen/_8dp"
-                android:importantForAutofill="no"
-                android:imeOptions="actionDone"
-                android:singleLine="true"/>
-
-            <TextView android:id="@+id/searchHint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/white"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:text="@string/massage_for_editText"
-                android:visibility="gone"/>
-        </LinearLayout>
-
-
+            android:layout_height="@dimen/_48dp"
+            android:id="@+id/search_bar"
+            android:inputType="text"
+            android:layout_marginHorizontal="@dimen/_16dp"
+            android:layout_marginVertical="@dimen/_8dp"
+            android:paddingEnd="@dimen/_40dp"
+            android:paddingStart="@dimen/_18dp"
+            android:hint="@string/hint"
+            android:background="@drawable/search_bg"
+            android:textColorHint="?attr/colorSecondary"
+            android:textColor="@color/yp_black"
+            android:textSize="@dimen/_19sp"
+            android:fontFamily="@font/ys_display_medium"
+            android:lines="1"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/_8dp"
+            android:importantForAutofill="no"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <Button
             android:layout_width="@dimen/_48dp"
@@ -107,7 +87,6 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="vertical"
             tools:listitem="@layout/track_view"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_weight="1"/>
 

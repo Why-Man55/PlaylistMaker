@@ -34,7 +34,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         val baseUrl = getString(R.string.iTunes)
-        val eTMassage = findViewById<TextView>(R.id.searchHint)
 
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -58,21 +57,6 @@ class SearchActivity : AppCompatActivity() {
         val searchHistory = SearchHistory(historySP)
 
 
-
-        if(searchHistory.load().isEmpty()){
-            historyMas.visibility = View.GONE
-            historyClearBut.visibility = View.GONE
-            rVTrack.visibility = View.GONE
-        }
-        else
-        {
-            historyMas.visibility = View.VISIBLE
-            historyClearBut.visibility = View.VISIBLE
-            rVTrack.visibility = View.VISIBLE
-            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
-        }
-
-
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
@@ -91,6 +75,8 @@ class SearchActivity : AppCompatActivity() {
                             rVTrack.visibility = View.VISIBLE
                             internetError.visibility = View.GONE
                             searchError.visibility = View.GONE
+                            historyMas.visibility = View.GONE
+                            historyClearBut.visibility = View.GONE
                             rVTrack.adapter = TrackAdapter(response.body(), historySP)
                         }
                     }
@@ -113,12 +99,21 @@ class SearchActivity : AppCompatActivity() {
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
+            HistoryAdapter(searchHistory.load())
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            eTMassage.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
-            if (inputEditText.text.isEmpty() && !hasFocus) rVTrack.adapter = HistoryAdapter(searchHistory.load())
-
+            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            if(searchHistory.load().isEmpty()){
+                historyMas.visibility = View.GONE
+                historyClearBut.visibility = View.GONE
+            }
+            else
+            {
+                historyMas.visibility = View.VISIBLE
+                historyClearBut.visibility = View.VISIBLE
+                rVTrack.visibility = View.VISIBLE
+            }
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)
@@ -159,7 +154,23 @@ class SearchActivity : AppCompatActivity() {
 
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = inputEditText.text.toString()
-                eTMassage.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                if (searchText.isEmpty()){
+                    if(searchHistory.load().isEmpty()){
+                        historyMas.visibility = View.GONE
+                        historyClearBut.visibility = View.GONE
+                    }
+                    else
+                    {
+                        historyMas.visibility = View.VISIBLE
+                        historyClearBut.visibility = View.VISIBLE
+                        rVTrack.visibility = View.VISIBLE
+                    }
+                }
+                else{
+                    historyMas.visibility = View.GONE
+                    historyClearBut.visibility = View.GONE
+                    rVTrack.visibility = View.GONE
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
