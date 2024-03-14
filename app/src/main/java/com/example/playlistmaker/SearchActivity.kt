@@ -103,17 +103,22 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            if (inputEditText.text.isEmpty()) rVTrack.adapter = HistoryAdapter(searchHistory.load())
-            if(searchHistory.load().isEmpty()){
-                historyMas.visibility = View.GONE
-                historyClearBut.visibility = View.GONE
+            if (inputEditText.text.isEmpty()){
+                if(searchHistory.load().isEmpty()){
+                    historyMas.visibility = View.GONE
+                    historyClearBut.visibility = View.GONE
+                }
+                else{
+                    historyMas.visibility = View.VISIBLE
+                    historyClearBut.visibility = View.VISIBLE
+                }
             }
             else
             {
-                historyMas.visibility = View.VISIBLE
-                historyClearBut.visibility = View.VISIBLE
-                rVTrack.visibility = View.VISIBLE
+                historyMas.visibility = View.GONE
+                historyClearBut.visibility = View.GONE
             }
+            rVTrack.adapter = HistoryAdapter(searchHistory.load())
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)
@@ -140,7 +145,7 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            rVTrack.visibility = View.GONE
+            rVTrack.adapter = HistoryAdapter(searchHistory.load())
             internetError.visibility = View.GONE
             searchError.visibility = View.GONE
         }
