@@ -94,6 +94,27 @@ class SearchActivity : AppCompatActivity() {
             })
         }
 
+        fun showHistory(){
+            if (inputEditText.text.isEmpty()){
+                if(searchHistory.load().isEmpty()){
+                    historyMas.visibility = View.GONE
+                    historyClearBut.visibility = View.GONE
+                }
+                else{
+                    historyMas.visibility = View.VISIBLE
+                    historyClearBut.visibility = View.VISIBLE
+                    rVTrack.visibility = View.VISIBLE
+                }
+            }
+            else
+            {
+                historyMas.visibility = View.GONE
+                historyClearBut.visibility = View.GONE
+                rVTrack.visibility = View.GONE
+            }
+            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+        }
+
         historyClearBut.setOnClickListener {
             searchHistory.clearHistory()
             historyMas.visibility = View.GONE
@@ -103,22 +124,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            if (inputEditText.text.isEmpty()){
-                if(searchHistory.load().isEmpty()){
-                    historyMas.visibility = View.GONE
-                    historyClearBut.visibility = View.GONE
-                }
-                else{
-                    historyMas.visibility = View.VISIBLE
-                    historyClearBut.visibility = View.VISIBLE
-                }
-            }
-            else
-            {
-                historyMas.visibility = View.GONE
-                historyClearBut.visibility = View.GONE
-            }
-            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            showHistory()
         }
 
         rVTrack.layoutManager = LinearLayoutManager(this)
@@ -158,24 +164,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 clearButton.visibility = clearButtonVisibility(s)
-                searchText = inputEditText.text.toString()
-                if (searchText.isEmpty()){
-                    if(searchHistory.load().isEmpty()){
-                        historyMas.visibility = View.GONE
-                        historyClearBut.visibility = View.GONE
-                    }
-                    else
-                    {
-                        historyMas.visibility = View.VISIBLE
-                        historyClearBut.visibility = View.VISIBLE
-                        rVTrack.visibility = View.VISIBLE
-                    }
-                }
-                else{
-                    historyMas.visibility = View.GONE
-                    historyClearBut.visibility = View.GONE
-                    rVTrack.visibility = View.GONE
-                }
+                showHistory()
             }
 
             override fun afterTextChanged(s: Editable?) {
