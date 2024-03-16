@@ -7,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class TrackAdapter(
     private val items: TrackResponse?,
-    sP: SharedPreferences) : RecyclerView.Adapter<TrackViewHolder> () {
-    private val searchHistory: SearchHistory = SearchHistory(sP)
+    private val searchHistory: SearchHistory) : RecyclerView.Adapter<TrackViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         return TrackViewHolder(parent)

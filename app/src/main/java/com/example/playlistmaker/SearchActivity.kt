@@ -77,7 +77,7 @@ class SearchActivity : AppCompatActivity() {
                             searchError.visibility = View.GONE
                             historyMas.visibility = View.GONE
                             historyClearBut.visibility = View.GONE
-                            rVTrack.adapter = TrackAdapter(response.body(), historySP)
+                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory)
                         }
                     }
                     else
@@ -130,7 +130,9 @@ class SearchActivity : AppCompatActivity() {
         rVTrack.layoutManager = LinearLayoutManager(this)
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTrack()
+                if(inputEditText.text.isNotEmpty()){
+                    searchTrack()
+                }
                 true
             }
             false
