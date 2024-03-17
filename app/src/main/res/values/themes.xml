@@ -5,10 +5,12 @@
         <item name="colorPrimary">@color/back_blue</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/yp_gray</item>
+        <item name="colorOnSurface">@color/yp_gray</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/yp_gray</item>
         <item name="colorSecondaryVariant">@color/yp_light_gray</item>
         <item name="colorOnSecondary">@color/yp_black</item>
+        <item name="colorSurface">@color/yp_light_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

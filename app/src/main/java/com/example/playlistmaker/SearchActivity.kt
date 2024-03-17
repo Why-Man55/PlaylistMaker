@@ -9,10 +9,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,11 +45,17 @@ class SearchActivity : AppCompatActivity() {
         val clearButton = findViewById<Button>(R.id.clear_text)
         val backButton = findViewById<Button>(R.id.search_back)
         val reloadButton = findViewById<MaterialButton>(R.id.reload_but)
+        val historyMas = findViewById<TextView>(R.id.history_main)
+        val historyClearBut = findViewById<MaterialButton>(R.id.history_clear_but)
 
         val searchError = findViewById<LinearLayout>(R.id.search_error_view)
         val internetError = findViewById<LinearLayout>(R.id.internet_error_view)
 
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
+
+        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+        val searchHistory = SearchHistory(historySP)
+
 
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
@@ -67,7 +75,9 @@ class SearchActivity : AppCompatActivity() {
                             rVTrack.visibility = View.VISIBLE
                             internetError.visibility = View.GONE
                             searchError.visibility = View.GONE
-                            rVTrack.adapter = TrackAdapter(response.body())
+                            historyMas.visibility = View.GONE
+                            historyClearBut.visibility = View.GONE
+                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory)
                         }
                     }
                     else
@@ -84,10 +94,45 @@ class SearchActivity : AppCompatActivity() {
             })
         }
 
+        fun showHistory(){
+            if (inputEditText.text.isEmpty()){
+                if(searchHistory.load().isEmpty()){
+                    historyMas.visibility = View.GONE
+                    historyClearBut.visibility = View.GONE
+                }
+                else{
+                    historyMas.visibility = View.VISIBLE
+                    historyClearBut.visibility = View.VISIBLE
+                    rVTrack.visibility = View.VISIBLE
+                }
+            }
+            else
+            {
+                historyMas.visibility = View.GONE
+                historyClearBut.visibility = View.GONE
+                rVTrack.visibility = View.GONE
+            }
+            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+        }
+
+        historyClearBut.setOnClickListener {
+            searchHistory.clearHistory()
+            historyMas.visibility = View.GONE
+            historyClearBut.visibility = View.GONE
+            rVTrack.visibility = View.GONE
+            HistoryAdapter(searchHistory.load())
+        }
+
+        inputEditText.setOnFocusChangeListener { view, hasFocus ->
+            showHistory()
+        }
+
         rVTrack.layoutManager = LinearLayoutManager(this)
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTrack()
+                if(inputEditText.text.isNotEmpty()){
+                    searchTrack()
+                }
                 true
             }
             false
@@ -108,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            rVTrack.visibility = View.GONE
+            rVTrack.adapter = HistoryAdapter(searchHistory.load())
             internetError.visibility = View.GONE
             searchError.visibility = View.GONE
         }
@@ -121,7 +166,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 clearButton.visibility = clearButtonVisibility(s)
-                searchText = inputEditText.text.toString()
+                showHistory()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -154,5 +199,6 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
         private const val ZERO_COUNT = 0
+        private const val HISTORY_KEY = "key_for_historySP"
     }
 }

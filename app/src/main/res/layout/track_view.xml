@@ -40,7 +40,8 @@
             app:icon="@drawable/ic_arrow"
             app:iconGravity="textEnd"
             app:iconPadding="@dimen/_4dp"
-            app:iconTint="?attr/colorOnPrimary" />
+            app:iconTint="?attr/colorOnPrimary"
+            android:id="@+id/select_but"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

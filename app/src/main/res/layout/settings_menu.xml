@@ -25,19 +25,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/setting_text"
-            android:layout_marginTop="@dimen/_24dp"
-            android:text="@string/Т_Темная_тема"/>
-
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
+            android:text="@string/Т_Темная_тема"
+            android:textAllCaps="false"
+            android:layout_marginHorizontal="60dp"
+            android:layout_gravity="start"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_61dp"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/_24dp"
-            android:layout_marginEnd="18dp"
-            android:colorControlActivated="@color/back_blue"
-            android:colorControlNormal="@color/yp_gray"/>
+            android:layout_height="wrap_content"
+            style="@style/setting_text"
+            android:layout_marginEnd="@dimen/_20dp"
+            android:gravity="center_vertical"
+            android:paddingTop="@dimen/_0dp"
+            app:thumbTint="?attr/colorOnSurface"
+            app:trackTint="?attr/colorSurface"/>
     </FrameLayout>
 
     <FrameLayout
