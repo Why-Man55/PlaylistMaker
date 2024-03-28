@@ -30,4 +30,12 @@
     <dimen name="_44dp">44dp</dimen>
     <dimen name="_0dp">0dp</dimen>
     <dimen name="_20dp">20dp</dimen>
+    <dimen name="_26dp">26dp</dimen>
+    <dimen name="_22sp">22sp</dimen>
+    <dimen name="_51dp">51dp</dimen>
+    <dimen name="_100dp">100dp</dimen>
+    <dimen name="_30dp">30dp</dimen>
+    <dimen name="_13sp">13sp</dimen>
+    <dimen name="_17dp">17dp</dimen>
+    <dimen name="_124dp">124dp</dimen>
 </resources>

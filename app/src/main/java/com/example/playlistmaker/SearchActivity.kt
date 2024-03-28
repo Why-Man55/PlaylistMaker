@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,6 +56,14 @@ class SearchActivity : AppCompatActivity() {
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         val searchHistory = SearchHistory(historySP)
 
+        val trackOnClicked = object : TrackOnClicked{
+            override fun getTrackAndStart(track: Track) {
+                PlayerActivity().bind(track)
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                startActivity(displayIntent)
+            }
+        }
+
 
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
@@ -77,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
                             searchError.visibility = View.GONE
                             historyMas.visibility = View.GONE
                             historyClearBut.visibility = View.GONE
-                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory)
+                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory, trackOnClicked)
                         }
                     }
                     else
@@ -202,3 +210,4 @@ class SearchActivity : AppCompatActivity() {
         private const val HISTORY_KEY = "key_for_historySP"
     }
 }
+
