@@ -9,6 +9,6 @@ data class Track(
     @SerializedName("artworkUrl100")val trackAvatarItem:String,
     @SerializedName("trackId")val trackID: Int,
     @SerializedName("collectionName")val collectionName:String,
-    @SerializedName("releaseDate")val rDate:Int,
+    @SerializedName("releaseDate")val rYear:String,
     @SerializedName("primaryGenreName")val genre:String,
     @SerializedName("country")val country:String)

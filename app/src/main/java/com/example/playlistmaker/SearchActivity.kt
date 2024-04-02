@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +23,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+
+    private val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
 
     private var searchText = TEXT_DEF
 
@@ -58,9 +61,9 @@ class SearchActivity : AppCompatActivity() {
 
         val trackOnClicked = object : TrackOnClicked{
             override fun getTrackAndStart(track: Track) {
-                PlayerActivity().bind(track)
-                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+
                 startActivity(displayIntent)
+                displayIntent.putExtra("track", Gson().toJson(track))
             }
         }
 

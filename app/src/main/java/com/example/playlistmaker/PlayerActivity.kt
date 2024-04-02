@@ -1,13 +1,14 @@
 package com.example.playlistmaker
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,10 +23,13 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var trackCountry: TextView
     private lateinit var staticTrackAlbum: TextView
 
-    private val radius: Float = 8 * resources.displayMetrics.density
+    private val radius: Float by lazy {
+        8 * this.resources.displayMetrics.density
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+        val track: Track = Gson().fromJson(intent.extras?.getString("track"), Track)
 
         titleName = findViewById(R.id.player_title_name)
         artistName = findViewById(R.id.player_artist_name)
@@ -42,9 +46,7 @@ class PlayerActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
-    }
 
-    fun bind(track: Track){
         titleName.text = track.trackNameItem
         artistName.text = track.artistNameItem
         Glide.with(this)
@@ -63,7 +65,7 @@ class PlayerActivity : AppCompatActivity() {
             staticTrackAlbum.visibility = View.VISIBLE
             trackAlbum.text = track.collectionName
         }
-        trackYear.text = track.rDate.toString()
+        trackYear.text = track.rYear
         trackStyle.text = track.genre
         trackCountry.text = track.country
     }
