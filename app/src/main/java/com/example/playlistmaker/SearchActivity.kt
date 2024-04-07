@@ -24,8 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    private val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-
     private var searchText = TEXT_DEF
 
     private val inputEditText: EditText by lazy {
@@ -61,9 +59,9 @@ class SearchActivity : AppCompatActivity() {
 
         val trackOnClicked = object : TrackOnClicked{
             override fun getTrackAndStart(track: Track) {
-
-                startActivity(displayIntent)
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                 displayIntent.putExtra("track", Gson().toJson(track))
+                startActivity(displayIntent)
             }
         }
 
@@ -123,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
                 historyClearBut.visibility = View.GONE
                 rVTrack.visibility = View.GONE
             }
-            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            rVTrack.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
         }
 
         historyClearBut.setOnClickListener {
@@ -131,7 +129,7 @@ class SearchActivity : AppCompatActivity() {
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
-            HistoryAdapter(searchHistory.load())
+            HistoryAdapter(searchHistory.load(), trackOnClicked)
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
@@ -164,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            rVTrack.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
             internetError.visibility = View.GONE
             searchError.visibility = View.GONE
         }

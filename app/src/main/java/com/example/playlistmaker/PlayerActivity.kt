@@ -29,7 +29,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        val track: Track = Gson().fromJson(intent.extras?.getString("track"), Track)
+        val track: Track = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
 
         titleName = findViewById(R.id.player_title_name)
         artistName = findViewById(R.id.player_artist_name)
@@ -40,6 +40,8 @@ class PlayerActivity : AppCompatActivity() {
         trackYear = findViewById(R.id.player_year_empty)
         trackStyle = findViewById(R.id.player_style_empty)
         trackCountry = findViewById(R.id.player_country_empty)
+
+        staticTrackAlbum = findViewById(R.id.player_album)
 
         val backButton = findViewById<Button>(R.id.player_back)
 
@@ -65,7 +67,7 @@ class PlayerActivity : AppCompatActivity() {
             staticTrackAlbum.visibility = View.VISIBLE
             trackAlbum.text = track.collectionName
         }
-        trackYear.text = track.rYear
+        trackYear.text = track.rYear.replaceAfter('-', "").substring(0, 4)
         trackStyle.text = track.genre
         trackCountry.text = track.country
     }
