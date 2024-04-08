@@ -42,13 +42,16 @@
     <ImageView
         android:id="@+id/player_img"
         android:layout_width="match_parent"
-        android:layout_height=""
-        android:layout_marginTop="@dimen/_26dp"
+        android:layout_height="@dimen/_0dp"
         android:layout_marginHorizontal="@dimen/_24dp"
-        android:src="@drawable/empty_av"
+        android:layout_marginTop="@dimen/_26dp"
+        android:src="@drawable/ic_empty_player_img"
+        app:layout_constraintBottom_toTopOf="@id/player_title_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_back" />
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_0dp"
         android:layout_height="@dimen/_26dp"
         android:textSize="@dimen/_22sp"
         android:text="@string/empty"
@@ -60,9 +63,11 @@
         app:layout_constraintStart_toStartOf="@id/player_left_barrier"
         app:layout_constraintEnd_toEndOf="@id/player_right_barrier"
         android:id="@+id/player_title_name"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintHorizontal_bias="0"
+        android:maxLines="1"
+        android:ellipsize="end"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_0dp"
         android:layout_height="@dimen/_16dp"
         android:textSize="@dimen/_14sp"
         android:text="@string/empty"
@@ -74,7 +79,9 @@
         app:layout_constraintStart_toStartOf="@id/player_left_barrier"
         app:layout_constraintEnd_toEndOf="@id/player_right_barrier"
         app:layout_constraintHorizontal_bias="0"
-        android:id="@+id/player_artist_name"/>
+        android:id="@+id/player_artist_name"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <ImageButton
         android:id="@+id/player_col_but"
@@ -118,15 +125,10 @@
         app:layout_constraintVertical_bias="0"/>
 
     <TextView
+        style="@style/player_states"
         android:id="@+id/player_country"
-        android:layout_width="@dimen/_124dp"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_20dp"
-        android:fontFamily="@font/ys_display_regular"
         android:text="@string/player_country"
-        android:textColor="@color/yp_gray"
-        android:textFontWeight="400"
-        android:textSize="@dimen/_13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/player_left_barrier2" />
 
