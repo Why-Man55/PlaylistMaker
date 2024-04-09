@@ -25,4 +25,10 @@
     <string name="massage_for_editText">Вводите название трека.</string>
     <string name="you_searched">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="player_time_empty">0:30</string>
+    <string name="player_country">Страна</string>
+    <string name="player_style">Жанр</string>
+    <string name="player_year">Год</string>
+    <string name="player_album">Альбом</string>
+    <string name="player_length">Длительность</string>
 </resources>

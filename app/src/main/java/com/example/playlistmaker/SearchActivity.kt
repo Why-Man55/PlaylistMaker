@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -56,6 +57,14 @@ class SearchActivity : AppCompatActivity() {
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         val searchHistory = SearchHistory(historySP)
 
+        val trackOnClicked = object : TrackOnClicked{
+            override fun getTrackAndStart(track: Track) {
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                displayIntent.putExtra("track", Gson().toJson(track))
+                startActivity(displayIntent)
+            }
+        }
+
 
         fun searchTrack(){
             iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
@@ -77,7 +86,7 @@ class SearchActivity : AppCompatActivity() {
                             searchError.visibility = View.GONE
                             historyMas.visibility = View.GONE
                             historyClearBut.visibility = View.GONE
-                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory)
+                            rVTrack.adapter = TrackAdapter(response.body(), searchHistory, trackOnClicked)
                         }
                     }
                     else
@@ -112,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
                 historyClearBut.visibility = View.GONE
                 rVTrack.visibility = View.GONE
             }
-            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            rVTrack.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
         }
 
         historyClearBut.setOnClickListener {
@@ -120,7 +129,7 @@ class SearchActivity : AppCompatActivity() {
             historyMas.visibility = View.GONE
             historyClearBut.visibility = View.GONE
             rVTrack.visibility = View.GONE
-            HistoryAdapter(searchHistory.load())
+            HistoryAdapter(searchHistory.load(), trackOnClicked)
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
@@ -153,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            rVTrack.adapter = HistoryAdapter(searchHistory.load())
+            rVTrack.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
             internetError.visibility = View.GONE
             searchError.visibility = View.GONE
         }
@@ -202,3 +211,4 @@ class SearchActivity : AppCompatActivity() {
         private const val HISTORY_KEY = "key_for_historySP"
     }
 }
+
