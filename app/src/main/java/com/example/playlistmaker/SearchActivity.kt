@@ -147,11 +147,9 @@ class SearchActivity : AppCompatActivity() {
         val searchRunnable = Runnable{searchTrack()}
 
         fun searchDebounce() {
-            if(inputEditText.text.isNotEmpty()){
-                handler.removeCallbacks(searchRunnable)
-                handler.postDelayed(searchRunnable, SEARCH_DELAY)
-                searchLoadingBar.visibility = View.VISIBLE
-            }
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DELAY)
+            searchLoadingBar.visibility = View.VISIBLE
         }
 
         historyClearBut.setOnClickListener {
@@ -203,10 +201,12 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                 clearButton.visibility = clearButtonVisibility(s)
                 showHistory()
-                searchDebounce()
+                if(s.toString().isNotEmpty())
+                {
+                    searchDebounce()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
