@@ -161,10 +161,11 @@
     </LinearLayout>
 
     <ProgressBar android:id="@+id/search_loading_bar"
-        android:layout_width="@dimen/_44dp"
-        android:layout_height="@dimen/_44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:indeterminateTint="@color/back_blue"
+        android:indeterminateDrawable="@drawable/loading_bar"
         android:visibility="gone"
+        android:layout_marginTop="@dimen/_140dp"
         android:indeterminate="true"/>
 </LinearLayout>
