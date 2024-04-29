@@ -2,6 +2,8 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -10,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +31,19 @@ class SearchActivity : AppCompatActivity() {
 
     private val inputEditText: EditText by lazy {
         findViewById(R.id.search_bar)
+    }
+
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DELAY)
+        }
+        return current
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +67,7 @@ class SearchActivity : AppCompatActivity() {
 
         val searchError = findViewById<LinearLayout>(R.id.search_error_view)
         val internetError = findViewById<LinearLayout>(R.id.internet_error_view)
+        val searchLoadingBar = findViewById<ProgressBar>(R.id.search_loading_bar)
 
         val rVTrack = findViewById<RecyclerView>(R.id.rv_tracks)
 
@@ -59,9 +76,11 @@ class SearchActivity : AppCompatActivity() {
 
         val trackOnClicked = object : TrackOnClicked{
             override fun getTrackAndStart(track: Track) {
-                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-                displayIntent.putExtra("track", Gson().toJson(track))
-                startActivity(displayIntent)
+                if(clickDebounce()){
+                    val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                    displayIntent.putExtra("track", Gson().toJson(track))
+                    startActivity(displayIntent)
+                }
             }
         }
 
@@ -86,6 +105,7 @@ class SearchActivity : AppCompatActivity() {
                             searchError.visibility = View.GONE
                             historyMas.visibility = View.GONE
                             historyClearBut.visibility = View.GONE
+                            searchLoadingBar.visibility = View.GONE
                             rVTrack.adapter = TrackAdapter(response.body(), searchHistory, trackOnClicked)
                         }
                     }
@@ -122,6 +142,16 @@ class SearchActivity : AppCompatActivity() {
                 rVTrack.visibility = View.GONE
             }
             rVTrack.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
+        }
+
+        val searchRunnable = Runnable{searchTrack()}
+
+        fun searchDebounce() {
+            if(inputEditText.text.isNotEmpty()){
+                handler.removeCallbacks(searchRunnable)
+                handler.postDelayed(searchRunnable, SEARCH_DELAY)
+                searchLoadingBar.visibility = View.VISIBLE
+            }
         }
 
         historyClearBut.setOnClickListener {
@@ -176,6 +206,7 @@ class SearchActivity : AppCompatActivity() {
 
                 clearButton.visibility = clearButtonVisibility(s)
                 showHistory()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -209,6 +240,8 @@ class SearchActivity : AppCompatActivity() {
         private const val TEXT_DEF = ""
         private const val ZERO_COUNT = 0
         private const val HISTORY_KEY = "key_for_historySP"
+        private const val CLICK_DELAY = 1000L
+        private const val SEARCH_DELAY = 2000L
     }
 }
 

@@ -159,4 +159,12 @@
             android:textFontWeight="500"
             android:id="@+id/reload_but"/>
     </LinearLayout>
+
+    <ProgressBar android:id="@+id/search_loading_bar"
+        android:layout_width="@dimen/_44dp"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_horizontal"
+        android:indeterminateTint="@color/back_blue"
+        android:visibility="gone"
+        android:indeterminate="true"/>
 </LinearLayout>
