@@ -129,7 +129,6 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         mediaPlayer.release()
         handlerCallBack()
-        playTime.text = getString(R.string.player_time_empty)
     }
 
     private fun playbackControl() {
