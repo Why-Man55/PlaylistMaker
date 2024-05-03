@@ -40,4 +40,6 @@
     <dimen name="_124dp">124dp</dimen>
     <dimen name="_55dp">55dp</dimen>
     <dimen name="_75dp">75dp</dimen>
+    <dimen name="_84dp">84dp</dimen>
+    <dimen name="_140dp">140dp</dimen>
 </resources>

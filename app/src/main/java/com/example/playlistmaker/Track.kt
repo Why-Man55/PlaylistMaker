@@ -11,4 +11,5 @@ data class Track(
     @SerializedName("collectionName")val collectionName:String,
     @SerializedName("releaseDate")val rYear:String,
     @SerializedName("primaryGenreName")val genre:String,
-    @SerializedName("country")val country:String)
+    @SerializedName("country")val country:String,
+    @SerializedName("previewUrl")val audioUrl:String)
