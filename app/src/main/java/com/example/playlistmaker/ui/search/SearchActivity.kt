@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.data.network.ITunesApi
+import com.example.playlistmaker.R
+import com.example.playlistmaker.doamin.api.TrackOnClicked
+import com.example.playlistmaker.data.dto.TrackResponse
+import com.example.playlistmaker.doamin.models.Track
+import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import retrofit2.Call
@@ -74,7 +80,7 @@ class SearchActivity : AppCompatActivity() {
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         val searchHistory = SearchHistory(historySP)
 
-        val trackOnClicked = object : TrackOnClicked{
+        val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
                     val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)

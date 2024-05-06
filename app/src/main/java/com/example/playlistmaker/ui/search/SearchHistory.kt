@@ -1,7 +1,7 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
-import android.content.Intent
 import android.content.SharedPreferences
+import com.example.playlistmaker.doamin.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

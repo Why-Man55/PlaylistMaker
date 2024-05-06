@@ -1,10 +1,7 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.player
 
 import android.annotation.SuppressLint
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -13,6 +10,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.MediaPlay
+import com.example.playlistmaker.doamin.models.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -30,8 +30,18 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playBut: ImageButton
     private lateinit var playTime: TextView
 
-    private val mediaPlayer = MediaPlayer()
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var mediaPlay: MediaPlay
+
+    private fun runTime(): Runnable{
+        return object : Runnable {
+            override fun run() {
+                if(playerState == STATE_PLAYING){
+                    playTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlay.returnCurrentPosition())
+                    mediaPlay.handlerPostDelayed(this, SET_TIME_WAIT)
+                }
+            }
+        }
+    }
 
     private var playerState = STATE_DEFAULT
 
@@ -59,16 +69,16 @@ class PlayerActivity : AppCompatActivity() {
         playTime = findViewById(R.id.play_timer)
         val backButton = findViewById<Button>(R.id.player_back)
 
-        mediaPlayer.setDataSource(track.audioUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
+        mediaPlay = MediaPlay(track.audioUrl)
+        mediaPlay.getReadyMedia()
+        mediaPlay.mediaPlayer.setOnPreparedListener{
             playBut.isEnabled = true
             playerState = STATE_PREPARED
         }
-        mediaPlayer.setOnCompletionListener {
+        mediaPlay.mediaPlayer.setOnCompletionListener {
             setPlay()
             playerState = STATE_PREPARED
-            handlerCallBack()
+            mediaPlay.handlerCallBack(runTime())
             playTime.text = getString(R.string.player_time_empty)
         }
 
@@ -102,16 +112,37 @@ class PlayerActivity : AppCompatActivity() {
         trackStyle.text = track.genre
         trackCountry.text = track.country
     }
-    private fun runTime(): Runnable{
-        return object : Runnable {
-            override fun run() {
-                if(playerState == STATE_PLAYING){
-                    playTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, SET_TIME_WAIT)
-                }
+
+    override fun onPause() {
+        super.onPause()
+        mediaPlay.pausePlayer()
+        setPlay()
+        callBack()
+        playerState = STATE_PAUSED
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlay.playRelease()
+        callBack()
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                mediaPlay.pausePlayer()
+                setPlay()
+                playerState = STATE_PAUSED
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                mediaPlay.startPlayer()
+                setPause()
+                playerState = STATE_PLAYING
+                mediaPlay.handlerPost(runTime())
             }
         }
     }
+
     private fun setPlay(){
         playBut.setBackgroundResource(R.drawable.ic_play_but)
     }
@@ -120,44 +151,8 @@ class PlayerActivity : AppCompatActivity() {
         playBut.setBackgroundResource(R.drawable.ic_pause_but)
     }
 
-    override fun onPause() {
-        super.onPause()
-        pausePlayer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.release()
-        handlerCallBack()
-    }
-
-    private fun playbackControl() {
-        when(playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        setPause()
-        playerState = STATE_PLAYING
-        handler.post(runTime())
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        setPlay()
-        playerState = STATE_PAUSED
-        handlerCallBack()
-    }
-
-    private fun handlerCallBack(){
-        handler.removeCallbacks(runTime())
+    private fun callBack(){
+        mediaPlay.handlerCallBack(runTime())
     }
 
     companion object {
