@@ -1,13 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.doamin.api.TrackOnClicked
+import com.example.playlistmaker.data.dto.TrackResponse
 
 
 class TrackAdapter(
     private val items: TrackResponse?,
     private val searchHistory: SearchHistory,
-    private val trackOnClicked: TrackOnClicked) : RecyclerView.Adapter<TrackViewHolder> () {
+    private val trackOnClicked: TrackOnClicked
+) : RecyclerView.Adapter<TrackViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         return TrackViewHolder(parent)
