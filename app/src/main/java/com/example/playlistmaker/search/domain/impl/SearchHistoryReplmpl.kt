@@ -1,19 +1,24 @@
-package com.example.playlistmaker.search.ui
+package com.example.playlistmaker.search.domain.impl
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.search.data.dto.HistoryMemory
+import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistory(private val sP: SharedPreferences) {
-    private val jSon = sP.getString(HISTORY_KEY, Gson().toJson(null))
+class SearchHistoryReplmpl(sP: SharedPreferences): SearchHistoryRepository {
+
+    private val historyMemory = HistoryMemory(sP)
+
+    private val jSon = historyMemory.returnNullJSon()
     class Token : TypeToken<ArrayList<Track>>()
     private val list: ArrayList<Track> = if (jSon == Gson().toJson(null)) ArrayList() else Gson().fromJson(jSon, Token().type)
-    fun load(): List<Track>{
+    override fun load(): List<Track>{
         return list.reversed()
     }
 
-    fun save(trackForSave: Track){
+    override fun save(trackForSave: Track){
         val isContains = list.any { trackForSave.trackID == it.trackID }
         if(isContains){
             list.removeIf { trackForSave.trackID == it.trackID }
@@ -28,27 +33,20 @@ class SearchHistory(private val sP: SharedPreferences) {
         }
         val addJSon = Gson().toJson(list)
         if(list.isEmpty()){
-            sP.edit()
-                .putString(HISTORY_KEY, null)
-                .apply()
+            historyMemory.editSP(null)
         }
         else{
-            sP.edit()
-                .putString(HISTORY_KEY, addJSon)
-                .apply()
+            historyMemory.editSP(addJSon)
         }
     }
 
-    fun clearHistory(){
+    override fun clearHistory(){
         list.clear()
         val emptyJSon = null
-        sP.edit()
-            .putString(HISTORY_KEY, emptyJSon)
-            .apply()
+        historyMemory.editSP(emptyJSon)
     }
 
     companion object{
-        private const val HISTORY_KEY = "key_for_historySP"
         private const val MAX_SIZE = 10
     }
 }

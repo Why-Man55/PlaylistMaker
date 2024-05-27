@@ -9,22 +9,20 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.google.android.material.button.MaterialButton
+import com.example.playlistmaker.search.domain.impl.HandlerControllerRepimpl
+import com.example.playlistmaker.search.domain.impl.SearchHistoryReplmpl
+import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,23 +30,20 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : ComponentActivity() {
 
     private var searchText = TEXT_DEF
-    private val inputEditText: EditText by lazy {
-        findViewById(R.id.search_bar)
-    }
-
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
 
+    private lateinit var handlerController: HandlerControllerRepimpl
+    private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DELAY)
+            handlerController.postDelay({ isClickAllowed = true },CLICK_DELAY)
         }
         return current
     }
@@ -66,11 +61,13 @@ class SearchActivity : AppCompatActivity() {
 
         val iTunes = retrofit.create(ITunesApi::class.java)
 
+        handlerController = HandlerControllerRepimpl()
+
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        val searchHistory = SearchHistory(historySP)
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
 
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
@@ -84,7 +81,7 @@ class SearchActivity : AppCompatActivity() {
 
 
         fun searchTrack(){
-            iTunes.search(inputEditText.text.toString()).enqueue(object : Callback<TrackResponse>{
+            iTunes.search(binding.searchBar.text.toString()).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
@@ -104,7 +101,7 @@ class SearchActivity : AppCompatActivity() {
                             binding.historyMain.visibility = View.GONE
                             binding.historyClearBut.visibility = View.GONE
                             binding.searchLoadingBar.visibility = View.GONE
-                            binding.rvTracks.adapter = TrackAdapter(response.body(), searchHistory, trackOnClicked)
+                            binding.rvTracks.adapter = TrackAdapter(response.body(), viewModel, trackOnClicked)
                         }
                     }
                     else
@@ -121,9 +118,11 @@ class SearchActivity : AppCompatActivity() {
             })
         }
 
+        val searchRunnable = Runnable{searchTrack()}
+
         fun showHistory(){
-            if (inputEditText.text.isEmpty()){
-                if(searchHistory.load().isEmpty()){
+            if (binding.searchBar.text.isEmpty()){
+                if(viewModel.load().isEmpty()){
                     binding.historyMain.visibility = View.GONE
                     binding.historyClearBut.visibility = View.GONE
                 }
@@ -139,33 +138,31 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyClearBut.visibility = View.GONE
                 binding.rvTracks.visibility = View.GONE
             }
-            binding.rvTracks.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
+            binding.rvTracks.adapter = HistoryAdapter(viewModel.load(), trackOnClicked)
         }
 
-        val searchRunnable = Runnable{searchTrack()}
-
         fun searchDebounce() {
-            handler.removeCallbacks(searchRunnable)
-            handler.postDelayed(searchRunnable, SEARCH_DELAY)
+            handlerController.removeCallback(searchRunnable)
+            handlerController.postDelay(searchRunnable, SEARCH_DELAY)
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
         binding.historyClearBut.setOnClickListener {
-            searchHistory.clearHistory()
+            viewModel.clearHistory()
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
             binding.rvTracks.visibility = View.GONE
-            HistoryAdapter(searchHistory.load(), trackOnClicked)
+            HistoryAdapter(viewModel.load(), trackOnClicked)
         }
 
-        inputEditText.setOnFocusChangeListener { view, hasFocus ->
+        binding.searchBar.setOnFocusChangeListener { view, hasFocus ->
             showHistory()
         }
 
         binding.rvTracks.layoutManager = LinearLayoutManager(this)
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if(inputEditText.text.isNotEmpty()){
+                if(binding.searchBar.text.isNotEmpty()){
                     searchTrack()
                 }
                 true
@@ -182,13 +179,13 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.clearText.setOnClickListener {
-            inputEditText.setText("")
+            binding.searchBar.setText("")
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            binding.rvTracks.adapter = HistoryAdapter(searchHistory.load(), trackOnClicked)
+            binding.rvTracks.adapter = HistoryAdapter(viewModel.load(), trackOnClicked)
             binding.internetErrorView.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
         }
@@ -212,7 +209,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.searchBar.addTextChangedListener(simpleTextWatcher)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -223,7 +220,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchText = savedInstanceState.getString(SEARCH_TEXT, TEXT_DEF)
-        inputEditText.setText(searchText)
+        binding.searchBar.setText(searchText)
     }
     fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
