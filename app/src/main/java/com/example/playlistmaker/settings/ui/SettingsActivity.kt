@@ -4,23 +4,26 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.settings.domain.impl.App
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.databinding.SettingsMenuBinding
+import com.example.playlistmaker.settings.domain.impl.App
+import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : ComponentActivity() {
+
+    private lateinit var binding: SettingsMenuBinding
+    private lateinit var viewModel: SettingsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_menu)
 
-        val shareButton = findViewById<Button>(R.id.Share_but)
-        val helpButton = findViewById<Button>(R.id.Help_but)
-        val agreeButton = findViewById<Button>(R.id.Agreement_but)
-        val backButton = findViewById<Button>(R.id.Set_back_but)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        binding = SettingsMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val adress = getString(R.string.and_dev_go)
 
@@ -30,21 +33,21 @@ class SettingsActivity : AppCompatActivity() {
 
         val agree = getString(R.string.agree_adress)
 
+        val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
 
-        backButton.setOnClickListener {
+        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(themeSP))[SettingsViewModel::class.java]
+
+        binding.SetBackBut.setOnClickListener {
             finish()
         }
 
-        val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-        themeSwitcher.isChecked = (application as App).darkTheme
-        themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
+        binding.themeSwitcher.isChecked = (application as App).darkTheme
+        binding.themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            themeSP.edit()
-                .putBoolean(THEME_KEY, checked)
-                .apply()
+            viewModel.editSP(checked)
         }
 
-        shareButton.setOnClickListener{
+        binding.ShareBut.setOnClickListener{
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, adress)
@@ -55,7 +58,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        helpButton.setOnClickListener{
+        binding.HelpBut.setOnClickListener{
 
             val mailto = "mailto:$email" +
                     "?subject=" + Uri.encode(title) +
@@ -71,14 +74,12 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        agreeButton.setOnClickListener{
+        binding.AgreementBut.setOnClickListener{
             val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agree))
             startActivity(agreeIntent)
         }
     }
-
     companion object{
-        private const val THEME_KEY = "key_for_themeSP"
         private const val THEME_PRETEXT = "key_pretext"
     }
 }

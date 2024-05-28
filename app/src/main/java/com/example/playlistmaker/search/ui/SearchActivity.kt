@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
@@ -54,12 +55,7 @@ class SearchActivity : ComponentActivity() {
 
         val baseUrl = getString(R.string.iTunes)
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val iTunes = retrofit.create(ITunesApi::class.java)
+        val iTunes = viewModel.createRetrofit(baseUrl).create(ITunesApi::class.java)
 
         handlerController = HandlerControllerRepimpl()
 

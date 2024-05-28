@@ -2,11 +2,8 @@ package com.example.playlistmaker.player.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.domain.impl.MediaPlayRepImpl
+import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
 
 class PlayerViewModel(val playerInter: MediaPlayRepImpl): ViewModel() {
     companion object{
