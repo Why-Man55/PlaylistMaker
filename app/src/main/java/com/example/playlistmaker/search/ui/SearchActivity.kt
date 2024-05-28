@@ -53,6 +53,9 @@ class SearchActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
+
         val baseUrl = getString(R.string.iTunes)
 
         val iTunes = viewModel.createRetrofit(baseUrl).create(ITunesApi::class.java)
@@ -61,9 +64,6 @@ class SearchActivity : ComponentActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
 
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
