@@ -19,17 +19,7 @@ class PlayerActivity : ComponentActivity()  {
 
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityPlayerBinding
-
-    private fun runTime(): Runnable{
-        return Runnable {
-            if(playerState == STATE_PLAYING){
-                binding.playTimer.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(viewModel.returnCurrentPosition())
-                viewModel.handlerPostDelayed(SET_TIME_WAIT)
-            }
-        }
-    }
-
-    private var playerState = STATE_DEFAULT
+    private lateinit var track:Track
 
     private val radius: Float by lazy {
         8 * this.resources.displayMetrics.density
@@ -38,21 +28,27 @@ class PlayerActivity : ComponentActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        val track: Track = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track.audioUrl, runTime()))[PlayerViewModel::class.java]
-
+        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track.audioUrl))[PlayerViewModel::class.java]
         binding = ActivityPlayerBinding.inflate(layoutInflater)
+        viewModel.getPlayerStates().observe(this){
+            time -> bindTime(time)
+        }
+
+        viewModel.getTrack(intent).observe(this){
+            track -> this.track = track
+        }
+
+        bindStaticViews(track)
         setContentView(binding.root)
 
         viewModel.getReadyMedia()
-        viewModel.playerInter.mediaPlayer.setOnPreparedListener{
+
+        viewModel.setOnPreparedListener{
             binding.playerPlayBut.isEnabled = true
-            playerState = STATE_PREPARED
         }
-        viewModel.playerInter.mediaPlayer.setOnCompletionListener {
+
+        viewModel.setOnCompletionListener {
             setPlay()
-            playerState = STATE_PREPARED
             viewModel.handlerCallBack()
             binding.playTimer.text = getString(R.string.player_time_empty)
         }
@@ -65,27 +61,16 @@ class PlayerActivity : ComponentActivity()  {
             finish()
         }
 
-        binding.playerTitleName.text = track.trackNameItem
-        binding.playerArtistName.text = track.artistNameItem
-        Glide.with(this)
-            .load(track.trackAvatarItem.replaceAfterLast('/',"512x512bb.jpg"))
-            .centerCrop()
-            .transform(RoundedCorners(radius.toInt()))
-            .placeholder(R.drawable.empty_av)
-            .into(binding.playerImg)
+        bindGlide(track)
+
         binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeItem)
         if(track.collectionName.isEmpty()){
-            binding.playerAlbumEmpty.visibility = View.GONE
-            binding.playerAlbum.visibility = View.GONE
+            bindAlbumVisible(false)
         }
         else{
-            binding.playerAlbumEmpty.visibility = View.VISIBLE
-            binding.playerAlbum.visibility = View.VISIBLE
+            bindAlbumVisible(true)
             binding.playerAlbum.text = track.collectionName
         }
-        binding.playerYearEmpty.text = track.rYear.replaceAfter('-', "").substring(0, 4)
-        binding.playerStyleEmpty.text = track.genre
-        binding.playerCountryEmpty.text = track.country
     }
 
     override fun onPause() {
@@ -93,7 +78,6 @@ class PlayerActivity : ComponentActivity()  {
         viewModel.pausePlayer()
         setPlay()
         callBack()
-        playerState = STATE_PAUSED
     }
 
     override fun onDestroy() {
@@ -103,18 +87,43 @@ class PlayerActivity : ComponentActivity()  {
     }
 
     private fun playbackControl() {
-        when(playerState) {
-            STATE_PLAYING -> {
-                viewModel.pausePlayer()
-                setPlay()
-                playerState = STATE_PAUSED
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                viewModel.startPlayer()
-                setPause()
-                playerState = STATE_PLAYING
-                viewModel.handlerPost()
-            }
+        if(viewModel.isPlaying()){
+            setPlay()
+        }
+        else{
+            setPause()
+        }
+    }
+
+    private fun bindTime(time: Long){
+        binding.playTimer.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    }
+
+    private fun bindStaticViews(track: Track){
+        binding.playerTitleName.text = track.trackNameItem
+        binding.playerArtistName.text = track.artistNameItem
+        binding.playerYearEmpty.text = track.rYear.replaceAfter('-', "").substring(0, 4)
+        binding.playerStyleEmpty.text = track.genre
+        binding.playerCountryEmpty.text = track.country
+    }
+
+    private fun bindGlide(track: Track){
+        Glide.with(this)
+            .load(track.trackAvatarItem.replaceAfterLast('/',"512x512bb.jpg"))
+            .centerCrop()
+            .transform(RoundedCorners(radius.toInt()))
+            .placeholder(R.drawable.empty_av)
+            .into(binding.playerImg)
+    }
+
+    private fun bindAlbumVisible(boolean: Boolean){
+        if(boolean){
+            binding.playerAlbumEmpty.visibility = View.VISIBLE
+            binding.playerAlbum.visibility = View.VISIBLE
+        }
+        else{
+            binding.playerAlbumEmpty.visibility = View.GONE
+            binding.playerAlbum.visibility = View.GONE
         }
     }
 
@@ -128,13 +137,5 @@ class PlayerActivity : ComponentActivity()  {
 
     private fun callBack(){
         viewModel.handlerCallBack()
-    }
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val SET_TIME_WAIT = 400L
     }
 }

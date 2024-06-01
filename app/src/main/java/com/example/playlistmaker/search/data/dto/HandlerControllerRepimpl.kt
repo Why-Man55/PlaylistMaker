@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.domain.impl
+package com.example.playlistmaker.search.data.dto
 
 import android.os.Handler
 import android.os.Looper

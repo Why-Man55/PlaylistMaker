@@ -3,41 +3,50 @@ package com.example.playlistmaker.player.data.dto
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import com.example.playlistmaker.player.domain.api.MediaPlayRepository
 
-class MediaPlayRepImpl(private val url: String, private val run: Runnable) {
-    val mediaPlayer = MediaPlayer()
+class MediaPlayRepImpl(private val url: String, private val run: Runnable): MediaPlayRepository {
+    private val mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
 
-    fun getReadyMedia(){
+    override fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
+        mediaPlayer.setOnPreparedListener(listener)
+    }
+
+    override fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
+        mediaPlayer.setOnCompletionListener (listener)
+    }
+
+    override fun getReadyMedia(){
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
     }
 
-    fun handlerPostDelayed(time: Long){
+    override fun handlerPostDelayed(time: Long){
         handler.postDelayed(run, time)
     }
 
-    fun handlerPost(){
+    override fun handlerPost(){
         handler.post(run)
     }
 
-    fun handlerCallBack(){
+    override fun handlerCallBack(){
         handler.removeCallbacks(run)
     }
 
-    fun startPlayer() {
+    override fun startPlayer() {
         mediaPlayer.start()
     }
 
-    fun pausePlayer() {
+    override fun pausePlayer() {
         mediaPlayer.pause()
     }
 
-    fun returnCurrentPosition(): Int{
+    override fun returnCurrentPosition(): Int{
         return mediaPlayer.currentPosition
     }
 
-    fun playRelease(){
+    override fun playRelease(){
         mediaPlayer.release()
     }
 }

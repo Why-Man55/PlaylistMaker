@@ -5,11 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.SettingsMenuBinding
-import com.example.playlistmaker.settings.domain.impl.App
+import com.example.playlistmaker.App
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
 
@@ -18,6 +17,8 @@ class SettingsActivity : ComponentActivity() {
     private lateinit var binding: SettingsMenuBinding
     private lateinit var viewModel: SettingsViewModel
 
+    private lateinit var texts: List<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_menu)
@@ -25,22 +26,16 @@ class SettingsActivity : ComponentActivity() {
         binding = SettingsMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val adress = getString(R.string.and_dev_go)
+        val sp = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
 
-        val email = getString(R.string.my_mail)
-        val title = getString(R.string.title)
-        val text = getString(R.string.text)
-
-        val agree = getString(R.string.agree_adress)
-
-        val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(themeSP))[SettingsViewModel::class.java]
+        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(sp))[SettingsViewModel::class.java]
+        viewModel.getTextForSettings().observe(this){
+            textsForSettings -> texts = textsForSettings
+        }
 
         binding.SetBackBut.setOnClickListener {
             finish()
         }
-
         binding.themeSwitcher.isChecked = (application as App).darkTheme
         binding.themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
             (applicationContext as App).switchTheme(checked)
@@ -50,7 +45,7 @@ class SettingsActivity : ComponentActivity() {
         binding.ShareBut.setOnClickListener{
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, adress)
+                putExtra(Intent.EXTRA_TEXT, texts[0])
                 type = "text/plain"
             }
 
@@ -60,9 +55,9 @@ class SettingsActivity : ComponentActivity() {
 
         binding.HelpBut.setOnClickListener{
 
-            val mailto = "mailto:$email" +
-                    "?subject=" + Uri.encode(title) +
-                    "&body=" + Uri.encode(text)
+            val mailto = "mailto:${texts[1]}" +
+                    "?subject=" + Uri.encode(texts[2]) +
+                    "&body=" + Uri.encode(texts[3])
 
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(mailto)
@@ -75,7 +70,7 @@ class SettingsActivity : ComponentActivity() {
         }
 
         binding.AgreementBut.setOnClickListener{
-            val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agree))
+            val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(texts[4]))
             startActivity(agreeIntent)
         }
     }

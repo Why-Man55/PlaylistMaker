@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,39 +10,28 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.player.presentation.PlayerViewModel
-import com.example.playlistmaker.search.domain.api.TrackOnClicked
-import com.example.playlistmaker.search.data.dto.TrackResponse
-import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.domain.impl.HandlerControllerRepimpl
-import com.example.playlistmaker.search.domain.impl.SearchHistoryReplmpl
+import com.example.playlistmaker.search.domain.api.TrackOnClicked
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : ComponentActivity() {
 
     private var searchText = TEXT_DEF
     private var isClickAllowed = true
 
-    private lateinit var handlerController: HandlerControllerRepimpl
     private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
+    private lateinit var searchStates: List<Boolean>
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handlerController.postDelay({ isClickAllowed = true },CLICK_DELAY)
+            viewModel.delayHandler { isClickAllowed = true }
         }
         return current
     }
@@ -53,17 +40,15 @@ class SearchActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
-
-        val baseUrl = getString(R.string.iTunes)
-
-        val iTunes = viewModel.createRetrofit(baseUrl).create(ITunesApi::class.java)
-
-        handlerController = HandlerControllerRepimpl()
-
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
+        viewModel.searchTrack(binding.searchBar.text.toString())
+        viewModel.getStatesSearch().observe(this){
+            states -> searchStates = states
+        }
 
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
@@ -77,41 +62,38 @@ class SearchActivity : ComponentActivity() {
 
 
         fun searchTrack(){
-            iTunes.search(binding.searchBar.text.toString()).enqueue(object : Callback<TrackResponse>{
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    if (response.isSuccessful)
-                    {
-                        if(response.body()?.resultCount == ZERO_COUNT)
-                        {
-                            binding.searchErrorView.visibility = View.VISIBLE
-                            binding.rvTracks.visibility = View.GONE
-                        }
-                        else
-                        {
-                            binding.rvTracks.visibility = View.VISIBLE
-                            binding.internetErrorView.visibility = View.GONE
-                            binding.searchErrorView.visibility = View.GONE
-                            binding.historyMain.visibility = View.GONE
-                            binding.historyClearBut.visibility = View.GONE
-                            binding.searchLoadingBar.visibility = View.GONE
-                            binding.rvTracks.adapter = TrackAdapter(response.body(), viewModel, trackOnClicked)
-                        }
-                    }
-                    else
+            viewModel.searchTrack(binding.searchBar.text.toString())
+            if(searchStates[2]) {
+                binding.internetErrorView.visibility = View.VISIBLE
+                binding.rvTracks.visibility = View.GONE
+            }
+            else {
+                if (searchStates[0])
+                {
+                    if(searchStates[1])
                     {
                         binding.searchErrorView.visibility = View.VISIBLE
                         binding.rvTracks.visibility = View.GONE
                     }
+                    else
+                    {
+                        binding.rvTracks.visibility = View.VISIBLE
+                        binding.internetErrorView.visibility = View.GONE
+                        binding.searchErrorView.visibility = View.GONE
+                        binding.historyMain.visibility = View.GONE
+                        binding.historyClearBut.visibility = View.GONE
+                        binding.searchLoadingBar.visibility = View.GONE
+                        viewModel.getTrackAdapter(trackOnClicked).observe(this){
+                            adapter -> binding.rvTracks.adapter = adapter
+                        }
+                    }
                 }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    binding.internetErrorView.visibility = View.VISIBLE
+                else
+                {
+                    binding.searchErrorView.visibility = View.VISIBLE
                     binding.rvTracks.visibility = View.GONE
                 }
-            })
+            }
         }
 
         val searchRunnable = Runnable{searchTrack()}
@@ -134,12 +116,14 @@ class SearchActivity : ComponentActivity() {
                 binding.historyClearBut.visibility = View.GONE
                 binding.rvTracks.visibility = View.GONE
             }
-            binding.rvTracks.adapter = HistoryAdapter(viewModel.load(), trackOnClicked)
+            viewModel.getHisAdapter(trackOnClicked).observe(this){
+                    adapter -> binding.rvTracks.adapter = adapter
+            }
         }
 
         fun searchDebounce() {
-            handlerController.removeCallback(searchRunnable)
-            handlerController.postDelay(searchRunnable, SEARCH_DELAY)
+            viewModel.callBackHandler(searchRunnable)
+            viewModel.delayHandler(searchRunnable)
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
@@ -148,7 +132,6 @@ class SearchActivity : ComponentActivity() {
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
             binding.rvTracks.visibility = View.GONE
-            HistoryAdapter(viewModel.load(), trackOnClicked)
         }
 
         binding.searchBar.setOnFocusChangeListener { view, hasFocus ->
@@ -181,7 +164,9 @@ class SearchActivity : ComponentActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            binding.rvTracks.adapter = HistoryAdapter(viewModel.load(), trackOnClicked)
+            viewModel.getHisAdapter(trackOnClicked).observe(this){
+                    adapter -> binding.rvTracks.adapter = adapter
+            }
             binding.internetErrorView.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
         }
@@ -229,9 +214,7 @@ class SearchActivity : ComponentActivity() {
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
-        private const val ZERO_COUNT = 0
         private const val HISTORY_KEY = "key_for_historySP"
-        private const val CLICK_DELAY = 1000L
         private const val SEARCH_DELAY = 2000L
     }
 }

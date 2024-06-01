@@ -1,29 +1,53 @@
 package com.example.playlistmaker.player.presentation
 
+import android.content.Intent
+import android.media.MediaPlayer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
+import com.example.playlistmaker.search.domain.models.Track
+import com.google.gson.Gson
 
-class PlayerViewModel(val playerInter: MediaPlayRepImpl): ViewModel() {
-    companion object{
-        fun getViewModelFactory(url: String, run: Runnable): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PlayerViewModel(Creator.getMediaPlay(run, url)) as T
-            }
-        }
+class PlayerViewModel(url: String): ViewModel() {
+
+    private val playerInter = Creator.getMediaPlay(url, runTime())
+
+    private var playerState = STATE_DEFAULT
+    private var liveDataTime = MutableLiveData<Long>()
+    private var liveDataTrack = MutableLiveData<Track>()
+    fun getPlayerStates(): LiveData<Long> = liveDataTime
+    fun getTrack(intent: Intent):LiveData<Track> {
+        returnTrack(intent)
+        return liveDataTrack
     }
+
+    private fun returnTrack(intent: Intent){
+        liveDataTrack.postValue( Gson().fromJson(intent.extras?.getString("track"), Track::class.java))
+    }
+
     fun getReadyMedia(){
         playerInter.getReadyMedia()
     }
 
-    fun handlerPostDelayed(time: Long){
-        playerInter.handlerPostDelayed(time)
+    fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
+        playerInter.setOnPreparedListener(listener)
     }
 
-    fun handlerPost(){
+    fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
+        playerInter.setOnCompletionListener(listener)
+    }
+
+    private fun handlerPostDelayed(){
+        playerInter.handlerPostDelayed(SET_TIME_WAIT)
+    }
+
+    private fun runStatus():Boolean{
+        return playerState == STATE_PLAYING
+    }
+
+    private fun handlerPost(){
         playerInter.handlerPost()
     }
 
@@ -31,19 +55,63 @@ class PlayerViewModel(val playerInter: MediaPlayRepImpl): ViewModel() {
         playerInter.handlerCallBack()
     }
 
-    fun startPlayer(){
+    private fun startPlayer(){
         playerInter.startPlayer()
+    }
+
+    fun isPlaying():Boolean{
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+                playerState = STATE_PAUSED
+                return true
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+                playerState = STATE_PLAYING
+                handlerPost()
+                return false
+            }
+            else ->{
+                return false
+            }
+        }
     }
 
     fun pausePlayer(){
         playerInter.pausePlayer()
+        playerState = STATE_PAUSED
     }
 
-    fun returnCurrentPosition(): Int{
+    private fun returnCurrentPosition(): Int{
         return playerInter.returnCurrentPosition()
     }
 
     fun playRelease(){
         playerInter.playRelease()
+    }
+
+    private fun runTime(): Runnable{
+        return Runnable {
+            if(runStatus()){
+                handlerPostDelayed()
+                liveDataTime.postValue(returnCurrentPosition().toLong())
+            }
+        }
+    }
+
+    companion object{
+        fun getViewModelFactory(url: String): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return PlayerViewModel(url) as T
+                }
+            }
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val SET_TIME_WAIT = 400L
     }
 }

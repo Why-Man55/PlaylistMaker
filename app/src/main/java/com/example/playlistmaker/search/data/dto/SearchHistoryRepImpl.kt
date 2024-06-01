@@ -1,17 +1,16 @@
-package com.example.playlistmaker.search.domain.impl
+package com.example.playlistmaker.search.data.dto
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.search.data.dto.HistoryMemory
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryReplmpl(sP: SharedPreferences): SearchHistoryRepository {
+class SearchHistoryRepImpl(sP: SharedPreferences): SearchHistoryRepository {
 
-    private val historyMemory = HistoryMemory(sP)
+    private val historyMemoryRepImpl = HistoryMemoryRepImpl(sP)
 
-    private val jSon = historyMemory.returnNullJSon()
+    private val jSon = historyMemoryRepImpl.returnNullJSon()
     class Token : TypeToken<ArrayList<Track>>()
     private val list: ArrayList<Track> = if (jSon == Gson().toJson(null)) ArrayList() else Gson().fromJson(jSon, Token().type)
     override fun load(): List<Track>{
@@ -33,17 +32,17 @@ class SearchHistoryReplmpl(sP: SharedPreferences): SearchHistoryRepository {
         }
         val addJSon = Gson().toJson(list)
         if(list.isEmpty()){
-            historyMemory.editSP(null)
+            historyMemoryRepImpl.editSP(null)
         }
         else{
-            historyMemory.editSP(addJSon)
+            historyMemoryRepImpl.editSP(addJSon)
         }
     }
 
     override fun clearHistory(){
         list.clear()
         val emptyJSon = null
-        historyMemory.editSP(emptyJSon)
+        historyMemoryRepImpl.editSP(emptyJSon)
     }
 
     companion object{
