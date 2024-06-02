@@ -46,6 +46,7 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     private var liveDataStates = MutableLiveData(listOf<Boolean>())
     private var liveDataAdapter = MutableLiveData<TrackAdapter>()
     private var liveDataHisAdapter = MutableLiveData<HistoryAdapter>()
+    private var liveDataLoadHis = MutableLiveData<List<Track>>()
 
     fun searchTrack(text: String){
         createRetrofit().create(ITunesApi::class.java)
@@ -63,24 +64,24 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
                     internetError = true
                 }
             })
-        liveDataStates.postValue(listOf(isSuccess, isEmptyRes, internetError))
+        liveDataStates.value = listOf(isSuccess, isEmptyRes, internetError)
     }
 
     fun getStatesSearch(): LiveData<List<Boolean>> = liveDataStates
     fun getTrackAdapter(trackOnClicked: TrackOnClicked): LiveData<TrackAdapter> {
-        liveDataAdapter.postValue(TrackAdapter(body, this, trackOnClicked))
+        liveDataAdapter.value = TrackAdapter(body, searchHistoryRep, trackOnClicked)
         return liveDataAdapter
     }
     fun getHisAdapter(trackOnClicked: TrackOnClicked): LiveData<HistoryAdapter> {
-        liveDataHisAdapter.postValue(HistoryAdapter(body?.results,trackOnClicked))
+        liveDataHisAdapter.value = HistoryAdapter(body?.results,trackOnClicked)
         return liveDataHisAdapter
     }
-
-    fun load():List<Track>{
-        return searchHistoryRep.load()
+    fun getHistory():LiveData<List<Track>>{
+        return liveDataLoadHis
     }
-    fun save(trackForSave: Track){
-        searchHistoryRep.save(trackForSave)
+
+    fun load(){
+        liveDataLoadHis.value = searchHistoryRep.load()
     }
     fun clearHistory(){
         searchHistoryRep.clearHistory()

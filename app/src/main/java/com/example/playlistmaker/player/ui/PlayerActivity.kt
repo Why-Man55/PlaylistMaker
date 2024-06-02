@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -15,7 +16,7 @@ import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : ComponentActivity()  {
+class PlayerActivity : AppCompatActivity()  {
 
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityPlayerBinding
@@ -28,7 +29,7 @@ class PlayerActivity : ComponentActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track.audioUrl))[PlayerViewModel::class.java]
+        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory())[PlayerViewModel::class.java]
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         viewModel.getPlayerStates().observe(this){
             time -> bindTime(time)

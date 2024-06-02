@@ -7,12 +7,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
+import com.example.playlistmaker.player.domain.api.MediaPlayRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 
-class PlayerViewModel(url: String): ViewModel() {
+class PlayerViewModel: ViewModel() {
 
-    private val playerInter = Creator.getMediaPlay(url, runTime())
+    private lateinit var playerInter:MediaPlayRepository
 
     private var playerState = STATE_DEFAULT
     private var liveDataTime = MutableLiveData<Long>()
@@ -30,6 +32,7 @@ class PlayerViewModel(url: String): ViewModel() {
 
     private fun returnTrack(intent: Intent){
         liveDataTrack.postValue( Gson().fromJson(intent.extras?.getString("track"), Track::class.java))
+        playerInter = Creator.getMediaPlay(Gson().fromJson(intent.extras?.getString("track"), Track::class.java).audioUrl, runTime())
     }
 
     fun getReadyMedia(){
@@ -106,11 +109,11 @@ class PlayerViewModel(url: String): ViewModel() {
     }
 
     companion object{
-        fun getViewModelFactory(url: String): ViewModelProvider.Factory =
+        fun getViewModelFactory(): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PlayerViewModel(url) as T
+                    return PlayerViewModel() as T
                 }
             }
         private const val STATE_DEFAULT = 0

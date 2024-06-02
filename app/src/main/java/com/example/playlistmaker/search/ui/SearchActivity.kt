@@ -7,7 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -18,7 +18,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
 
-class SearchActivity : ComponentActivity() {
+class SearchActivity : AppCompatActivity() {
 
     private var searchText = TEXT_DEF
     private var isClickAllowed = true
@@ -26,6 +26,7 @@ class SearchActivity : ComponentActivity() {
     private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchStates: List<Boolean>
+    private lateinit var history: List<Track>
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
@@ -45,7 +46,7 @@ class SearchActivity : ComponentActivity() {
 
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
-        viewModel.searchTrack(binding.searchBar.text.toString())
+
         viewModel.getStatesSearch().observe(this){
             states -> searchStates = states
         }
@@ -100,7 +101,11 @@ class SearchActivity : ComponentActivity() {
 
         fun showHistory(){
             if (binding.searchBar.text.isEmpty()){
-                if(viewModel.load().isEmpty()){
+                viewModel.load()
+                viewModel.getHistory().observe(this){
+                    his -> history = his
+                }
+                if(history.isEmpty()){
                     binding.historyMain.visibility = View.GONE
                     binding.historyClearBut.visibility = View.GONE
                 }
@@ -109,6 +114,8 @@ class SearchActivity : ComponentActivity() {
                     binding.historyClearBut.visibility = View.VISIBLE
                     binding.rvTracks.visibility = View.VISIBLE
                 }
+                binding.searchErrorView.visibility = View.GONE
+                binding.searchLoadingBar.visibility = View.GONE
             }
             else
             {
@@ -215,7 +222,6 @@ class SearchActivity : ComponentActivity() {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
         private const val HISTORY_KEY = "key_for_historySP"
-        private const val SEARCH_DELAY = 2000L
     }
 }
 

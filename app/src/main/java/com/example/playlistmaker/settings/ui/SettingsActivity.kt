@@ -4,7 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.SettingsMenuBinding
@@ -12,7 +12,7 @@ import com.example.playlistmaker.App
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: SettingsMenuBinding
     private lateinit var viewModel: SettingsViewModel
@@ -36,6 +36,7 @@ class SettingsActivity : ComponentActivity() {
         binding.SetBackBut.setOnClickListener {
             finish()
         }
+
         binding.themeSwitcher.isChecked = (application as App).darkTheme
         binding.themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
             (applicationContext as App).switchTheme(checked)

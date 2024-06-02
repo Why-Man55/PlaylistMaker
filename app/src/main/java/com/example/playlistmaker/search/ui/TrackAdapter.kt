@@ -6,12 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackViewBinding
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.data.dto.TrackResponse
+import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.presentation.SearchViewModel
 
 
 class TrackAdapter(
     private val items: TrackResponse?,
-    private val searchHistory: SearchViewModel,
+    private val searchHistory: SearchHistoryRepository,
     private val trackOnClicked: TrackOnClicked
 ) : RecyclerView.Adapter<TrackViewHolder> () {
 
