@@ -26,7 +26,7 @@ object Creator {
     fun getRetrofitController(): RetrofitControllerRepository {
         return RetrofitControllerRepImpl()
     }
-    fun setApplication(app: Application){
+    fun initApplication(app: Application){
         application = app
     }
 }

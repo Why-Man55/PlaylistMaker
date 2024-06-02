@@ -22,7 +22,7 @@ class App: Application() {
         val gotThemeSP = themeSP.getBoolean(THEME_KEY, darkTheme)
         switchTheme(gotThemeSP)
 
-        Creator.setApplication(this)
+        Creator.initApplication(this)
     }
 
     fun switchTheme(isDark: Boolean)
