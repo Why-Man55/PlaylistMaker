@@ -1,5 +1,6 @@
 package com.example.playlistmaker.creator
 
+import android.app.Application
 import android.content.SharedPreferences
 import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayRepository
@@ -11,6 +12,8 @@ import com.example.playlistmaker.settings.data.dto.ThemeSaveRepImpl
 import com.example.playlistmaker.settings.domain.api.ThemeSaveRepository
 
 object Creator {
+    lateinit var application: Application
+
     fun getMediaPlay(url: String, run: Runnable): MediaPlayRepository {
         return MediaPlayRepImpl(url, run)
     }
@@ -22,5 +25,8 @@ object Creator {
     }
     fun getRetrofitController(): RetrofitControllerRepository {
         return RetrofitControllerRepImpl()
+    }
+    fun setApplication(app: Application){
+        application = app
     }
 }

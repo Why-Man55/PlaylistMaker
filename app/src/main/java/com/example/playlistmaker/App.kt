@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.creator.Creator
 
 class App: Application() {
     var darkTheme: Boolean = false
@@ -18,8 +19,10 @@ class App: Application() {
         }
 
         val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-        val getedThemeSP = themeSP.getBoolean(THEME_KEY, darkTheme)
-        switchTheme(getedThemeSP)
+        val gotThemeSP = themeSP.getBoolean(THEME_KEY, darkTheme)
+        switchTheme(gotThemeSP)
+
+        Creator.setApplication(this)
     }
 
     fun switchTheme(isDark: Boolean)

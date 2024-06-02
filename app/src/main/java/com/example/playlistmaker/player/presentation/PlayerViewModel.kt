@@ -17,6 +17,11 @@ class PlayerViewModel(url: String): ViewModel() {
     private var playerState = STATE_DEFAULT
     private var liveDataTime = MutableLiveData<Long>()
     private var liveDataTrack = MutableLiveData<Track>()
+
+    init{
+        liveDataTime.postValue(1000)
+        liveDataTrack.postValue(Track("ntcn","ntcn",1,"ntcn",1,"ntcn","ntcn","ntcn","ntcn","ntcn"))
+    }
     fun getPlayerStates(): LiveData<Long> = liveDataTime
     fun getTrack(intent: Intent):LiveData<Track> {
         returnTrack(intent)

@@ -10,21 +10,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.settings.data.dto.ExternalNavigatorRepImpl
 import com.example.playlistmaker.settings.domain.api.ThemeSaveRepository
 
 class SettingsViewModel(private val themeSaveRepImpl: ThemeSaveRepository):ViewModel() {
 
-    private val app = App()
-    private val adress = app.getString(R.string.and_dev_go)
-    private val email = app.getString(R.string.my_mail)
-    private val title = app.getString(R.string.title)
-    private val text = app.getString(R.string.text)
-    private val agree = app.getString(R.string.agree_adress)
-
+    private val strings = ExternalNavigatorRepImpl(Creator.application).returnTextsForSet()
     private var liveData = MutableLiveData(listOf<String>())
 
     init{
-        liveData.postValue(listOf(adress,email, title, text, agree))
+        liveData.postValue(strings)
     }
 
     fun getTextForSettings():LiveData<List<String>> = liveData
