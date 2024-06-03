@@ -20,7 +20,6 @@ class PlayerActivity : AppCompatActivity()  {
 
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var track:Track
 
     private val radius: Float by lazy {
         8 * this.resources.displayMetrics.density
@@ -36,10 +35,20 @@ class PlayerActivity : AppCompatActivity()  {
         }
 
         viewModel.getTrack(intent).observe(this){
-            track -> this.track = track
+            trackRet ->
+            bindStaticViews(trackRet)
+            bindGlide(trackRet)
+            binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
+                trackRet.trackTimeItem
+            )
+            if(trackRet.collectionName.isEmpty()){
+                bindAlbumVisible(false)
+            }
+            else {
+                bindAlbumVisible(true)
+                binding.playerAlbum.text = trackRet.collectionName
+            }
         }
-
-        bindStaticViews(track)
         setContentView(binding.root)
 
         viewModel.getReadyMedia()
@@ -60,17 +69,6 @@ class PlayerActivity : AppCompatActivity()  {
 
         binding.playerBack.setOnClickListener {
             finish()
-        }
-
-        bindGlide(track)
-
-        binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeItem)
-        if(track.collectionName.isEmpty()){
-            bindAlbumVisible(false)
-        }
-        else{
-            bindAlbumVisible(true)
-            binding.playerAlbum.text = track.collectionName
         }
     }
 

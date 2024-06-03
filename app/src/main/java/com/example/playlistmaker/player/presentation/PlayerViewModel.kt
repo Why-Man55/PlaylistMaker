@@ -19,11 +19,6 @@ class PlayerViewModel: ViewModel() {
     private var playerState = STATE_DEFAULT
     private var liveDataTime = MutableLiveData<Long>()
     private var liveDataTrack = MutableLiveData<Track>()
-
-    init{
-        liveDataTime.postValue(1000)
-        liveDataTrack.postValue(Track("ntcn","ntcn",1,"ntcn",1,"ntcn","ntcn","ntcn","ntcn","ntcn"))
-    }
     fun getPlayerStates(): LiveData<Long> = liveDataTime
     fun getTrack(intent: Intent):LiveData<Track> {
         returnTrack(intent)
@@ -31,7 +26,7 @@ class PlayerViewModel: ViewModel() {
     }
 
     private fun returnTrack(intent: Intent){
-        liveDataTrack.postValue( Gson().fromJson(intent.extras?.getString("track"), Track::class.java))
+        liveDataTrack.value = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
         playerInter = Creator.getMediaPlay(Gson().fromJson(intent.extras?.getString("track"), Track::class.java).audioUrl, runTime())
     }
 
@@ -103,7 +98,7 @@ class PlayerViewModel: ViewModel() {
         return Runnable {
             if(runStatus()){
                 handlerPostDelayed()
-                liveDataTime.postValue(returnCurrentPosition().toLong())
+                liveDataTime.value = returnCurrentPosition().toLong()
             }
         }
     }

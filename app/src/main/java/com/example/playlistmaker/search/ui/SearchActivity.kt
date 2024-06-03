@@ -63,41 +63,40 @@ class SearchActivity : AppCompatActivity() {
 
 
         fun searchTrack(){
-            viewModel.searchTrack(binding.searchBar.text.toString())
-            if(searchStates[2]) {
-                binding.internetErrorView.visibility = View.VISIBLE
-                binding.rvTracks.visibility = View.GONE
-            }
-            else {
-                if (searchStates[0])
-                {
-                    if(searchStates[1])
+            viewModel.searchTrack(binding.searchBar.text.toString(), trackOnClicked)
+            if(searchStates.isNotEmpty()){
+                if(searchStates[2]) {
+                    binding.internetErrorView.visibility = View.VISIBLE
+                    binding.rvTracks.visibility = View.GONE
+                }
+                else {
+                    if (searchStates[0])
                     {
-                        binding.searchErrorView.visibility = View.VISIBLE
-                        binding.rvTracks.visibility = View.GONE
+                        if(searchStates[1])
+                        {
+                            binding.searchErrorView.visibility = View.VISIBLE
+                            binding.rvTracks.visibility = View.GONE
+                        }
+                        else
+                        {
+                            binding.rvTracks.visibility = View.VISIBLE
+                            binding.internetErrorView.visibility = View.GONE
+                            binding.searchErrorView.visibility = View.GONE
+                            binding.historyMain.visibility = View.GONE
+                            binding.historyClearBut.visibility = View.GONE
+                            binding.searchLoadingBar.visibility = View.GONE
+                            viewModel.getTrackAdapter().observe(this){
+                                    adapter -> binding.rvTracks.adapter = adapter
+                            }
+                        }
                     }
                     else
                     {
-                        binding.rvTracks.visibility = View.VISIBLE
-                        binding.internetErrorView.visibility = View.GONE
-                        binding.searchErrorView.visibility = View.GONE
-                        binding.historyMain.visibility = View.GONE
-                        binding.historyClearBut.visibility = View.GONE
-                        binding.searchLoadingBar.visibility = View.GONE
-                        viewModel.getTrackAdapter(trackOnClicked).observe(this){
-                            adapter -> binding.rvTracks.adapter = adapter
-                        }
+                        binding.rvTracks.visibility = View.GONE
                     }
-                }
-                else
-                {
-                    binding.searchErrorView.visibility = View.VISIBLE
-                    binding.rvTracks.visibility = View.GONE
                 }
             }
         }
-
-        val searchRunnable = Runnable{searchTrack()}
 
         fun showHistory(){
             if (binding.searchBar.text.isEmpty()){
@@ -123,14 +122,14 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyClearBut.visibility = View.GONE
                 binding.rvTracks.visibility = View.GONE
             }
-            viewModel.getHisAdapter(trackOnClicked).observe(this){
+            viewModel.getHisAdapter().observe(this){
                     adapter -> binding.rvTracks.adapter = adapter
             }
         }
 
         fun searchDebounce() {
-            viewModel.callBackHandler(searchRunnable)
-            viewModel.delayHandler(searchRunnable)
+            viewModel.callBackHandler { searchTrack() }
+            viewModel.delayHandler { searchTrack() }
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
@@ -171,7 +170,7 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            viewModel.getHisAdapter(trackOnClicked).observe(this){
+            viewModel.getHisAdapter().observe(this){
                     adapter -> binding.rvTracks.adapter = adapter
             }
             binding.internetErrorView.visibility = View.GONE
@@ -185,10 +184,12 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearText.visibility = clearButtonVisibility(s)
-                showHistory()
                 if(s.toString().isNotEmpty())
                 {
                     searchDebounce()
+                }
+                else{
+                    showHistory()
                 }
             }
 

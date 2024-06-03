@@ -38,44 +38,36 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
-    private var isSuccess = false
-    private var isEmptyRes = false
-    private var internetError = false
-    private var body:TrackResponse? = TrackResponse(0, listOf())
-
     private var liveDataStates = MutableLiveData(listOf<Boolean>())
     private var liveDataAdapter = MutableLiveData<TrackAdapter>()
     private var liveDataHisAdapter = MutableLiveData<HistoryAdapter>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
 
-    fun searchTrack(text: String){
+    fun searchTrack(text: String, trackOnClicked: TrackOnClicked){
+        var states = mutableListOf<Boolean>()
         createRetrofit().create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    isSuccess = response.isSuccessful
-                    isEmptyRes = response.body()?.resultCount == ZERO_COUNT
-                    body = response.body()
+                    states = mutableListOf(response.isSuccessful,response.body()?.resultCount == ZERO_COUNT, false)
+                    val body = response.body()
+                    liveDataAdapter.value = TrackAdapter(body, searchHistoryRep, trackOnClicked)
+                    liveDataHisAdapter.value = HistoryAdapter(body?.results,trackOnClicked)
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    internetError = true
+                    states[2] = true
+
                 }
             })
-        liveDataStates.value = listOf(isSuccess, isEmptyRes, internetError)
+        liveDataStates.value = states
     }
 
     fun getStatesSearch(): LiveData<List<Boolean>> = liveDataStates
-    fun getTrackAdapter(trackOnClicked: TrackOnClicked): LiveData<TrackAdapter> {
-        liveDataAdapter.value = TrackAdapter(body, searchHistoryRep, trackOnClicked)
-        return liveDataAdapter
-    }
-    fun getHisAdapter(trackOnClicked: TrackOnClicked): LiveData<HistoryAdapter> {
-        liveDataHisAdapter.value = HistoryAdapter(body?.results,trackOnClicked)
-        return liveDataHisAdapter
-    }
+    fun getTrackAdapter(): LiveData<TrackAdapter> = liveDataAdapter
+    fun getHisAdapter(): LiveData<HistoryAdapter> = liveDataHisAdapter
     fun getHistory():LiveData<List<Track>>{
         return liveDataLoadHis
     }
