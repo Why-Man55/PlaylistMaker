@@ -7,21 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.search.data.dto.HandlerControllerRepimpl
-import com.example.playlistmaker.search.data.dto.RetrofitControllerRepImpl
-import com.example.playlistmaker.search.data.dto.SearchHistoryRepImpl
 import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.domain.api.RetrofitControllerRepository
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.HistoryAdapter
-import com.example.playlistmaker.search.ui.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.create
 
 class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, private val retrofitControllerRepImpl: RetrofitControllerRepository):ViewModel() {
     companion object{
@@ -39,11 +33,15 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
     private var liveDataStates = MutableLiveData(listOf<Boolean>())
-    private var liveDataAdapter = MutableLiveData<TrackAdapter>()
-    private var liveDataHisAdapter = MutableLiveData<HistoryAdapter>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
+    private var liveDataResponse = MutableLiveData<TrackResponse?>()
+    private var liveDataSearchHistory = MutableLiveData<SearchHistoryRepository>()
 
-    fun searchTrack(text: String, trackOnClicked: TrackOnClicked){
+    init{
+        liveDataSearchHistory.postValue(searchHistoryRep)
+    }
+
+    fun searchTrack(text: String){
         var states = mutableListOf<Boolean>()
         createRetrofit().create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
@@ -52,8 +50,7 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
                     response: Response<TrackResponse>
                 ) {
                     states = mutableListOf(response.isSuccessful,response.body()?.resultCount == ZERO_COUNT, false)
-                    val body = response.body()
-                    liveDataAdapter.value = TrackAdapter(body, searchHistoryRep, trackOnClicked)
+                    liveDataResponse.value = response.body()
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
@@ -65,14 +62,12 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
 
     fun getStatesSearch(): LiveData<List<Boolean>> = liveDataStates
-    fun getTrackAdapter(): LiveData<TrackAdapter> = liveDataAdapter
-    fun getHisAdapter(): LiveData<HistoryAdapter> = liveDataHisAdapter
     fun getHistory():LiveData<List<Track>> = liveDataLoadHis
+    fun getResponse():LiveData<TrackResponse?> = liveDataResponse
+    fun getSearchHis():LiveData<SearchHistoryRepository> = liveDataSearchHistory
 
-    fun load(trackOnClicked: TrackOnClicked){
-        val load = searchHistoryRep.load()
-        liveDataLoadHis.value = load
-        liveDataHisAdapter.value = HistoryAdapter(load,trackOnClicked)
+    fun load(){
+        liveDataLoadHis.value = searchHistoryRep.load()
     }
     fun clearHistory(){
         searchHistoryRep.clearHistory()
