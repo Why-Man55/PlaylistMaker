@@ -36,10 +36,12 @@ class PlayerViewModel: ViewModel() {
 
     fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
         playerInter.setOnPreparedListener(listener)
+        playerState = STATE_PREPARED
     }
 
     fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
         playerInter.setOnCompletionListener(listener)
+        playerState = STATE_PREPARED
     }
 
     private fun handlerPostDelayed(){

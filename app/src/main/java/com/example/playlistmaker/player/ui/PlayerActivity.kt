@@ -30,6 +30,7 @@ class PlayerActivity : AppCompatActivity()  {
         setContentView(R.layout.activity_player)
         viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory())[PlayerViewModel::class.java]
         binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         viewModel.getPlayerStates().observe(this){
             time -> bindTime(time)
         }
@@ -46,15 +47,15 @@ class PlayerActivity : AppCompatActivity()  {
             }
             else {
                 bindAlbumVisible(true)
-                binding.playerAlbum.text = trackRet.collectionName
+                binding.playerAlbumEmpty.text = trackRet.collectionName
             }
         }
-        setContentView(binding.root)
 
         viewModel.getReadyMedia()
 
         viewModel.setOnPreparedListener{
             binding.playerPlayBut.isEnabled = true
+
         }
 
         viewModel.setOnCompletionListener {
