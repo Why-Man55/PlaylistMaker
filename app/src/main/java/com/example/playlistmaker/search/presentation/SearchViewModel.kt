@@ -54,7 +54,6 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
                     states = mutableListOf(response.isSuccessful,response.body()?.resultCount == ZERO_COUNT, false)
                     val body = response.body()
                     liveDataAdapter.value = TrackAdapter(body, searchHistoryRep, trackOnClicked)
-                    liveDataHisAdapter.value = HistoryAdapter(body?.results,trackOnClicked)
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
@@ -68,12 +67,12 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     fun getStatesSearch(): LiveData<List<Boolean>> = liveDataStates
     fun getTrackAdapter(): LiveData<TrackAdapter> = liveDataAdapter
     fun getHisAdapter(): LiveData<HistoryAdapter> = liveDataHisAdapter
-    fun getHistory():LiveData<List<Track>>{
-        return liveDataLoadHis
-    }
+    fun getHistory():LiveData<List<Track>> = liveDataLoadHis
 
-    fun load(){
-        liveDataLoadHis.value = searchHistoryRep.load()
+    fun load(trackOnClicked: TrackOnClicked){
+        val load = searchHistoryRep.load()
+        liveDataLoadHis.value = load
+        liveDataHisAdapter.value = HistoryAdapter(load,trackOnClicked)
     }
     fun clearHistory(){
         searchHistoryRep.clearHistory()

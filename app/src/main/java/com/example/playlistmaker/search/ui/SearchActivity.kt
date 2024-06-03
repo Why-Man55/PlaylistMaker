@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
 
         viewModel.getStatesSearch().observe(this){
-            states -> searchStates = states
+                states -> searchStates = states
         }
 
         val trackOnClicked = object : TrackOnClicked {
@@ -100,9 +100,9 @@ class SearchActivity : AppCompatActivity() {
 
         fun showHistory(){
             if (binding.searchBar.text.isEmpty()){
-                viewModel.load()
+                viewModel.load(trackOnClicked)
                 viewModel.getHistory().observe(this){
-                    his -> history = his
+                        his -> history = his
                 }
                 if(history.isEmpty()){
                     binding.historyMain.visibility = View.GONE
