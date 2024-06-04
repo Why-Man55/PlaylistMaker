@@ -11,6 +11,7 @@ import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.domain.api.RetrofitControllerRepository
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
+import com.example.playlistmaker.search.domain.models.ResponseStates
 import com.example.playlistmaker.search.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,39 +33,36 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
-    private var liveDataStates = MutableLiveData(listOf<Boolean>())
+    private var liveDataResponseStates = MutableLiveData<ResponseStates>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
     private var liveDataResponse = MutableLiveData<TrackResponse?>()
-    private var liveDataSearchHistory = MutableLiveData<SearchHistoryRepository>()
-
-    init{
-        liveDataSearchHistory.postValue(searchHistoryRep)
-    }
 
     fun searchTrack(text: String){
-        var states = mutableListOf<Boolean>()
+        var isSuccess = true
+        var zeroCount = false
+        var internetError = false
         createRetrofit().create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    states = mutableListOf(response.isSuccessful,response.body()?.resultCount == ZERO_COUNT, false)
-                    liveDataResponse.value = response.body()
+                    isSuccess = response.isSuccessful
+                    zeroCount = response.body()?.resultCount == ZERO_COUNT
+                    liveDataResponse.postValue(response.body())
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    states[2] = true
+                    internetError = true
 
                 }
             })
-        liveDataStates.value = states
+        liveDataResponseStates.value = ResponseStates(isSuccess, zeroCount, internetError)
     }
 
-    fun getStatesSearch(): LiveData<List<Boolean>> = liveDataStates
+    fun getStatesSearch(): LiveData<ResponseStates> = liveDataResponseStates
     fun getHistory():LiveData<List<Track>> = liveDataLoadHis
     fun getResponse():LiveData<TrackResponse?> = liveDataResponse
-    fun getSearchHis():LiveData<SearchHistoryRepository> = liveDataSearchHistory
 
     fun load(){
         liveDataLoadHis.value = searchHistoryRep.load()

@@ -15,6 +15,7 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
+import com.example.playlistmaker.search.domain.models.ResponseStates
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
@@ -26,11 +27,10 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var searchStates: List<Boolean>
+    private lateinit var searchStates: ResponseStates
     private lateinit var history: List<Track>
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var historyAdapter: HistoryAdapter
-    private lateinit var searchHistory: SearchHistoryRepository
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
@@ -51,7 +51,7 @@ class SearchActivity : AppCompatActivity() {
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
 
-        val trackOnClicked = object : TrackOnClicked {
+        object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
                     val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
@@ -65,48 +65,44 @@ class SearchActivity : AppCompatActivity() {
                 states -> searchStates = states
         }
         viewModel.getResponse().observe(this){
-                resp -> trackAdapter = TrackAdapter(resp, searchHistory,trackOnClicked)
-        }
-        viewModel.getSearchHis().observe(this){
-            searchHis -> searchHistory = searchHis
+                resp -> trackAdapter.submitList(resp?.results)
         }
         viewModel.getHistory().observe(this){
                 his -> history = his
-            historyAdapter = HistoryAdapter(his,trackOnClicked)
+            historyAdapter.submitList(his)
         }
 
 
         fun searchTrack(){
             viewModel.searchTrack(binding.searchBar.text.toString())
-            if(searchStates.isNotEmpty()){
-                if(searchStates[2]) {
-                    binding.internetErrorView.visibility = View.VISIBLE
-                    binding.rvTracks.visibility = View.GONE
-                }
-                else {
-                    if (searchStates[0])
+            if(searchStates.internetError) {
+                binding.rvTracks.visibility = View.GONE
+            }
+            else {
+                if (searchStates.isSuccessful)
+                {
+                    binding.searchErrorView.visibility = View.VISIBLE
+                    if(searchStates.zeroCount)
                     {
-                        if(searchStates[1])
-                        {
-                            binding.searchErrorView.visibility = View.VISIBLE
-                            binding.rvTracks.visibility = View.GONE
-                        }
-                        else
-                        {
-                            binding.rvTracks.visibility = View.VISIBLE
-                            binding.internetErrorView.visibility = View.GONE
-                            binding.searchErrorView.visibility = View.GONE
-                            binding.historyMain.visibility = View.GONE
-                            binding.historyClearBut.visibility = View.GONE
-                            binding.searchLoadingBar.visibility = View.GONE
-                            binding.rvTracks.adapter = trackAdapter
-
-                        }
+                        binding.searchErrorView.visibility = View.VISIBLE
+                        binding.rvTracks.visibility = View.GONE
                     }
                     else
                     {
-                        binding.rvTracks.visibility = View.GONE
+                        binding.rvTracks.adapter = trackAdapter
+                        binding.rvTracks.visibility = View.VISIBLE
+                        binding.internetErrorView.visibility = View.GONE
+                        binding.searchErrorView.visibility = View.GONE
+                        binding.historyMain.visibility = View.GONE
+                        binding.historyClearBut.visibility = View.GONE
+                        binding.searchLoadingBar.visibility = View.GONE
+
                     }
+                }
+                else
+                {
+                    binding.rvTracks.visibility = View.GONE
+                    binding.searchLoadingBar.visibility = View.GONE
                 }
             }
         }
@@ -114,6 +110,7 @@ class SearchActivity : AppCompatActivity() {
         fun showHistory(){
             if (binding.searchBar.text.isEmpty()){
                 viewModel.load()
+                binding.rvTracks.adapter = historyAdapter
                 if(history.isEmpty()){
                     binding.historyMain.visibility = View.GONE
                     binding.historyClearBut.visibility = View.GONE
@@ -132,12 +129,12 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyClearBut.visibility = View.GONE
                 binding.rvTracks.visibility = View.GONE
             }
-            binding.rvTracks.adapter = historyAdapter
         }
 
         fun searchDebounce() {
-            viewModel.callBackHandler { searchTrack() }
-            viewModel.delayHandler { searchTrack() }
+            val runnable = Runnable{searchTrack()}
+            viewModel.callBackHandler(runnable)
+            viewModel.delayHandler(runnable)
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
@@ -178,7 +175,6 @@ class SearchActivity : AppCompatActivity() {
                 currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            showHistory()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -192,9 +188,7 @@ class SearchActivity : AppCompatActivity() {
                 {
                     searchDebounce()
                 }
-                else{
-                    showHistory()
-                }
+                showHistory()
             }
 
             override fun afterTextChanged(s: Editable?) {

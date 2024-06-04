@@ -12,12 +12,12 @@ import java.util.Locale
 class TrackViewHolder(private val binding: TrackViewBinding): RecyclerView.ViewHolder(binding.root) {
 
     private val radius: Float = 2 * itemView.resources.displayMetrics.density
-    fun bind(model: Track) {
-        binding.name.text = model.trackNameItem
-        binding.artist.text = model.artistNameItem
-        binding.time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeItem)
+    fun bind(model: Track) = with(binding) {
+        name.text = model.trackNameItem
+        artist.text = model.artistNameItem
+        time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeItem)
         Glide.with(itemView).load(model.trackAvatarItem).centerCrop().transform(RoundedCorners(radius.toInt())).placeholder(
             R.drawable.empty_av
-        ).into(binding.url)
+        ).into(url)
     }
 }
