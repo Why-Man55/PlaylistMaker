@@ -38,6 +38,10 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
     private var liveDataSHRep = MutableLiveData<SearchHistoryRepository>()
 
+    private val retrofit = createRetrofit()
+
+    lateinit var trackResponse:TrackResponse
+
     init{
         liveDataSHRep.value = searchHistoryRep
     }
@@ -46,8 +50,7 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
         var isSuccess = true
         var zeroCount = false
         var internetError = false
-        var trackResponse:TrackResponse? = TrackResponse(0, listOf())
-        createRetrofit().create(ITunesApi::class.java)
+        retrofit.create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
                     call: Call<TrackResponse>,
@@ -55,7 +58,7 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
                 ) {
                     isSuccess = response.isSuccessful
                     zeroCount = response.body()?.resultCount == ZERO_COUNT
-                    trackResponse = response.body()
+                    trackResponse = response.body() as TrackResponse
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {

@@ -10,7 +10,6 @@ import com.example.playlistmaker.search.domain.models.Track
 
 
 class TrackAdapter(
-    private val items: List<Track>?,
     private val searchHistory: SearchHistoryRepository,
     private val trackOnClicked: TrackOnClicked
 ) : ListAdapter<Track,TrackViewHolder>(ItemComparator()) {
@@ -21,14 +20,11 @@ class TrackAdapter(
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(items!![position])
+        val item = getItem(position)
+        holder.bind(item)
         holder.itemView.setOnClickListener {
-            searchHistory.save(items[position])
-            trackOnClicked.getTrackAndStart(items[position])
+            searchHistory.save(item)
+            trackOnClicked.getTrackAndStart(item)
         }
-    }
-
-    override fun getItemCount(): Int {
-        return items!!.size
     }
 }

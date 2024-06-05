@@ -23,7 +23,6 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchText = TEXT_DEF
     private var isClickAllowed = true
-    private var responseTracks:List<Track>? = listOf()
 
     private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
@@ -63,10 +62,12 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = HistoryAdapter(listOf(),trackOnClicked)
 
         viewModel.getSearchRep().observe(this){
-            rep -> trackAdapter = TrackAdapter(listOf(Track("","",0,"",0,"","","","","")), rep, trackOnClicked)
+            rep -> trackAdapter = TrackAdapter(rep, trackOnClicked)
+            trackAdapter.submitList(listOf())
         }
         viewModel.getStatesSearch().observe(this){
             searchStates = it.responseStates
+            binding.searchBar.setText(it.response?.resultCount.toString())
             trackAdapter.submitList(it.response?.results)
 
             if(searchStates.internetError) {
