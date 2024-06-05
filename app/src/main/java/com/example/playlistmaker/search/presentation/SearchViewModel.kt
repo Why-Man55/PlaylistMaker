@@ -12,6 +12,7 @@ import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.domain.api.RetrofitControllerRepository
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.ResponseStates
+import com.example.playlistmaker.search.domain.models.SearchReturnClasses
 import com.example.playlistmaker.search.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,14 +34,19 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
-    private var liveDataResponseStates = MutableLiveData<ResponseStates>()
+    private var liveDataResponseStates = MutableLiveData<SearchReturnClasses>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
-    private var liveDataResponse = MutableLiveData<TrackResponse?>()
+    private var liveDataSHRep = MutableLiveData<SearchHistoryRepository>()
+
+    init{
+        liveDataSHRep.value = searchHistoryRep
+    }
 
     fun searchTrack(text: String){
         var isSuccess = true
         var zeroCount = false
         var internetError = false
+        var trackResponse:TrackResponse? = TrackResponse(0, listOf())
         createRetrofit().create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(
@@ -49,7 +55,7 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
                 ) {
                     isSuccess = response.isSuccessful
                     zeroCount = response.body()?.resultCount == ZERO_COUNT
-                    liveDataResponse.postValue(response.body())
+                    trackResponse = response.body()
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
@@ -57,12 +63,12 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
 
                 }
             })
-        liveDataResponseStates.value = ResponseStates(isSuccess, zeroCount, internetError)
+        liveDataResponseStates.value = SearchReturnClasses(ResponseStates(isSuccess, zeroCount, internetError), trackResponse)
     }
 
-    fun getStatesSearch(): LiveData<ResponseStates> = liveDataResponseStates
+    fun getStatesSearch(): LiveData<SearchReturnClasses> = liveDataResponseStates
     fun getHistory():LiveData<List<Track>> = liveDataLoadHis
-    fun getResponse():LiveData<TrackResponse?> = liveDataResponse
+    fun getSearchRep():LiveData<SearchHistoryRepository> = liveDataSHRep
 
     fun load(){
         liveDataLoadHis.value = searchHistoryRep.load()

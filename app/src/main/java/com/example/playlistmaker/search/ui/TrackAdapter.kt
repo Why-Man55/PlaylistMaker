@@ -4,14 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.playlistmaker.databinding.TrackViewBinding
-import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.Track
 
 
 class TrackAdapter(
-    private val items: TrackResponse?,
+    private val items: List<Track>,
     private val searchHistory: SearchHistoryRepository,
     private val trackOnClicked: TrackOnClicked
 ) : ListAdapter<Track,TrackViewHolder>(ItemComparator()) {
@@ -22,14 +21,14 @@ class TrackAdapter(
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(items!!.results[position])
+        holder.bind(items[position])
         holder.itemView.setOnClickListener {
-            searchHistory.save(items.results[position])
-            trackOnClicked.getTrackAndStart(items.results[position])
+            searchHistory.save(items[position])
+            trackOnClicked.getTrackAndStart(items[position])
         }
     }
 
     override fun getItemCount(): Int {
-        return items!!.resultCount
+        return items.size
     }
 }
