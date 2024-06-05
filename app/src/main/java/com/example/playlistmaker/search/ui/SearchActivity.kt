@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.ResponseStates
 import com.example.playlistmaker.search.domain.models.Track
@@ -24,6 +23,7 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchText = TEXT_DEF
     private var isClickAllowed = true
+    private var responseTracks:List<Track>? = listOf()
 
     private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
@@ -63,33 +63,33 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = HistoryAdapter(listOf(),trackOnClicked)
 
         viewModel.getSearchRep().observe(this){
-            rep -> trackAdapter = TrackAdapter(listOf(), rep, trackOnClicked)
+            rep -> trackAdapter = TrackAdapter(listOf(Track("","",0,"",0,"","","","","")), rep, trackOnClicked)
         }
         viewModel.getStatesSearch().observe(this){
-                states ->
-            searchStates = states.responseStates
-            trackAdapter.submitList(states.response?.results)
+            searchStates = it.responseStates
+            trackAdapter.submitList(it.response?.results)
+
             if(searchStates.internetError) {
                 binding.rvTracks.visibility = View.GONE
+                binding.internetErrorView.visibility = View.VISIBLE
             }
             else {
                 if (searchStates.isSuccessful)
                 {
-                    binding.rvTracks.adapter = trackAdapter
-                    binding.searchErrorView.visibility = View.VISIBLE
-                    binding.rvTracks.visibility = View.VISIBLE
+
                     if(searchStates.zeroCount)
                     {
                         binding.searchErrorView.visibility = View.VISIBLE
                     }
                     else
                     {
+                        binding.rvTracks.adapter = trackAdapter
+                        binding.rvTracks.visibility = View.VISIBLE
                         binding.internetErrorView.visibility = View.GONE
                         binding.searchErrorView.visibility = View.GONE
                         binding.historyMain.visibility = View.GONE
                         binding.historyClearBut.visibility = View.GONE
                         binding.searchLoadingBar.visibility = View.GONE
-
                     }
                 }
                 else
