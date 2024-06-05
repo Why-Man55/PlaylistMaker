@@ -1,6 +1,9 @@
 package com.example.playlistmaker.search.presentation
 
+import android.content.ContentValues.TAG
 import android.content.SharedPreferences
+import android.os.Debug
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,9 +50,10 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
 
     fun searchTrack(text: String){
-        var isSuccess = true
+        var isSuccess = false
         var zeroCount = false
         var internetError = false
+        var trackResponse = TrackResponse(0, listOf())
         retrofit.create(ITunesApi::class.java)
             .search(text).enqueue(object : Callback<TrackResponse>{
                 override fun onResponse(

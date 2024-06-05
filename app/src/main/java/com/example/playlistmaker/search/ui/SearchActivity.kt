@@ -67,7 +67,6 @@ class SearchActivity : AppCompatActivity() {
         }
         viewModel.getStatesSearch().observe(this){
             searchStates = it.responseStates
-            binding.searchBar.setText(it.response?.resultCount.toString())
             trackAdapter.submitList(it.response?.results)
 
             if(searchStates.internetError) {
