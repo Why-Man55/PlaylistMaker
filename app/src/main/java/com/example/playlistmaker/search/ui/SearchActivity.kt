@@ -30,7 +30,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchStates: ResponseStates
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var historyAdapter: HistoryAdapter
-    private lateinit var searchHistoryRepository: SearchHistoryRepository
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
