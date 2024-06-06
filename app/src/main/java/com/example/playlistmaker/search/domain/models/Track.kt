@@ -1,15 +1,13 @@
 package com.example.playlistmaker.search.domain.models
 
-import com.google.gson.annotations.SerializedName
-
 data class Track(
-    @SerializedName("trackName")val trackNameItem:String,
-    @SerializedName("artistName")val artistNameItem:String,
-    @SerializedName("trackTimeMillis")val trackTimeItem:Int,
-    @SerializedName("artworkUrl100")val trackAvatarItem:String,
-    @SerializedName("trackId")val trackID: Int,
-    @SerializedName("collectionName")val collectionName:String,
-    @SerializedName("releaseDate")val rYear:String,
-    @SerializedName("primaryGenreName")val genre:String,
-    @SerializedName("country")val country:String,
-    @SerializedName("previewUrl")val audioUrl:String)
+    val trackNameItem:String,
+    val artistNameItem:String,
+    val trackTimeItem:Int,
+    val trackAvatarItem:String,
+    val trackID: Int,
+    val collectionName:String,
+    val rYear:String,
+    val genre:String,
+    val country:String,
+    val audioUrl:String)

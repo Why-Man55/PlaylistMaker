@@ -1,29 +1,30 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.search.data.TrackRepositoryImpl
+import com.example.playlistmaker.search.data.network.RetrofitController
+import com.example.playlistmaker.search.domain.api.TrackInteractor
+import com.example.playlistmaker.search.domain.api.TrackRepository
+import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
 
 class App: Application() {
-    var darkTheme: Boolean = false
-
-
-
+    var darkTheme:Boolean = false
     override fun onCreate() {
         super.onCreate()
 
-        darkTheme = when(applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK){
-            Configuration.UI_MODE_NIGHT_NO -> false
-            else -> true
-        }
-
         val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-        val gotThemeSP = themeSP.getBoolean(THEME_KEY, darkTheme)
-        switchTheme(gotThemeSP)
+        val themeRep = Creator.getSettingsInt(themeSP)
+
+        switchTheme(themeRep.getThemeSettings().nightTheme)
 
         Creator.initApplication(this)
     }
+    init{
+        Creator.initApplication(this)
+    }
+
 
     fun switchTheme(isDark: Boolean)
     {
@@ -38,6 +39,5 @@ class App: Application() {
     }
     companion object{
         private const val THEME_PRETEXT = "key_pretext"
-        private const val THEME_KEY = "key_for_themeSP"
     }
 }

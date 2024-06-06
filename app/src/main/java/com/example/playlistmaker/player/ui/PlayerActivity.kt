@@ -3,7 +3,6 @@ package com.example.playlistmaker.player.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -11,8 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
-import com.example.playlistmaker.search.domain.models.Track
-import com.google.gson.Gson
+import com.example.playlistmaker.search.data.dto.TrackDto
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -99,7 +97,7 @@ class PlayerActivity : AppCompatActivity()  {
         binding.playTimer.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
     }
 
-    private fun bindStaticViews(track: Track){
+    private fun bindStaticViews(track: TrackDto){
         binding.playerTitleName.text = track.trackNameItem
         binding.playerArtistName.text = track.artistNameItem
         binding.playerYearEmpty.text = track.rYear.replaceAfter('-', "").substring(0, 4)
@@ -107,7 +105,7 @@ class PlayerActivity : AppCompatActivity()  {
         binding.playerCountryEmpty.text = track.country
     }
 
-    private fun bindGlide(track: Track){
+    private fun bindGlide(track: TrackDto){
         Glide.with(this)
             .load(track.trackAvatarItem.replaceAfterLast('/',"512x512bb.jpg"))
             .centerCrop()

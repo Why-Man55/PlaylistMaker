@@ -17,8 +17,6 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: SettingsMenuBinding
     private lateinit var viewModel: SettingsViewModel
 
-    private lateinit var texts: List<String>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_menu)
@@ -28,10 +26,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val sp = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
 
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(sp))[SettingsViewModel::class.java]
-        viewModel.getTextForSettings().observe(this){
-            textsForSettings -> texts = textsForSettings
-        }
+        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(this,sp))[SettingsViewModel::class.java]
 
         binding.SetBackBut.setOnClickListener {
             finish()
@@ -44,35 +39,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.ShareBut.setOnClickListener{
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, texts[0])
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+            viewModel.startShare()
         }
 
         binding.HelpBut.setOnClickListener{
-
-            val mailto = "mailto:${texts[1]}" +
-                    "?subject=" + Uri.encode(texts[2]) +
-                    "&body=" + Uri.encode(texts[3])
-
-            val emailIntent = Intent(Intent.ACTION_SENDTO)
-            emailIntent.data = Uri.parse(mailto)
-
-            try {
-                startActivity(emailIntent)
-            } catch (e: ActivityNotFoundException) {
-                //TODO: Handle case where no email app is available
-            }
+            viewModel.startSupport()
         }
 
         binding.AgreementBut.setOnClickListener{
-            val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(texts[4]))
-            startActivity(agreeIntent)
+            viewModel.startAgreement()
         }
     }
     companion object{

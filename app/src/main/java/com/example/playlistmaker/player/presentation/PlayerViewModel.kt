@@ -7,9 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayRepository
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.data.dto.TrackDto
 import com.google.gson.Gson
 
 class PlayerViewModel: ViewModel() {
@@ -18,16 +17,16 @@ class PlayerViewModel: ViewModel() {
 
     private var playerState = STATE_DEFAULT
     private var liveDataTime = MutableLiveData<Long>()
-    private var liveDataTrack = MutableLiveData<Track>()
+    private var liveDataTrack = MutableLiveData<TrackDto>()
     fun getPlayerStates(): LiveData<Long> = liveDataTime
-    fun getTrack(intent: Intent):LiveData<Track> {
+    fun getTrack(intent: Intent):LiveData<TrackDto> {
         returnTrack(intent)
         return liveDataTrack
     }
 
     private fun returnTrack(intent: Intent){
-        liveDataTrack.value = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-        playerInter = Creator.getMediaPlay(Gson().fromJson(intent.extras?.getString("track"), Track::class.java).audioUrl, runTime())
+        liveDataTrack.value = Gson().fromJson(intent.extras?.getString("track"), TrackDto::class.java)
+        playerInter = Creator.getMediaPlay(Gson().fromJson(intent.extras?.getString("track"), TrackDto::class.java).audioUrl, runTime())
     }
 
     fun getReadyMedia(){

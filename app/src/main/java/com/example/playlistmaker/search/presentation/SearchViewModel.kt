@@ -1,85 +1,56 @@
 package com.example.playlistmaker.search.presentation
 
-import android.content.ContentValues.TAG
 import android.content.SharedPreferences
-import android.os.Debug
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.search.data.dto.HandlerControllerRepimpl
-import com.example.playlistmaker.search.data.dto.TrackResponse
-import com.example.playlistmaker.search.data.network.ITunesApi
-import com.example.playlistmaker.search.domain.api.RetrofitControllerRepository
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.example.playlistmaker.search.domain.models.ResponseStates
-import com.example.playlistmaker.search.domain.models.SearchReturnClasses
+import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
 
-class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, private val retrofitControllerRepImpl: RetrofitControllerRepository):ViewModel() {
+class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, private val tracksInteractor: TrackInteractor):ViewModel() {
     companion object{
-        fun getViewModelFactory(sp:SharedPreferences): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SearchViewModel(Creator.getSearchHistory(sp), Creator.getRetrofitController()) as T
+        fun getViewModelFactory(sp: SharedPreferences): ViewModelProvider.Factory = viewModelFactory  {
+            initializer{
+                SearchViewModel(Creator.getSearchHistory(sp), Creator. provideTrackInteractor())
                 }
             }
 
-        private const val ZERO_COUNT = 0
         private const val CLICK_DELAY = 1000L
+        private const val SEARCH_DELAY = 2000L
     }
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
-    private var liveDataResponseStates = MutableLiveData<SearchReturnClasses>()
+    private var liveDataResponseStates = MutableLiveData<List<Track>?>()
+    private var liveDataCode = MutableLiveData<Int>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
     private var liveDataSHRep = MutableLiveData<SearchHistoryRepository>()
-
-    private val retrofit = createRetrofit()
-
-    lateinit var trackResponse:TrackResponse
 
     init{
         liveDataSHRep.value = searchHistoryRep
     }
 
-    fun searchTrack(text: String){
-        var isSuccess = false
-        var zeroCount = false
-        var internetError = false
-        var trackResponse = TrackResponse(0, listOf())
-        retrofit.create(ITunesApi::class.java)
-            .search(text).enqueue(object : Callback<TrackResponse>{
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    isSuccess = response.isSuccessful
-                    zeroCount = response.body()?.resultCount == ZERO_COUNT
-                    trackResponse = response.body() as TrackResponse
-                }
+    private val consumer = object : TrackInteractor.TracksConsumer {
+        override fun consume(foundTracks: List<Track>?, code:Int) {
+            liveDataCode.postValue(code)
+            liveDataResponseStates.postValue(foundTracks)
+        }
 
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    internetError = true
-
-                }
-            })
-        liveDataResponseStates.value = SearchReturnClasses(ResponseStates(isSuccess, zeroCount, internetError), trackResponse)
     }
 
-    fun getStatesSearch(): LiveData<SearchReturnClasses> = liveDataResponseStates
+    fun searchTrack(text: String){
+        tracksInteractor.searchTrack(text, consumer)
+    }
+
+    fun getStatesSearch(): LiveData<List<Track>?> = liveDataResponseStates
+    fun getCodeType(): LiveData<Int> = liveDataCode
     fun getHistory():LiveData<List<Track>> = liveDataLoadHis
     fun getSearchRep():LiveData<SearchHistoryRepository> = liveDataSHRep
-
-    fun load(){
-        liveDataLoadHis.value = searchHistoryRep.load()
-    }
     fun clearHistory(){
         searchHistoryRep.clearHistory()
     }
@@ -88,10 +59,10 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
         handlerControllerRepimpl.removeCallback(runnable)
     }
 
-    fun delayHandler(runnable: Runnable){
+    fun delayClick(runnable: Runnable){
         handlerControllerRepimpl.postDelay(runnable, CLICK_DELAY)
     }
-    private fun createRetrofit():Retrofit{
-        return retrofitControllerRepImpl.createRetrofit()
+    fun delaySearch(runnable: Runnable){
+        handlerControllerRepimpl.postDelay(runnable, SEARCH_DELAY)
     }
 }

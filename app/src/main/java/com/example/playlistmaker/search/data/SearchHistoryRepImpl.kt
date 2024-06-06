@@ -1,6 +1,8 @@
-package com.example.playlistmaker.search.data.dto
+package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.search.data.dto.HistoryMemoryRepImpl
+import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson

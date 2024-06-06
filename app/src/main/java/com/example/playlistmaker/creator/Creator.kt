@@ -1,15 +1,23 @@
 package com.example.playlistmaker.creator
 
 import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import com.example.playlistmaker.player.data.dto.MediaPlayRepImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayRepository
-import com.example.playlistmaker.search.data.dto.RetrofitControllerRepImpl
-import com.example.playlistmaker.search.data.dto.SearchHistoryRepImpl
-import com.example.playlistmaker.search.domain.api.RetrofitControllerRepository
+import com.example.playlistmaker.search.data.SearchHistoryRepImpl
+import com.example.playlistmaker.search.data.TrackRepositoryImpl
+import com.example.playlistmaker.search.data.network.RetrofitController
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.example.playlistmaker.settings.data.dto.ThemeSaveRepImpl
-import com.example.playlistmaker.settings.domain.api.ThemeSaveRepository
+import com.example.playlistmaker.search.domain.api.TrackInteractor
+import com.example.playlistmaker.search.domain.api.TrackRepository
+import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
+import com.example.playlistmaker.settings.domain.SettingInteractor
+import com.example.playlistmaker.settings.domain.impl.SettingInteractorImpl
+import com.example.playlistmaker.sharing.data.ExternalNavigatorRepository
+import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorRepImpl
+import com.example.playlistmaker.sharing.domain.SharingInteractor
+import com.example.playlistmaker.sharing.domain.impl.SharingIntractorImpl
 
 object Creator {
     lateinit var application: Application
@@ -20,13 +28,23 @@ object Creator {
     fun getSearchHistory(sp:SharedPreferences): SearchHistoryRepository{
         return SearchHistoryRepImpl(sp)
     }
-    fun getThemeSave(sp:SharedPreferences): ThemeSaveRepository {
-        return ThemeSaveRepImpl(sp)
+    private fun getMoviesRepository(): TrackRepository {
+        return TrackRepositoryImpl(RetrofitController())
     }
-    fun getRetrofitController(): RetrofitControllerRepository {
-        return RetrofitControllerRepImpl()
+
+    fun provideTrackInteractor(): TrackInteractor {
+        return TrackInteractorImpl(getMoviesRepository())
     }
     fun initApplication(app: Application){
         application = app
+    }
+    fun getSettingsInt(sp:SharedPreferences): SettingInteractor {
+        return SettingInteractorImpl(sp)
+    }
+    fun getSharingInt(context: Context):SharingInteractor{
+        return SharingIntractorImpl(getNavigator(context))
+    }
+    private fun getNavigator(context: Context):ExternalNavigatorRepository{
+        return ExternalNavigatorRepImpl(context,application)
     }
 }

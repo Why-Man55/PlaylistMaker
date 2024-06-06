@@ -7,7 +7,7 @@ import com.example.playlistmaker.search.domain.api.HandlerControllerRepository
 class HandlerControllerRepimpl: HandlerControllerRepository {
 
     private val handler = Handler(Looper.getMainLooper())
-    override fun postDelay(runnable:Runnable, delay: Long) {
+    override fun postDelay(runnable:Runnable, delay:Long) {
         handler.postDelayed(runnable, delay)
     }
 
