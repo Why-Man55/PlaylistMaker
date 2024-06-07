@@ -78,7 +78,6 @@ class SearchActivity : AppCompatActivity() {
 
         viewModel.getHistory().observe(this){
             historyAdapter.submitList(it)
-            binding.rvTracks.adapter = historyAdapter
             if(it.isEmpty()){
                 binding.historyMain.visibility = View.GONE
                 binding.historyClearBut.visibility = View.GONE
@@ -88,6 +87,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyClearBut.visibility = View.VISIBLE
                 binding.rvTracks.visibility = View.VISIBLE
             }
+            binding.rvTracks.adapter = historyAdapter
         }
 
 
