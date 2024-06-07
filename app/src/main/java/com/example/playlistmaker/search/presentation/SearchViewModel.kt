@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.presentation
 
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,17 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.search.data.dto.HandlerControllerRepimpl
-import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
-import com.example.playlistmaker.search.domain.api.TrackInteractor
+import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, private val tracksInteractor: TrackInteractor):ViewModel() {
+class SearchViewModel(private val tracksInteractor: TrackInteractor):ViewModel() {
     companion object{
-        fun getViewModelFactory(sp: SharedPreferences): ViewModelProvider.Factory = viewModelFactory  {
+        fun getViewModelFactory(sp: SharedPreferences, context: Context): ViewModelProvider.Factory = viewModelFactory  {
             initializer{
-                SearchViewModel(Creator.getSearchHistory(sp), Creator. provideTrackInteractor())
+                SearchViewModel(Creator.provideTrackInteractor(sp, context))
                 }
             }
 
@@ -26,19 +26,12 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
     }
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
-    private var liveDataResponseStates = MutableLiveData<List<Track>?>()
-    private var liveDataCode = MutableLiveData<Int>()
+    private var livaDataSearchRes = MutableLiveData<SearchObjects>()
     private var liveDataLoadHis = MutableLiveData<List<Track>>()
-    private var liveDataSHRep = MutableLiveData<SearchHistoryRepository>()
-
-    init{
-        liveDataSHRep.value = searchHistoryRep
-    }
 
     private val consumer = object : TrackInteractor.TracksConsumer {
-        override fun consume(foundTracks: List<Track>?, code:Int) {
-            liveDataCode.postValue(code)
-            liveDataResponseStates.postValue(foundTracks)
+        override fun consume(foundTracks: List<Track>?, errorMessage: Int?) {
+            livaDataSearchRes.postValue(SearchObjects(foundTracks, errorMessage))
         }
 
     }
@@ -47,12 +40,14 @@ class SearchViewModel(private val searchHistoryRep: SearchHistoryRepository, pri
         tracksInteractor.searchTrack(text, consumer)
     }
 
-    fun getStatesSearch(): LiveData<List<Track>?> = liveDataResponseStates
-    fun getCodeType(): LiveData<Int> = liveDataCode
+    fun getSearchRes(): LiveData<SearchObjects> = livaDataSearchRes
     fun getHistory():LiveData<List<Track>> = liveDataLoadHis
-    fun getSearchRep():LiveData<SearchHistoryRepository> = liveDataSHRep
     fun clearHistory(){
-        searchHistoryRep.clearHistory()
+        tracksInteractor.clearHistory()
+    }
+
+    fun getHistoryList(){
+        liveDataLoadHis.postValue(tracksInteractor.getHistory())
     }
 
     fun callBackHandler(runnable: Runnable){

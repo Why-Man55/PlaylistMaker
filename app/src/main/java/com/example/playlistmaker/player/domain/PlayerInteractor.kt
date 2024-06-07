@@ -1,9 +1,8 @@
-package com.example.playlistmaker.player.domain.api
+package com.example.playlistmaker.player.domain
 
 import android.media.MediaPlayer
 
-
-interface MediaPlayRepository {
+interface PlayerInteractor {
     fun getReadyMedia()
     fun handlerPostDelayed(time: Long)
     fun handlerPost()

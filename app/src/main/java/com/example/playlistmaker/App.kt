@@ -2,12 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.data.TrackRepositoryImpl
-import com.example.playlistmaker.search.data.network.RetrofitController
-import com.example.playlistmaker.search.domain.api.TrackInteractor
-import com.example.playlistmaker.search.domain.api.TrackRepository
-import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
+import com.example.playlistmaker.util.Creator
 
 class App: Application() {
     var darkTheme:Boolean = false
@@ -15,7 +10,7 @@ class App: Application() {
         super.onCreate()
 
         val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-        val themeRep = Creator.getSettingsInt(themeSP)
+        val themeRep = Creator.provideSettingsInteractor(themeSP)
 
         switchTheme(themeRep.getThemeSettings().nightTheme)
 

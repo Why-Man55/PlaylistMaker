@@ -45,7 +45,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP))[SearchViewModel::class.java]
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP, this))[SearchViewModel::class.java]
 
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
@@ -57,29 +57,29 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        historyAdapter = HistoryAdapter(listOf(),trackOnClicked)
+        historyAdapter = HistoryAdapter(trackOnClicked)
+        historyAdapter.submitList(listOf())
 
-        viewModel.getSearchRep().observe(this){
-            rep -> trackAdapter = TrackAdapter(rep, trackOnClicked)
-            trackAdapter.submitList(listOf())
-        }
+        trackAdapter = TrackAdapter(this, historySP, trackOnClicked)
+        trackAdapter.submitList(listOf())
 
-        viewModel.getCodeType().observe(this){
-            setVisible(it)
+        viewModel.getSearchRes().observe(this){
+            trackAdapter.submitList(it.tracks)
+            binding.rvTracks.adapter = trackAdapter
+            setVisible(it.code)
+            if(it.tracks.isNullOrEmpty()){
+                binding.searchErrorView.visibility = View.VISIBLE
+            }
+            binding.rvTracks.visibility = View.VISIBLE
             binding.searchLoadingBar.visibility = View.GONE
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
         }
 
-        viewModel.getStatesSearch().observe(this){
-            trackAdapter.submitList(it)
-            binding.rvTracks.adapter = trackAdapter
-            binding.rvTracks.visibility = View.VISIBLE
-        }
-
         viewModel.getHistory().observe(this){
-                his ->
-            if(his.isEmpty()){
+            historyAdapter.submitList(it)
+            binding.rvTracks.adapter = historyAdapter
+            if(it.isEmpty()){
                 binding.historyMain.visibility = View.GONE
                 binding.historyClearBut.visibility = View.GONE
             }
@@ -88,8 +88,6 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyClearBut.visibility = View.VISIBLE
                 binding.rvTracks.visibility = View.VISIBLE
             }
-            historyAdapter.submitList(his)
-            binding.rvTracks.adapter = historyAdapter
         }
 
 
@@ -98,23 +96,21 @@ class SearchActivity : AppCompatActivity() {
         }
 
         fun showHistory(){
-            if (binding.searchBar.text.isEmpty()){
-                binding.searchErrorView.visibility = View.GONE
-                binding.searchLoadingBar.visibility = View.GONE
-            }
-            else
-            {
-                binding.historyMain.visibility = View.GONE
-                binding.historyClearBut.visibility = View.GONE
-                binding.rvTracks.visibility = View.GONE
-            }
+            viewModel.getHistoryList()
+            binding.searchErrorView.visibility = View.GONE
+            binding.searchLoadingBar.visibility = View.GONE
         }
 
         fun searchDebounce() {
-            val runnable = Runnable{searchTrack()}
-            viewModel.callBackHandler(runnable)
-            viewModel.delaySearch(runnable)
-            binding.searchLoadingBar.visibility = View.VISIBLE
+            if(binding.searchBar.text.isNotEmpty()){
+                val runnable = Runnable{searchTrack()}
+                viewModel.callBackHandler(runnable)
+                viewModel.delaySearch(runnable)
+                binding.searchLoadingBar.visibility = View.VISIBLE
+            }
+            else{
+                showHistory()
+            }
         }
 
         binding.historyClearBut.setOnClickListener {
@@ -122,6 +118,8 @@ class SearchActivity : AppCompatActivity() {
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
             binding.rvTracks.visibility = View.GONE
+            binding.internetErrorView.visibility = View.GONE
+            binding.searchErrorView.visibility = View.GONE
         }
 
         binding.searchBar.setOnFocusChangeListener { view, hasFocus ->
@@ -164,13 +162,11 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearText.visibility = clearButtonVisibility(s)
                 binding.rvTracks.visibility = View.GONE
-                if(s.toString().isNotEmpty())
-                {
-                    searchDebounce()
-                }
-                else{
-                    showHistory()
-                }
+                binding.historyMain.visibility = View.GONE
+                binding.historyClearBut.visibility = View.GONE
+                binding.searchErrorView.visibility = View.GONE
+                binding.internetErrorView.visibility = View.GONE
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -199,18 +195,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun setVisible(code:Int){
+    private fun setVisible(code:Int?){
         when (code) {
             200 -> {
-                binding.rvTracks.visibility = View.VISIBLE
-                binding.internetErrorView.visibility = View.GONE
-                binding.searchErrorView.visibility = View.GONE
-            }
-            0 -> {
-                binding.searchErrorView.visibility = View.VISIBLE
                 binding.internetErrorView.visibility = View.GONE
             }
-            else -> {
+            -1 -> {
                 binding.internetErrorView.visibility = View.VISIBLE
                 binding.searchErrorView.visibility = View.GONE
             }

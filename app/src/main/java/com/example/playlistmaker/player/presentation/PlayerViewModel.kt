@@ -6,27 +6,28 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.domain.api.MediaPlayRepository
-import com.example.playlistmaker.search.data.dto.TrackDto
+import com.example.playlistmaker.util.Creator
+import com.example.playlistmaker.player.domain.PlayerInteractor
+import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 
 class PlayerViewModel: ViewModel() {
 
-    private lateinit var playerInter:MediaPlayRepository
+    private lateinit var playerInter: PlayerInteractor
 
     private var playerState = STATE_DEFAULT
     private var liveDataTime = MutableLiveData<Long>()
-    private var liveDataTrack = MutableLiveData<TrackDto>()
+    private var liveDataTrack = MutableLiveData<Track>()
     fun getPlayerStates(): LiveData<Long> = liveDataTime
-    fun getTrack(intent: Intent):LiveData<TrackDto> {
+    fun getTrack(intent: Intent):LiveData<Track> {
         returnTrack(intent)
         return liveDataTrack
     }
 
     private fun returnTrack(intent: Intent){
-        liveDataTrack.value = Gson().fromJson(intent.extras?.getString("track"), TrackDto::class.java)
-        playerInter = Creator.getMediaPlay(Gson().fromJson(intent.extras?.getString("track"), TrackDto::class.java).audioUrl, runTime())
+        val gSon = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
+        liveDataTrack.value = gSon
+        playerInter = Creator.providePlayerInteractor(gSon.audioUrl, runTime())
     }
 
     fun getReadyMedia(){
