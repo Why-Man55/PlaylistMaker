@@ -29,23 +29,21 @@ class PlayerActivity : AppCompatActivity()  {
         viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory())[PlayerViewModel::class.java]
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.getPlayerStates().observe(this){
-            time -> bindTime(time)
-        }
 
         viewModel.getTrack(intent).observe(this){
-            trackRet ->
-            bindStaticViews(trackRet)
-            bindGlide(trackRet)
+            bindTime(it.time)
+            val track = it.track
+            bindStaticViews(track)
+            bindGlide(track)
             binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                trackRet.trackTimeItem
+                track.trackTimeItem
             )
-            if(trackRet.collectionName.isEmpty()){
+            if(track.collectionName.isEmpty()){
                 bindAlbumVisible(false)
             }
             else {
                 bindAlbumVisible(true)
-                binding.playerAlbumEmpty.text = trackRet.collectionName
+                binding.playerAlbumEmpty.text = track.collectionName
             }
         }
 

@@ -16,18 +16,16 @@ class PlayerViewModel: ViewModel() {
     private lateinit var playerInter: PlayerInteractor
 
     private var playerState = STATE_DEFAULT
-    private var liveDataTime = MutableLiveData<Long>()
-    private var liveDataTrack = MutableLiveData<Track>()
-    fun getPlayerStates(): LiveData<Long> = liveDataTime
-    fun getTrack(intent: Intent):LiveData<Track> {
+    private var playerLiveData = MutableLiveData<PlayerVMObjects>()
+    fun getTrack(intent: Intent):LiveData<PlayerVMObjects> {
         returnTrack(intent)
-        return liveDataTrack
+        return playerLiveData
     }
 
     private fun returnTrack(intent: Intent){
         val gSon = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-        liveDataTrack.value = gSon
-        playerInter = Creator.providePlayerInteractor(gSon.audioUrl, runTime())
+        playerLiveData.value = PlayerVMObjects(0, gSon)
+        playerInter = Creator.providePlayerInteractor(gSon.audioUrl, runTime(gSon))
     }
 
     fun getReadyMedia(){
@@ -96,11 +94,11 @@ class PlayerViewModel: ViewModel() {
         playerInter.playRelease()
     }
 
-    private fun runTime(): Runnable{
+    private fun runTime(track: Track): Runnable{
         return Runnable {
             if(runStatus()){
                 handlerPostDelayed()
-                liveDataTime.value = returnCurrentPosition().toLong()
+                playerLiveData.value = PlayerVMObjects(returnCurrentPosition().toLong(), track)
             }
         }
     }
