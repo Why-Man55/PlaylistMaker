@@ -27,11 +27,10 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor):ViewModel()
     private val handlerControllerRepimpl = HandlerControllerRepimpl()
 
     private var livaDataSearchRes = MutableLiveData<SearchVMObjects>()
-    private var liveDataLoadHis = MutableLiveData<List<Track>>()
 
     private val consumer = object : TrackInteractor.TracksConsumer {
         override fun consume(foundTracks: List<Track>?, errorMessage: Int?) {
-            livaDataSearchRes.postValue(SearchVMObjects(foundTracks, errorMessage))
+            livaDataSearchRes.postValue(SearchVMObjects(foundTracks, errorMessage, tracksInteractor.getHistory()))
         }
 
     }
@@ -39,15 +38,13 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor):ViewModel()
     fun searchTrack(text: String){
         tracksInteractor.searchTrack(text, consumer)
     }
-
-    fun getSearchRes(): LiveData<SearchVMObjects> = livaDataSearchRes
-    fun getHistory():LiveData<List<Track>> = liveDataLoadHis
-    fun clearHistory(){
-        tracksInteractor.clearHistory()
+    fun loadHistory(){
+        livaDataSearchRes.postValue(SearchVMObjects(listOf(), -2, tracksInteractor.getHistory()))
     }
 
-    fun getHistoryList(){
-        liveDataLoadHis.postValue(tracksInteractor.getHistory())
+    fun getSearchRes(): LiveData<SearchVMObjects> = livaDataSearchRes
+    fun clearHistory(){
+        tracksInteractor.clearHistory()
     }
 
     fun callBackHandler(runnable: Runnable){
