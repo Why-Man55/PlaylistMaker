@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.search.data.dto.HandlerControllerRepimpl
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.util.Creator
 
 class SearchViewModel(private val tracksInteractor: TrackInteractor):ViewModel() {
     companion object{
@@ -40,6 +40,10 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor):ViewModel()
     }
     fun loadHistory(){
         livaDataSearchRes.postValue(SearchVMObjects(listOf(), -2, tracksInteractor.getHistory()))
+    }
+
+    fun saveTrack(track: Track){
+        tracksInteractor.saveTrack(track)
     }
 
     fun getSearchRes(): LiveData<SearchVMObjects> = livaDataSearchRes

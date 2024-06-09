@@ -50,6 +50,7 @@ class SearchActivity : AppCompatActivity() {
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
+                    viewModel.saveTrack(track)
                     val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                     displayIntent.putExtra("track", Gson().toJson(track))
                     startActivity(displayIntent)
@@ -60,7 +61,7 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = HistoryAdapter(trackOnClicked)
         historyAdapter.submitList(listOf())
 
-        trackAdapter = TrackAdapter(this, historySP, trackOnClicked)
+        trackAdapter = TrackAdapter(trackOnClicked)
         trackAdapter.submitList(listOf())
 
         viewModel.getSearchRes().observe(this){
@@ -72,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.historyMain.visibility = View.GONE
                 binding.historyClearBut.visibility = View.GONE
                 setVisible(it.code)
-                if(it.tracks.isNullOrEmpty()){
+                if(it.tracks.isNullOrEmpty() and (it.code != -1)){
                     binding.searchErrorView.visibility = View.VISIBLE
                 }
                 else{

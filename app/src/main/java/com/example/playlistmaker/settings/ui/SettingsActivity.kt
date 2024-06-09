@@ -1,14 +1,11 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.SettingsMenuBinding
-import com.example.playlistmaker.App
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
 

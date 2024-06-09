@@ -1,11 +1,9 @@
 package com.example.playlistmaker.sharing.data.impl
 
-import android.app.Application
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.data.ExternalNavigatorRepository
 import com.example.playlistmaker.sharing.domain.model.EmailData
 
