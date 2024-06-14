@@ -16,11 +16,13 @@ class ExternalNavigatorRepImpl(private val context: Context): ExternalNavigatorR
         }
 
         val shareIntent = Intent.createChooser(sendIntent, null)
+        shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(shareIntent)
     }
 
     override fun openLink(text: String) {
         val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(text))
+        agreeIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(agreeIntent)
     }
 
@@ -31,6 +33,7 @@ class ExternalNavigatorRepImpl(private val context: Context): ExternalNavigatorR
 
         val emailIntent = Intent(Intent.ACTION_SENDTO)
         emailIntent.data = Uri.parse(mailto)
+        emailIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         try {
             context.startActivity(emailIntent)

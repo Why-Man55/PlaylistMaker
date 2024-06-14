@@ -1,13 +1,13 @@
 package com.example.playlistmaker.sharing.domain.impl
 
+import android.content.Context
 import com.example.playlistmaker.R
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.sharing.data.ExternalNavigatorRepository
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
 
-class SharingIntractorImpl(private val navigator: ExternalNavigatorRepository):SharingInteractor {
-    private val app = Creator.application
+class SharingIntractorImpl(private val navigator: ExternalNavigatorRepository,private val app:Context):SharingInteractor {
+
     override fun shareApp() {
         navigator.shareLink(getShareAppLink())
     }
