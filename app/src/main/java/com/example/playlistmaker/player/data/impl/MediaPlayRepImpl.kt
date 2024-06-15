@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.data.impl
 
 import android.media.MediaPlayer
 import android.os.Handler
-import android.os.Looper
 import com.example.playlistmaker.player.data.MediaPlayRepository
 
 class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer,  private val handler: Handler): MediaPlayRepository {
