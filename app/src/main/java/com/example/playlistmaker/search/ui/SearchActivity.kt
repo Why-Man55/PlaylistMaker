@@ -107,9 +107,7 @@ class SearchActivity : AppCompatActivity() {
             binding.historyClearBut.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
             binding.internetErrorView.visibility = View.GONE
-            val runnable = Runnable{searchTrack()}
-            viewModel.callBackHandler(runnable)
-            viewModel.delaySearch(runnable)
+            searchTrack()
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
@@ -169,7 +167,9 @@ class SearchActivity : AppCompatActivity() {
                     getHistory()
                 }
                 else{
-                    searchDebounce()
+                    val runnable = Runnable{searchDebounce()}
+                    viewModel.callBackHandler(runnable)
+                    viewModel.delaySearch(runnable)
                 }
             }
 
