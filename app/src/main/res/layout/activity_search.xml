@@ -36,6 +36,7 @@
             android:paddingStart="@dimen/_18dp"
             android:hint="@string/hint"
             android:background="@drawable/search_bg"
+            android:textStyle="normal"
             android:textColorHint="?attr/colorSecondary"
             android:textColor="@color/yp_black"
             android:textSize="@dimen/_19sp"

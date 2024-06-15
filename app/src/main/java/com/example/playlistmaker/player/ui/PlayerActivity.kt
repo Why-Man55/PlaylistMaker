@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.presentation.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -99,7 +97,7 @@ class PlayerActivity : AppCompatActivity()  {
     private fun bindStaticViews(track: Track){
         binding.playerTitleName.text = track.trackNameItem
         binding.playerArtistName.text = track.artistNameItem
-        binding.playerYearEmpty.text = track.rYear.replaceAfter('-', "").substring(0, 4)
+        binding.playerYearEmpty.text = track.rYear?.replaceAfter('-', "")?.substring(0, 4)
         binding.playerStyleEmpty.text = track.genre
         binding.playerCountryEmpty.text = track.country
     }

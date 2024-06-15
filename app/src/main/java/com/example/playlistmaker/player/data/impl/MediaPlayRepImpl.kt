@@ -15,7 +15,7 @@ class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer,  private val handle
         mediaPlayer.setOnCompletionListener (listener)
     }
 
-    override fun getReadyMedia(url: String){
+    override fun getReadyMedia(url: String?){
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
     }
@@ -45,6 +45,6 @@ class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer,  private val handle
     }
 
     override fun playRelease(){
-        mediaPlayer.release()
+        mediaPlayer.reset()
     }
 }

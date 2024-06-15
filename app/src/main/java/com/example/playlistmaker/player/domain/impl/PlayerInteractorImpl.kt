@@ -5,7 +5,7 @@ import com.example.playlistmaker.player.data.MediaPlayRepository
 import com.example.playlistmaker.player.domain.PlayerInteractor
 
 class PlayerInteractorImpl(private val repository: MediaPlayRepository): PlayerInteractor {
-    override fun getReadyMedia(url:String) {
+    override fun getReadyMedia(url:String?) {
         repository.getReadyMedia(url)
     }
 
