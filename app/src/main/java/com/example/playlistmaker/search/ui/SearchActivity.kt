@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -49,6 +50,9 @@ class SearchActivity : AppCompatActivity() {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
                     viewModel.saveTrack(track)
+                    if(binding.historyMain.isVisible){
+                        viewModel.loadHistory()
+                    }
                     val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                     displayIntent.putExtra("track", Gson().toJson(track))
                     startActivity(displayIntent)
@@ -111,6 +115,8 @@ class SearchActivity : AppCompatActivity() {
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
+        var runnable = Runnable{searchDebounce()}
+
         binding.historyClearBut.setOnClickListener {
             viewModel.clearHistory()
             binding.historyMain.visibility = View.GONE
@@ -167,8 +173,8 @@ class SearchActivity : AppCompatActivity() {
                     getHistory()
                 }
                 else{
-                    val runnable = Runnable{searchDebounce()}
                     viewModel.callBackHandler(runnable)
+                    runnable = Runnable{searchDebounce()}
                     viewModel.delaySearch(runnable)
                 }
             }
