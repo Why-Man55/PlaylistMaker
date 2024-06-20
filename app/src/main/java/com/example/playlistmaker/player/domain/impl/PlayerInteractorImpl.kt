@@ -5,16 +5,16 @@ import com.example.playlistmaker.player.data.MediaPlayRepository
 import com.example.playlistmaker.player.domain.PlayerInteractor
 
 class PlayerInteractorImpl(private val repository: MediaPlayRepository): PlayerInteractor {
-    override fun getReadyMedia() {
-        repository.getReadyMedia()
+    override fun getReadyMedia(url:String?) {
+        repository.getReadyMedia(url)
     }
 
-    override fun handlerPost() {
-        repository.handlerPost()
+    override fun handlerPost(run:Runnable) {
+        repository.handlerPost(run)
     }
 
-    override fun handlerCallBack() {
-        repository.handlerCallBack()
+    override fun handlerCallBack(run:Runnable) {
+        repository.handlerCallBack(run)
     }
 
     override fun pausePlayer() {
@@ -33,8 +33,8 @@ class PlayerInteractorImpl(private val repository: MediaPlayRepository): PlayerI
         repository.startPlayer()
     }
 
-    override fun handlerPostDelayed(time: Long) {
-        repository.handlerPostDelayed(time)
+    override fun handlerPostDelayed(run:Runnable,time: Long) {
+        repository.handlerPostDelayed(run,time)
     }
 
     override fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {

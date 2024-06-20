@@ -5,31 +5,31 @@ import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 
-class PlayerViewModel: ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
 
-    private lateinit var playerInter: PlayerInteractor
 
     private var playerState = STATE_DEFAULT
     private var playerLiveData = MutableLiveData<PlayerVMObjects>()
+
+    private lateinit var gsonTrack: Track
+    private lateinit var runnableTrack: Runnable
     fun getTrack(intent: Intent):LiveData<PlayerVMObjects> {
         returnTrack(intent)
         return playerLiveData
     }
 
     private fun returnTrack(intent: Intent){
-        val gSon = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-        playerLiveData.value = PlayerVMObjects(0, gSon)
-        playerInter = Creator.providePlayerInteractor(gSon.audioUrl, runTime(gSon))
+        gsonTrack = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
+        runnableTrack = runTime(gsonTrack)
+        playerLiveData.value = PlayerVMObjects(0, gsonTrack)
     }
 
     fun getReadyMedia(){
-        playerInter.getReadyMedia()
+        playerInter.getReadyMedia(gsonTrack.audioUrl)
     }
 
     fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
@@ -43,7 +43,7 @@ class PlayerViewModel: ViewModel() {
     }
 
     private fun handlerPostDelayed(){
-        playerInter.handlerPostDelayed(SET_TIME_WAIT)
+        playerInter.handlerPostDelayed(runnableTrack,SET_TIME_WAIT)
     }
 
     private fun runStatus():Boolean{
@@ -51,11 +51,11 @@ class PlayerViewModel: ViewModel() {
     }
 
     private fun handlerPost(){
-        playerInter.handlerPost()
+        playerInter.handlerPost(runnableTrack)
     }
 
     fun handlerCallBack(){
-        playerInter.handlerCallBack()
+        playerInter.handlerCallBack(runnableTrack)
     }
 
     private fun startPlayer(){
@@ -104,13 +104,6 @@ class PlayerViewModel: ViewModel() {
     }
 
     companion object{
-        fun getViewModelFactory(): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PlayerViewModel() as T
-                }
-            }
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2

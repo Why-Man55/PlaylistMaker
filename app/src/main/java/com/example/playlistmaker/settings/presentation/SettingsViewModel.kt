@@ -1,10 +1,6 @@
 package com.example.playlistmaker.settings.presentation
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.settings.domain.SettingInteractor
 import com.example.playlistmaker.settings.domain.models.ThemeSettings
 import com.example.playlistmaker.sharing.domain.SharingInteractor
@@ -25,16 +21,5 @@ class SettingsViewModel(
     }
     fun startAgreement(){
         sharingInteractor.openTerms()
-    }
-
-
-    companion object{
-        fun getViewModelFactory(context: Context,sp:SharedPreferences): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(Creator.getSharingInt(context), Creator.provideSettingsInteractor(sp)) as T
-                }
-            }
     }
 }

@@ -4,10 +4,10 @@ import android.media.MediaPlayer
 
 
 interface MediaPlayRepository {
-    fun getReadyMedia()
-    fun handlerPostDelayed(time: Long)
-    fun handlerPost()
-    fun handlerCallBack()
+    fun getReadyMedia(url: String?)
+    fun handlerPostDelayed(run: Runnable,time: Long)
+    fun handlerPost(run: Runnable)
+    fun handlerCallBack(run: Runnable)
     fun startPlayer()
     fun pausePlayer()
     fun returnCurrentPosition(): Int

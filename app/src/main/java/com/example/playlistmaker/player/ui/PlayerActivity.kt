@@ -4,19 +4,19 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity()  {
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var binding: ActivityPlayerBinding
 
     private val radius: Float by lazy {
@@ -26,7 +26,6 @@ class PlayerActivity : AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory())[PlayerViewModel::class.java]
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -98,7 +97,7 @@ class PlayerActivity : AppCompatActivity()  {
     private fun bindStaticViews(track: Track){
         binding.playerTitleName.text = track.trackNameItem
         binding.playerArtistName.text = track.artistNameItem
-        binding.playerYearEmpty.text = track.rYear.replaceAfter('-', "").substring(0, 4)
+        binding.playerYearEmpty.text = track.rYear?.replaceAfter('-', "")?.substring(0, 4)
         binding.playerStyleEmpty.text = track.genre
         binding.playerCountryEmpty.text = track.country
     }

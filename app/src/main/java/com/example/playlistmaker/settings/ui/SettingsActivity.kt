@@ -2,17 +2,17 @@ package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.SettingsMenuBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: SettingsMenuBinding
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,10 +20,6 @@ class SettingsActivity : AppCompatActivity() {
 
         binding = SettingsMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val sp = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
-
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(this,sp))[SettingsViewModel::class.java]
 
         binding.SetBackBut.setOnClickListener {
             finish()
@@ -46,8 +42,5 @@ class SettingsActivity : AppCompatActivity() {
         binding.AgreementBut.setOnClickListener{
             viewModel.startAgreement()
         }
-    }
-    companion object{
-        private const val THEME_PRETEXT = "key_pretext"
     }
 }

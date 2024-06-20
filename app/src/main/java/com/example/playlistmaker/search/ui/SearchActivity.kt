@@ -8,7 +8,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -17,16 +17,18 @@ import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private var searchText = TEXT_DEF
     private var isClickAllowed = true
 
-    private lateinit var viewModel : SearchViewModel
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var historyAdapter: HistoryAdapter
+
+    private val viewModel by viewModel<SearchViewModel>()
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
@@ -44,13 +46,13 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val historySP = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historySP, this))[SearchViewModel::class.java]
-
         val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
                     viewModel.saveTrack(track)
+                    if(binding.historyMain.isVisible){
+                        viewModel.loadHistory()
+                    }
                     val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                     displayIntent.putExtra("track", Gson().toJson(track))
                     startActivity(displayIntent)
@@ -109,11 +111,11 @@ class SearchActivity : AppCompatActivity() {
             binding.historyClearBut.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
             binding.internetErrorView.visibility = View.GONE
-            val runnable = Runnable{searchTrack()}
-            viewModel.callBackHandler(runnable)
-            viewModel.delaySearch(runnable)
+            searchTrack()
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
+
+        var runnable = Runnable{searchDebounce()}
 
         binding.historyClearBut.setOnClickListener {
             viewModel.clearHistory()
@@ -171,7 +173,9 @@ class SearchActivity : AppCompatActivity() {
                     getHistory()
                 }
                 else{
-                    searchDebounce()
+                    viewModel.callBackHandler(runnable)
+                    runnable = Runnable{searchDebounce()}
+                    viewModel.delaySearch(runnable)
                 }
             }
 
@@ -216,7 +220,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
-        private const val HISTORY_KEY = "key_for_historySP"
     }
 }
 
