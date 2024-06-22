@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorPrimaryVariant">
+
+    <ImageView
+        style="@style/search_error_image"
+        android:layout_marginTop="@dimen/_106dp"
+        android:src="@drawable/searcherror"
+        android:importantForAccessibility="no" />
+    <TextView
+        style="@style/search_error_text"
+        android:textSize="@dimen/_19sp"
+        android:gravity="center_horizontal"
+        android:text="@string/empty_favorites" />
+
+</LinearLayout>
