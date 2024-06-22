@@ -158,7 +158,8 @@
             app:cornerRadius="@dimen/_54dp"
             android:fontFamily="@font/ys_display_medium"
             android:textFontWeight="500"
-            android:id="@+id/reload_but"/>
+            android:id="@+id/reload_but"
+            android:letterSpacing="0"/>
     </LinearLayout>
 
     <ProgressBar android:id="@+id/search_loading_bar"

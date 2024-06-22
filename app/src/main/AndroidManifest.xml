@@ -51,7 +51,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.playlistmaker.media.MediatekActivity" />
+        <activity android:name="com.example.playlistmaker.media.ui.MediatekActivity" />
     </application>
 
 </manifest>
