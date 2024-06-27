@@ -30,6 +30,7 @@
         app:tabMode="fixed"
         app:tabIndicatorColor="?attr/colorOnSecondary"
         app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorFullWidth="true"
         app:tabTextAppearance="@style/myCustomTextAppearance"/>
 
     <androidx.viewpager2.widget.ViewPager2
