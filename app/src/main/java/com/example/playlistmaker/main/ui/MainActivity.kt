@@ -23,11 +23,5 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.bottomNavigationView.setupWithNavController(navController)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                this.add(R.id.fragment_container_view, MediatekFragment())
-            }
-        }
     }
 }

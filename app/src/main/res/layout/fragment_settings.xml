@@ -10,7 +10,8 @@
 
     <TextView
         style="@style/activities_name"
-        android:text="@string/settings_setting"/>
+        android:text="@string/settings_setting"
+        android:paddingTop="4dp"/>
 
     <FrameLayout
         android:layout_width="match_parent"
