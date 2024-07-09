@@ -1,36 +1,33 @@
 package com.example.playlistmaker.main.ui
 
-import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.ui.MediatekActivity
-import com.example.playlistmaker.search.ui.SearchActivity
-import com.example.playlistmaker.settings.ui.SettingsActivity
-import com.google.android.material.button.MaterialButton
+import com.example.playlistmaker.databinding.MainActivityBinding
+import com.example.playlistmaker.media.ui.MediatekFragment
+import com.example.playlistmaker.search.ui.SearchFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding:MainActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_menu)
+        binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val searchButton = findViewById<MaterialButton>(R.id.Poisk_but)
-        val mediaButton = findViewById<MaterialButton>(R.id.Media_but)
-        val settingsButton = findViewById<MaterialButton>(R.id.Set_but)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        searchButton.setOnClickListener {
-            val displayIntent = Intent(this, SearchActivity::class.java)
-            startActivity(displayIntent)
-        }
+        binding.bottomNavigationView.setupWithNavController(navController)
 
-        mediaButton.setOnClickListener {
-            val displayIntent = Intent(this, MediatekActivity::class.java)
-            startActivity(displayIntent)
-        }
-
-        settingsButton.setOnClickListener {
-            val displayIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(displayIntent)
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                this.add(R.id.fragment_container_view, MediatekFragment())
+            }
         }
     }
 }

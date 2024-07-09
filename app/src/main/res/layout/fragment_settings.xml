@@ -8,18 +8,9 @@
     android:background="?attr/colorPrimaryVariant"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_56dp">
-
-        <Button
-            style="@style/quite_but"
-            android:id="@+id/Set_back_but"/>
-        
-        <TextView
-            style="@style/activities_name"
-            android:text="@string/settings_setting"/>
-    </FrameLayout>
+    <TextView
+        style="@style/activities_name"
+        android:text="@string/settings_setting"/>
 
     <FrameLayout
         android:layout_width="match_parent"
