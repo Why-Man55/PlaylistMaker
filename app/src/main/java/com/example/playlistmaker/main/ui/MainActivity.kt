@@ -1,16 +1,11 @@
 package com.example.playlistmaker.main.ui
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.MainActivityBinding
-import com.example.playlistmaker.media.ui.MediatekFragment
-import com.example.playlistmaker.search.ui.SearchFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:MainActivityBinding
