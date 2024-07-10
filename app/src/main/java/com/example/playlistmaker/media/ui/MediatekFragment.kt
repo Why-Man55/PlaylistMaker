@@ -35,8 +35,8 @@ class MediatekFragment: Fragment() {
         tabMediator.attach()
     }
 
-    override fun onDetach() {
-        super.onDetach()
+    override fun onDestroyView() {
+        super.onDestroyView()
         tabMediator.detach()
     }
 }
