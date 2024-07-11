@@ -7,19 +7,10 @@
     android:orientation="vertical"
     android:background="?attr/colorPrimaryVariant">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_48dp">
-
-        <TextView
-            style="@style/activities_name"
-            android:text="@string/Poisk"
-            android:paddingTop="4dp"/>
-
-        <Button
-            style="@style/quite_but"
-            android:id="@+id/search_back"/>
-    </FrameLayout>
+    <TextView
+        style="@style/activities_name"
+        android:text="@string/Poisk"
+        android:paddingTop="4dp"/>
 
     <FrameLayout
         android:layout_width="match_parent"
