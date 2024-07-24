@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
@@ -20,6 +21,8 @@ import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment:Fragment() {
@@ -36,7 +39,10 @@ class SearchFragment:Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            viewModel.delayClick { isClickAllowed = true }
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
@@ -81,7 +87,7 @@ class SearchFragment:Fragment() {
             binding.searchLoadingBar.visibility = View.GONE
             trackAdapter.submitList(it.tracks)
             historyAdapter.submitList(it.history)
-            if((it.code != -2) and binding.searchBar.text.isNotEmpty()){
+            if((it.code != -2) and (binding.searchBar.text.isNotEmpty())){
                 binding.rvTracks.adapter = trackAdapter
                 binding.historyMain.visibility = View.GONE
                 binding.historyClearBut.visibility = View.GONE
@@ -126,8 +132,6 @@ class SearchFragment:Fragment() {
             binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
-        var runnable = Runnable{searchDebounce()}
-
         binding.historyClearBut.setOnClickListener {
             viewModel.clearHistory()
             binding.historyMain.visibility = View.GONE
@@ -137,7 +141,7 @@ class SearchFragment:Fragment() {
             binding.searchErrorView.visibility = View.GONE
         }
 
-        binding.searchBar.setOnFocusChangeListener { view, hasFocus ->
+        binding.searchBar.setOnFocusChangeListener { _, _ ->
             getHistory()
         }
 
@@ -176,11 +180,7 @@ class SearchFragment:Fragment() {
                 if(s.isNullOrEmpty()){
                     getHistory()
                 }
-                else{
-                    viewModel.callBackHandler(runnable)
-                    runnable = Runnable{searchDebounce()}
-                    viewModel.delaySearch(runnable)
-                }
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -220,5 +220,6 @@ class SearchFragment:Fragment() {
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
+        private const val CLICK_DELAY = 1000L
     }
 }
