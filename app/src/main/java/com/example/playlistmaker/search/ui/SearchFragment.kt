@@ -95,9 +95,6 @@ class SearchFragment:Fragment() {
                 if(it.tracks.isNullOrEmpty() and (it.code != -1)){
                     binding.searchErrorView.visibility = View.VISIBLE
                 }
-                else{
-                    binding.rvTracks.visibility = View.VISIBLE
-                }
             }
             else{
                 if(it.history.isEmpty()){
@@ -109,7 +106,6 @@ class SearchFragment:Fragment() {
                     binding.historyClearBut.visibility = View.VISIBLE
                 }
                 binding.rvTracks.adapter = historyAdapter
-                binding.rvTracks.visibility = View.VISIBLE
             }
         }
 
@@ -123,7 +119,6 @@ class SearchFragment:Fragment() {
         }
 
         fun searchDebounce() {
-            binding.rvTracks.visibility = View.GONE
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
@@ -136,7 +131,7 @@ class SearchFragment:Fragment() {
             viewModel.clearHistory()
             binding.historyMain.visibility = View.GONE
             binding.historyClearBut.visibility = View.GONE
-            binding.rvTracks.visibility = View.GONE
+            hideRV()
             binding.internetErrorView.visibility = View.GONE
             binding.searchErrorView.visibility = View.GONE
         }
@@ -176,6 +171,7 @@ class SearchFragment:Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                hideRV()
                 binding.clearText.visibility = clearButtonVisibility(s)
                 if(s.isNullOrEmpty()){
                     getHistory()
@@ -215,6 +211,11 @@ class SearchFragment:Fragment() {
                 binding.searchErrorView.visibility = View.GONE
             }
         }
+    }
+
+    private fun hideRV(){
+        trackAdapter.submitList(listOf())
+        historyAdapter.submitList(listOf())
     }
 
     companion object {
