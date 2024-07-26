@@ -3,51 +3,80 @@ package com.example.playlistmaker.search.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.search.domain.HandlerControllerInt
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SearchViewModel(private val tracksInteractor: TrackInteractor, private val searchHistoryInt: SearchHistoryInteractor,
-    private val handler: HandlerControllerInt):ViewModel() {
+class SearchViewModel(private val tracksInteractor: TrackInteractor, private val searchHistoryInt: SearchHistoryInteractor):ViewModel() {
     companion object{
-        private const val CLICK_DELAY = 1000L
         private const val SEARCH_DELAY = 2000L
     }
 
-    private var livaDataSearchRes = MutableLiveData<SearchVMObjects>()
-
-    private val consumer = object : TrackInteractor.TracksConsumer {
-        override fun consume(foundTracks: List<Track>?, errorMessage: Int?) {
-            livaDataSearchRes.postValue(SearchVMObjects(foundTracks, errorMessage, searchHistoryInt.getHistory()))
-        }
-
-    }
+    private var lastRequest: String? = null
+    private var searchJob: Job? = null
+    private var liveDataSearchRes = MutableLiveData<SearchVMObjects>()
 
     fun searchTrack(text: String){
-        tracksInteractor.searchTrack(text, consumer)
+        if (text == lastRequest){
+            return
+        }
+
+        lastRequest = text
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DELAY)
+            searchRequest(text)
+        }
     }
+
+    private fun searchRequest(newSearchText: String){
+        if(newSearchText.isNotEmpty()){
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTrack(newSearchText)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
+                    }
+            }
+        }
+    }
+
+
+    private fun processResult(foundNames: List<Track>?, errorMessage: Int?) {
+        val persons = mutableListOf<Track>()
+        if (foundNames != null) {
+            persons.addAll(foundNames)
+        }
+
+        when {
+            errorMessage == null -> {
+                renderSearch(SearchVMObjects(persons, 200, listOf()))
+            }
+            else -> {
+                renderSearch(SearchVMObjects(listOf(), -1, listOf()))
+            }
+        }
+    }
+
     fun loadHistory(){
-        livaDataSearchRes.postValue(SearchVMObjects(listOf(), -2, searchHistoryInt.getHistory()))
+        renderSearch(SearchVMObjects(listOf(), -2, searchHistoryInt.getHistory()))
     }
 
     fun saveTrack(track: Track){
         searchHistoryInt.saveTrack(track)
     }
 
-    fun getSearchRes(): LiveData<SearchVMObjects> = livaDataSearchRes
+    fun getSearchRes(): LiveData<SearchVMObjects> = liveDataSearchRes
     fun clearHistory(){
         searchHistoryInt.clearHistory()
     }
 
-    fun callBackHandler(runnable: Runnable){
-        handler.removeCallback(runnable)
-    }
-
-    fun delayClick(runnable: Runnable){
-        handler.postDelay(runnable, CLICK_DELAY)
-    }
-    fun delaySearch(runnable: Runnable){
-        handler.postDelay(runnable, SEARCH_DELAY)
+    private fun renderSearch(searchObject: SearchVMObjects){
+        liveDataSearchRes.postValue(searchObject)
     }
 }

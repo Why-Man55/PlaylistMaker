@@ -50,13 +50,12 @@ class PlayerActivity : AppCompatActivity()  {
 
         viewModel.setOnPreparedListener{
             binding.playerPlayBut.isEnabled = true
-
         }
 
         viewModel.setOnCompletionListener {
             setPlay()
-            viewModel.handlerCallBack()
-            binding.playTimer.text = getString(R.string.player_time_empty)
+            callBack()
+            bindTime(0)
         }
 
         binding.playerPlayBut.setOnClickListener {
@@ -131,6 +130,6 @@ class PlayerActivity : AppCompatActivity()  {
     }
 
     private fun callBack(){
-        viewModel.handlerCallBack()
+        viewModel.stopTimer()
     }
 }
