@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
@@ -13,7 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor, private val mediaInteractor: MediaInteractor): ViewModel() {
 
 
     private var playerState = STATE_DEFAULT
@@ -32,6 +33,39 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
         playerLiveData.value = PlayerVMObjects(0, gsonTrack)
     }
 
+    private fun returnCurrentPosition(): Int{
+        return playerInter.returnCurrentPosition()
+    }
+
+    private fun runTime(){
+        timerJob = viewModelScope.launch {
+            while (runStatus()) {
+                delay(SET_TIME_WAIT)
+                playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),gsonTrack))
+            }
+        }
+    }
+
+    private fun runStatus():Boolean{
+        return playerState == STATE_PLAYING
+    }
+
+    private fun startPlayer(){
+        playerInter.startPlayer()
+    }
+
+    fun changeFavorites(track: Track){
+        viewModelScope.launch {
+            mediaInteractor.changeFavorites(track)
+        }
+    }
+
+    fun deleteTrack(track: Track){
+        viewModelScope.launch {
+            mediaInteractor.deleteTrack(track)
+        }
+    }
+
     fun getReadyMedia(){
         playerInter.getReadyMedia(gsonTrack.audioUrl)
     }
@@ -44,14 +78,6 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
     fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
         playerInter.setOnCompletionListener(listener)
         playerState = STATE_PREPARED
-    }
-
-    private fun runStatus():Boolean{
-        return playerState == STATE_PLAYING
-    }
-
-    private fun startPlayer(){
-        playerInter.startPlayer()
     }
 
     fun isPlaying():Boolean{
@@ -82,21 +108,8 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
         playerState = STATE_PAUSED
     }
 
-    private fun returnCurrentPosition(): Int{
-        return playerInter.returnCurrentPosition()
-    }
-
     fun playRelease(){
         playerInter.playRelease()
-    }
-
-    private fun runTime(){
-        timerJob = viewModelScope.launch {
-            while (runStatus()) {
-                delay(SET_TIME_WAIT)
-                playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),gsonTrack))
-            }
-        }
     }
 
     companion object{

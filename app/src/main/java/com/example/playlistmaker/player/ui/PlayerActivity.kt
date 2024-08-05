@@ -19,6 +19,8 @@ class PlayerActivity : AppCompatActivity()  {
     private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var binding: ActivityPlayerBinding
 
+    private lateinit var thisTrack:Track
+
     private val radius: Float by lazy {
         8 * this.resources.displayMetrics.density
     }
@@ -29,20 +31,26 @@ class PlayerActivity : AppCompatActivity()  {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        var favotiteSelected = false
+
         viewModel.getTrack(intent).observe(this){
             bindTime(it.time)
-            val track = it.track
-            bindStaticViews(track)
-            bindGlide(track)
+            thisTrack = it.track
+            favotiteSelected = thisTrack.isFavorite
+            bindStaticViews(thisTrack)
+            bindGlide(thisTrack)
             binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                track.trackTimeItem
+                thisTrack.trackTimeItem
             )
-            if(track.collectionName.isEmpty()){
+            if(thisTrack.collectionName.isEmpty()){
                 bindAlbumVisible(false)
             }
             else {
                 bindAlbumVisible(true)
-                binding.playerAlbumEmpty.text = track.collectionName
+                binding.playerAlbumEmpty.text = thisTrack.collectionName
+            }
+            if(favotiteSelected){
+                bindFavBut(true)
             }
         }
 
@@ -64,6 +72,17 @@ class PlayerActivity : AppCompatActivity()  {
 
         binding.playerBack.setOnClickListener {
             finish()
+        }
+
+        binding.playerLovedBut.setOnClickListener{
+            if(favotiteSelected){
+                bindFavBut(false)
+                viewModel.changeFavorites(thisTrack)
+            }
+            else{
+                bindFavBut(true)
+                viewModel.deleteTrack(thisTrack)
+            }
         }
     }
 
@@ -91,6 +110,15 @@ class PlayerActivity : AppCompatActivity()  {
 
     private fun bindTime(time: Long){
         binding.playTimer.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    }
+
+    private fun bindFavBut(boolean: Boolean){
+        if(boolean){
+            binding.playerLovedBut.setImageResource(R.drawable.selected_favorite_icon)
+        }
+        else{
+            binding.playerLovedBut.setImageResource(R.drawable.ic_loved_but)
+        }
     }
 
     private fun bindStaticViews(track: Track){

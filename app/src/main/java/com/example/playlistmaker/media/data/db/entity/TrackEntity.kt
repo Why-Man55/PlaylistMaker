@@ -1,14 +1,19 @@
-package com.example.playlistmaker.search.domain.models
+package com.example.playlistmaker.media.data.db.entity
 
-data class Track(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @PrimaryKey
+    val id: Int,
     val trackNameItem:String,
     val artistNameItem:String,
     val trackTimeItem:Int,
     val trackAvatarItem:String,
-    val trackID: Int,
     val collectionName:String,
     val rYear:String?,
     val genre:String,
     val country:String,
     val audioUrl:String?,
-    val isFavorite:Boolean = false)
+    val isFavorite: Boolean)
