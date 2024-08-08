@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FavoritesFragmentViewModel(private val interactor: MediaInteractor): ViewModel() {
@@ -13,7 +14,7 @@ class FavoritesFragmentViewModel(private val interactor: MediaInteractor): ViewM
     fun getFavorites():LiveData<FFVMObject> = favoriteLiveData
 
     fun getTracks(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             interactor.getTracks().collect{
                     tracks -> processTracks(tracks)
             }

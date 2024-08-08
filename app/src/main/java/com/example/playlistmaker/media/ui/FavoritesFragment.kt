@@ -14,6 +14,7 @@ import com.example.playlistmaker.media.presentation.FavoritesFragmentViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.api.TrackOnClicked
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.TrackAdapter
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,7 +64,7 @@ class FavoritesFragment:Fragment() {
             }
         }
 
-        val favoriteAdapter = FavoritesAdapter(trackOnClicked)
+        val favoriteAdapter = TrackAdapter(trackOnClicked)
         favoriteAdapter.submitList(listOf())
 
         viewModel.getTracks()
@@ -71,6 +72,7 @@ class FavoritesFragment:Fragment() {
         viewModel.getFavorites().observe(this as LifecycleOwner){
             if(it.error != 1){
                 favoriteAdapter.submitList(it.tracks)
+                binding.favoriteError.isVisible = false
             }
             else{
                 favoriteAdapter.submitList(listOf())

@@ -18,4 +18,7 @@ interface TrackDao {
 
     @Query("Select * FROM track_table")
     fun getTracks(): List<TrackEntity>
+
+    @Query("Select id FROM track_table")
+    fun getTrackID(): List<Int>
 }

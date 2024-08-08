@@ -12,6 +12,9 @@ class MediaRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val converter: TrackConvertor): MediaRepository {
 
+    override fun getFavID(): List<Int> {
+        return appDatabase.trackDao().getTrackID()
+    }
     override fun getFavorites(): Flow<List<Track>> = flow {
         val tracks = appDatabase.trackDao().getTracks()
         emit(tracks.map { trackEntity -> converter.map(trackEntity) })

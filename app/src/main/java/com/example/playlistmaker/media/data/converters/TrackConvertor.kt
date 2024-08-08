@@ -26,9 +26,11 @@ class TrackConvertor {
             trackEntity.trackAvatarItem,
             trackEntity.id,
             trackEntity.collectionName,
-            trackEntity.rYear, trackEntity.genre,
+            trackEntity.rYear,
+            trackEntity.genre,
             trackEntity.country,
-            trackEntity.audioUrl)
+            trackEntity.audioUrl,
+            true)
     }
 
 }

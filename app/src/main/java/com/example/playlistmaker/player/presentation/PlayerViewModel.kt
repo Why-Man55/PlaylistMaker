@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
@@ -14,7 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInter: PlayerInteractor, private val mediaInteractor: MediaInteractor): ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor, private val mediaInteractor: MediaInteractor, private val db:MediaInteractor): ViewModel() {
 
 
     private var playerState = STATE_DEFAULT
@@ -52,6 +53,11 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
 
     private fun startPlayer(){
         playerInter.startPlayer()
+    }
+
+    fun checkLiked(id:Int):Boolean{
+        return id in db.getFavID()
+
     }
 
     fun changeFavorites(track: Track){
@@ -110,6 +116,28 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
 
     fun playRelease(){
         playerInter.playRelease()
+    }
+
+    fun isFavClicked(isFav:Boolean){
+        viewModelScope.launch {
+            if(isFav){
+                db.deleteTrack(gsonTrack)
+            }
+            else{
+                db.changeFavorites(gsonTrack)
+            }
+        }
+        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),Track(gsonTrack.trackNameItem,
+            gsonTrack.artistNameItem,
+            gsonTrack.trackTimeItem,
+            gsonTrack.trackAvatarItem,
+            gsonTrack.trackID,
+            gsonTrack.collectionName,
+            gsonTrack.rYear,
+            gsonTrack.genre,
+            gsonTrack.country,
+            gsonTrack.audioUrl,
+            !isFav)))
     }
 
     companion object{

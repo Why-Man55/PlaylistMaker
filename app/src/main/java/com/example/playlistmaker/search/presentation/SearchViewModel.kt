@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,7 +37,7 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor, private val
 
     private fun searchRequest(newSearchText: String){
         if(newSearchText.isNotEmpty()){
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 tracksInteractor
                     .searchTrack(newSearchText)
                     .collect { pair ->
@@ -64,7 +65,9 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor, private val
     }
 
     fun loadHistory(){
-        renderSearch(SearchVMObjects(listOf(), -2, searchHistoryInt.getHistory()))
+        viewModelScope.launch(Dispatchers.IO) {
+            renderSearch(SearchVMObjects(listOf(), -2, searchHistoryInt.getHistory()))
+        }
     }
 
     fun saveTrack(track: Track){

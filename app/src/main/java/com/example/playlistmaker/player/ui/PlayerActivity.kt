@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,12 +35,9 @@ class PlayerActivity : AppCompatActivity()  {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var favotiteSelected = false
-
         viewModel.getTrack(intent).observe(this){
             bindTime(it.time)
             thisTrack = it.track
-            favotiteSelected = thisTrack.isFavorite
             bindStaticViews(thisTrack)
             bindGlide(thisTrack)
             binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
@@ -49,8 +50,13 @@ class PlayerActivity : AppCompatActivity()  {
                 bindAlbumVisible(true)
                 binding.playerAlbumEmpty.text = thisTrack.collectionName
             }
-            if(favotiteSelected){
-                bindFavBut(true)
+            lifecycleScope.launch(Dispatchers.IO) {
+                if(viewModel.checkLiked(thisTrack.trackID)){
+                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_active_fav_but)
+                }
+                else{
+                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_loved_but)
+                }
             }
         }
 
@@ -75,14 +81,7 @@ class PlayerActivity : AppCompatActivity()  {
         }
 
         binding.playerLovedBut.setOnClickListener{
-            if(favotiteSelected){
-                bindFavBut(false)
-                viewModel.changeFavorites(thisTrack)
-            }
-            else{
-                bindFavBut(true)
-                viewModel.deleteTrack(thisTrack)
-            }
+            viewModel.isFavClicked(thisTrack.isFavorite)
         }
     }
 
@@ -110,15 +109,6 @@ class PlayerActivity : AppCompatActivity()  {
 
     private fun bindTime(time: Long){
         binding.playTimer.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
-    }
-
-    private fun bindFavBut(boolean: Boolean){
-        if(boolean){
-            binding.playerLovedBut.setImageResource(R.drawable.selected_favorite_icon)
-        }
-        else{
-            binding.playerLovedBut.setImageResource(R.drawable.ic_loved_but)
-        }
     }
 
     private fun bindStaticViews(track: Track){

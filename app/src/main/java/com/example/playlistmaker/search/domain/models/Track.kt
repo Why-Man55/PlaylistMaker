@@ -11,4 +11,4 @@ data class Track(
     val genre:String,
     val country:String,
     val audioUrl:String?,
-    val isFavorite:Boolean = false)
+    var isFavorite:Boolean = false)

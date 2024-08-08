@@ -6,6 +6,9 @@ import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 class MediaInteractorImpl(private val repository: MediaRepository): MediaInteractor {
+    override fun getFavID(): List<Int> {
+        return repository.getFavID()
+    }
     override fun getTracks(): Flow<List<Track>> {
         return repository.getFavorites()
     }

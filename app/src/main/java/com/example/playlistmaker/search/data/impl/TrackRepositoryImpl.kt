@@ -1,5 +1,7 @@
 package com.example.playlistmaker.search.data.impl
 
+import com.example.playlistmaker.media.data.db.AppDatabase
+import com.example.playlistmaker.media.data.db.dao.TrackDao
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.TrackRepository
 import com.example.playlistmaker.search.data.dto.TrackResponse
@@ -9,9 +11,10 @@ import com.example.playlistmaker.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient): TrackRepository {
+class TrackRepositoryImpl(private val networkClient: NetworkClient, private val dao: AppDatabase): TrackRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
+        val idList = dao.trackDao().getTrackID()
         val response = networkClient.doSearch(TrackSearchRequest(expression))
         when (response.searchState) {
             -1 -> {
@@ -21,7 +24,8 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient): TrackReposi
             with(response as TrackResponse) {
                 val data = results.map{
                     Track(it.trackNameItem,it.artistNameItem, it.trackTimeItem, it.trackAvatarItem,
-                        it.trackID, it.collectionName, it.rYear, it.genre, it.country, it.audioUrl)
+                        it.trackID, it.collectionName, it.rYear, it.genre, it.country, it.audioUrl,
+                        it.trackID in idList)
                 }
                 emit(Resource.Success(data))
                 }
