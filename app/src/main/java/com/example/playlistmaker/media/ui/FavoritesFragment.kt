@@ -32,6 +32,8 @@ class FavoritesFragment:Fragment() {
 
     private var isClickAllowed = true
 
+    var isChanged = false
+
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -79,6 +81,15 @@ class FavoritesFragment:Fragment() {
                 binding.favoriteError.isVisible = true
             }
             binding.favoriteRv.adapter = favoriteAdapter
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if(isChanged){
+            viewModel.getTracks()
+            isChanged = false
         }
     }
 
