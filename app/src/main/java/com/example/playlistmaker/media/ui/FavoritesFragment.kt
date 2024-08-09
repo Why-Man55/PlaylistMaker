@@ -24,6 +24,7 @@ class FavoritesFragment:Fragment() {
     companion object{
         fun newInstance() = FavoritesFragment().apply { }
         private const val CLICK_DELAY:Long = 1000
+        private const val INTENT_KEY = "track"
     }
 
     private val viewModel by viewModel<FavoritesFragmentViewModel>()
@@ -60,7 +61,7 @@ class FavoritesFragment:Fragment() {
             override fun getTrackAndStart(track: Track) {
                 if(clickDebounce()){
                     val displayIntent = Intent(actContext, PlayerActivity::class.java)
-                    displayIntent.putExtra("track",Gson().toJson(track))
+                    displayIntent.putExtra(INTENT_KEY,Gson().toJson(track))
                     startActivity(displayIntent)
                 }
             }

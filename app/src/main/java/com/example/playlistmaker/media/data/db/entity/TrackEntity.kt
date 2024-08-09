@@ -15,5 +15,4 @@ data class TrackEntity(
     val rYear:String?,
     val genre:String,
     val country:String,
-    val audioUrl:String?,
-    val isFavorite: Boolean)
+    val audioUrl:String?)
