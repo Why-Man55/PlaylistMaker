@@ -14,10 +14,19 @@
         android:id="@+id/mediatekFragment"
         android:name="com.example.playlistmaker.media.ui.MediatekFragment"
         android:label="MediatekFragment"
-        tools:layout="@layout/fragment_mediatek" />
+        tools:layout="@layout/fragment_mediatek" >
+        <action
+            android:id="@+id/action_mediatekFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player" />
 </navigation>

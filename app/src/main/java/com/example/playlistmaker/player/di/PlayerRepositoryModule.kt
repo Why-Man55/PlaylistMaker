@@ -11,11 +11,8 @@ val playerRepositoryModule = module{
     single{
         MediaPlayer()
     }
-    single {
-        Handler((Looper.getMainLooper()))
-    }
 
     single<MediaPlayRepository> {
-        MediaPlayRepImpl(get(), get())
+        MediaPlayRepImpl(get())
     }
 }
