@@ -188,11 +188,6 @@ class SearchFragment:Fragment() {
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.searchBar.setText("")
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
