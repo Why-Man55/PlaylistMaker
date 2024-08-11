@@ -19,7 +19,7 @@ class MediaRepositoryImpl(
     }
 
     override suspend fun deleteTrack(track: Track){
-        appDatabase.trackDao().deleteTrack(converter.map(track))
+        appDatabase.trackDao().deleteTrack(converter.map(track).id )
     }
 
     override suspend fun changeFavorites(track: Track) {

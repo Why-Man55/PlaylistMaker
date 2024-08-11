@@ -10,6 +10,7 @@ import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,18 +60,6 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
 
     }
 
-    fun changeFavorites(track: Track){
-        viewModelScope.launch {
-            mediaInteractor.changeFavorites(track)
-        }
-    }
-
-    fun deleteTrack(track: Track){
-        viewModelScope.launch {
-            mediaInteractor.deleteTrack(track)
-        }
-    }
-
     fun getReadyMedia(){
         playerInter.getReadyMedia(gsonTrack.audioUrl)
     }
@@ -118,7 +107,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
     }
 
     fun isFavClicked(isFav:Boolean){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if(isFav){
                 db.deleteTrack(gsonTrack)
             }

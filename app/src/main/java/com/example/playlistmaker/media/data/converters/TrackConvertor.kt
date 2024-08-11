@@ -5,7 +5,8 @@ import com.example.playlistmaker.search.domain.models.Track
 
 class TrackConvertor {
     fun map(track: Track):TrackEntity{
-        return TrackEntity(track.trackID,
+        return TrackEntity(0L,
+            track.trackID,
             track.trackNameItem,
             track.artistNameItem,
             track.trackTimeItem,
