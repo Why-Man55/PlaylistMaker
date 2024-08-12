@@ -82,7 +82,6 @@ class PlayerActivity : AppCompatActivity()  {
 
         binding.playerLovedBut.setOnClickListener{
             viewModel.isFavClicked(thisTrack.isFavorite)
-            FavoritesFragment().isChanged = true
         }
     }
 
