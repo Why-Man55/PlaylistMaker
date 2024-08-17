@@ -20,7 +20,7 @@
         android:padding="@dimen/_0dp"
         android:textColor="?attr/colorPrimaryVariant"
         android:visibility="visible"
-        android:id="@+id/history_clear_but"
+        android:id="@+id/new_playlist_but"
         android:letterSpacing="0"/>
 
     <ImageView
