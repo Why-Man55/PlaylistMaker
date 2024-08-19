@@ -1,11 +1,11 @@
-package com.example.playlistmaker.media.ui
+package com.example.playlistmaker.media.ui.playlists
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistsFragmentBinding
@@ -29,13 +29,31 @@ class PlaylistFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val adapter = PlaylistFragmentAdapter()
+        adapter.submitList(listOf())
+        viewModel.returnPlaylists().observe(viewLifecycleOwner){
+            adapter.submitList(it)
+            binding.playlistList.adapter = adapter
+            if(it.isEmpty()){
+                setError(true)
+            }
+            else{
+                setError(false)
+            }
+        }
+
         binding.newPlaylistBut.setOnClickListener{
             findNavController().navigate(R.id.action_mediatekFragment_to_newPlaylistActivity)
         }
+        viewModel.getPlaylists()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setError(boolean: Boolean){
+        binding.playlistErrorMassage.isVisible = boolean
     }
 }

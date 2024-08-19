@@ -9,7 +9,7 @@ import com.example.playlistmaker.search.domain.models.Track
 
 
 class TrackAdapter(private val trackOnClicked: TrackOnClicked
-) : ListAdapter<Track,TrackViewHolder>(ItemComparator()) {
+) : ListAdapter<Track,TrackViewHolder>(TrackItemComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)

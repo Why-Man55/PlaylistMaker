@@ -54,4 +54,7 @@
     <dimen name="_33dp">33dp</dimen>
     <dimen name="_32dp">32dp</dimen>
     <dimen name="_8sp">8sp</dimen>
+    <dimen name="_160dp">160dp</dimen>
+    <dimen name="_196dp">196dp</dimen>
+    <dimen name="_12sp">12sp</dimen>
 </resources>

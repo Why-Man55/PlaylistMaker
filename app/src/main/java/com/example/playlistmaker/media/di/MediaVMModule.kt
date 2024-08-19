@@ -10,6 +10,6 @@ val mediaViewModule = module{
         FavoritesFragmentViewModel(get())
     }
     viewModel {
-        PlaylistsFragmentViewModel()
+        PlaylistsFragmentViewModel(get())
     }
 }

@@ -34,6 +34,6 @@
         tools:layout="@layout/activity_player" />
     <activity
         android:id="@+id/newPlaylistActivity"
-        android:name="com.example.playlistmaker.media.ui.NewPlaylistActivity"
+        android:name="com.example.playlistmaker.media.ui.playlists.NewPlaylistActivity"
         android:label="NewPlaylistActivity" />
 </navigation>

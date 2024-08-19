@@ -1,6 +1,8 @@
 package com.example.playlistmaker.media.data.converters
 
+import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 
 class TrackConvertor {
@@ -30,6 +32,22 @@ class TrackConvertor {
             trackEntity.country,
             trackEntity.audioUrl,
             true)
+    }
+
+    fun map(playlist: Playlist): PlaylistEntity{
+        return PlaylistEntity(0L,
+            playlist.name,
+            playlist.image,
+            playlist.count,
+            playlist.info)
+    }
+
+    fun map(playlist: PlaylistEntity): Playlist{
+        return Playlist(
+            playlist.name,
+            playlist.image,
+            playlist.count,
+            playlist.info)
     }
 
 }

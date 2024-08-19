@@ -18,7 +18,7 @@
         android:theme="@style/Theme.MyApp"
         tools:targetApi="31">
         <activity
-            android:name=".media.ui.NewPlaylistActivity"
+            android:name=".media.ui.playlists.NewPlaylistActivity"
             android:exported="false" />
         <activity
             android:name=".player.ui.PlayerActivity"
