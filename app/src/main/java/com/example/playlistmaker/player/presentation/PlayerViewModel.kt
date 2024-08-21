@@ -6,14 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor, private val mediaInteractor: MediaInteractor, private val db:MediaInteractor): ViewModel() {
 
 
     private var playerState = STATE_DEFAULT
@@ -32,6 +34,32 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
         playerLiveData.value = PlayerVMObjects(0, gsonTrack)
     }
 
+    private fun returnCurrentPosition(): Int{
+        return playerInter.returnCurrentPosition()
+    }
+
+    private fun runTime(){
+        timerJob = viewModelScope.launch {
+            while (runStatus()) {
+                delay(SET_TIME_WAIT)
+                playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),gsonTrack))
+            }
+        }
+    }
+
+    private fun runStatus():Boolean{
+        return playerState == STATE_PLAYING
+    }
+
+    private fun startPlayer(){
+        playerInter.startPlayer()
+    }
+
+    fun checkLiked(id:Int):Boolean{
+        return id in db.getFavID()
+
+    }
+
     fun getReadyMedia(){
         playerInter.getReadyMedia(gsonTrack.audioUrl)
     }
@@ -44,14 +72,6 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
     fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
         playerInter.setOnCompletionListener(listener)
         playerState = STATE_PREPARED
-    }
-
-    private fun runStatus():Boolean{
-        return playerState == STATE_PLAYING
-    }
-
-    private fun startPlayer(){
-        playerInter.startPlayer()
     }
 
     fun isPlaying():Boolean{
@@ -82,21 +102,30 @@ class PlayerViewModel(private val playerInter: PlayerInteractor): ViewModel() {
         playerState = STATE_PAUSED
     }
 
-    private fun returnCurrentPosition(): Int{
-        return playerInter.returnCurrentPosition()
-    }
-
     fun playRelease(){
         playerInter.playRelease()
     }
 
-    private fun runTime(){
-        timerJob = viewModelScope.launch {
-            while (runStatus()) {
-                delay(SET_TIME_WAIT)
-                playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),gsonTrack))
+    fun isFavClicked(isFav:Boolean){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(isFav){
+                db.deleteTrack(gsonTrack)
+            }
+            else{
+                db.changeFavorites(gsonTrack)
             }
         }
+        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),Track(gsonTrack.trackNameItem,
+            gsonTrack.artistNameItem,
+            gsonTrack.trackTimeItem,
+            gsonTrack.trackAvatarItem,
+            gsonTrack.trackID,
+            gsonTrack.collectionName,
+            gsonTrack.rYear,
+            gsonTrack.genre,
+            gsonTrack.country,
+            gsonTrack.audioUrl,
+            !isFav)))
     }
 
     companion object{

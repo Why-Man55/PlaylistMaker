@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -18,6 +21,8 @@ class PlayerActivity : AppCompatActivity()  {
 
     private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var binding: ActivityPlayerBinding
+
+    private lateinit var thisTrack:Track
 
     private val radius: Float by lazy {
         8 * this.resources.displayMetrics.density
@@ -31,18 +36,26 @@ class PlayerActivity : AppCompatActivity()  {
 
         viewModel.getTrack(intent).observe(this){
             bindTime(it.time)
-            val track = it.track
-            bindStaticViews(track)
-            bindGlide(track)
+            thisTrack = it.track
+            bindStaticViews(thisTrack)
+            bindGlide(thisTrack)
             binding.playerLengthEmpty.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                track.trackTimeItem
+                thisTrack.trackTimeItem
             )
-            if(track.collectionName.isEmpty()){
+            if(thisTrack.collectionName.isEmpty()){
                 bindAlbumVisible(false)
             }
             else {
                 bindAlbumVisible(true)
-                binding.playerAlbumEmpty.text = track.collectionName
+                binding.playerAlbumEmpty.text = thisTrack.collectionName
+            }
+            lifecycleScope.launch(Dispatchers.IO) {
+                if(viewModel.checkLiked(thisTrack.trackID)){
+                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_active_fav_but)
+                }
+                else{
+                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_loved_but)
+                }
             }
         }
 
@@ -64,6 +77,10 @@ class PlayerActivity : AppCompatActivity()  {
 
         binding.playerBack.setOnClickListener {
             finish()
+        }
+
+        binding.playerLovedBut.setOnClickListener{
+            viewModel.isFavClicked(thisTrack.isFavorite)
         }
     }
 

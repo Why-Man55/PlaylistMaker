@@ -7,7 +7,7 @@ import org.koin.dsl.module
 
 val mediaViewModule = module{
     viewModel {
-        FavoritesFragmentViewModel()
+        FavoritesFragmentViewModel(get())
     }
     viewModel {
         PlaylistsFragmentViewModel()

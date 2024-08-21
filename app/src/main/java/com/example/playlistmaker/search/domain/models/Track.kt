@@ -10,4 +10,5 @@ data class Track(
     val rYear:String?,
     val genre:String,
     val country:String,
-    val audioUrl:String?)
+    val audioUrl:String?,
+    var isFavorite:Boolean = false)
