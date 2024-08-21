@@ -9,14 +9,6 @@ class PlayerInteractorImpl(private val repository: MediaPlayRepository): PlayerI
         repository.getReadyMedia(url)
     }
 
-    override fun handlerPost(run:Runnable) {
-        repository.handlerPost(run)
-    }
-
-    override fun handlerCallBack(run:Runnable) {
-        repository.handlerCallBack(run)
-    }
-
     override fun pausePlayer() {
         repository.pausePlayer()
     }
@@ -31,10 +23,6 @@ class PlayerInteractorImpl(private val repository: MediaPlayRepository): PlayerI
 
     override fun startPlayer() {
         repository.startPlayer()
-    }
-
-    override fun handlerPostDelayed(run:Runnable,time: Long) {
-        repository.handlerPostDelayed(run,time)
     }
 
     override fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
