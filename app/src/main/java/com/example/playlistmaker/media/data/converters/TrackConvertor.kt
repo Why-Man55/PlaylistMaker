@@ -39,7 +39,8 @@ class TrackConvertor {
             playlist.name,
             playlist.image,
             playlist.count,
-            playlist.info)
+            playlist.info,
+            playlist.content)
     }
 
     fun map(playlist: PlaylistEntity): Playlist{
@@ -47,7 +48,8 @@ class TrackConvertor {
             playlist.name,
             playlist.image,
             playlist.count,
-            playlist.info)
+            playlist.info,
+            playlist.content)
     }
 
 }

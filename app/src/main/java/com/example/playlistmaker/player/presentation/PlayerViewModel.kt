@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.MediaInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
@@ -15,13 +16,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInter: PlayerInteractor, private val mediaInteractor: MediaInteractor, private val db:MediaInteractor): ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:MediaInteractor): ViewModel() {
 
 
     private var playerState = STATE_DEFAULT
     private var playerLiveData = MutableLiveData<PlayerVMObjects>()
 
     private var timerJob:Job? = null
+
+    private var playlistList:List<Playlist> = listOf()
 
     private lateinit var gsonTrack: Track
     fun getTrack(intent: Intent):LiveData<PlayerVMObjects> {
@@ -31,7 +34,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
 
     private fun returnTrack(intent: Intent){
         gsonTrack = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-        playerLiveData.value = PlayerVMObjects(0, gsonTrack)
+        playerLiveData.value = PlayerVMObjects(0, gsonTrack, playlistList)
     }
 
     private fun returnCurrentPosition(): Int{
@@ -42,7 +45,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
         timerJob = viewModelScope.launch {
             while (runStatus()) {
                 delay(SET_TIME_WAIT)
-                playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),gsonTrack))
+                bind(gsonTrack)
             }
         }
     }
@@ -115,7 +118,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
                 db.changeFavorites(gsonTrack)
             }
         }
-        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(),Track(gsonTrack.trackNameItem,
+        bind(Track(gsonTrack.trackNameItem,
             gsonTrack.artistNameItem,
             gsonTrack.trackTimeItem,
             gsonTrack.trackAvatarItem,
@@ -125,7 +128,25 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val med
             gsonTrack.genre,
             gsonTrack.country,
             gsonTrack.audioUrl,
-            !isFav)))
+            !isFav))
+    }
+
+    fun getPlaylists(){
+        viewModelScope.launch(Dispatchers.IO) {
+            db.getPlaylists().collect{
+                    playlists ->
+                playlistList = playlists
+                bind(gsonTrack)
+            }
+        }
+    }
+
+    fun updatePlaylists(playlist: Playlist){
+        viewModelScope.launch(Dispatchers.IO) { db.updatePlaylist(playlist) }
+    }
+
+    fun bind(track:Track){
+        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(), track, playlistList))
     }
 
     companion object{

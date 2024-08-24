@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistsFragmentBinding
 import com.example.playlistmaker.media.presentation.PlaylistsFragmentViewModel
@@ -33,6 +34,7 @@ class PlaylistFragment:Fragment() {
         adapter.submitList(listOf())
         viewModel.returnPlaylists().observe(viewLifecycleOwner){
             adapter.submitList(it)
+            binding.playlistList.layoutManager = GridLayoutManager(requireActivity(), 2)
             binding.playlistList.adapter = adapter
             if(it.isEmpty()){
                 setError(true)

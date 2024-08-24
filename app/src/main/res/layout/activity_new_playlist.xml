@@ -27,38 +27,68 @@
             android:layout_marginStart="@dimen/_12dp"/>
     </LinearLayout>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/new_playlist_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_24dp"
-        android:layout_marginTop="@dimen/_26dp"
+        android:layout_width="312dp"
+        android:layout_height="312dp"
+        android:src="@drawable/new_image_empty_ic"
+        android:scaleType="centerCrop"
         android:background="@drawable/empty_newplaylist_image"
-        app:layout_constraintTop_toBottomOf="@id/new_playlist_title_bar"
-        tools:layout_editor_absoluteX="24dp" />
+        tools:ignore="contentDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_playlist_title_bar"
+        android:layout_marginTop="26dp"
+        />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/new_playlist_name_et"
-        app:layout_constraintTop_toBottomOf="@id/new_playlist_image"
+        style="@style/new_playlist_ets"
         android:layout_marginTop="@dimen/_33dp"
-        android:layout_marginHorizontal="@dimen/_16dp"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/new_playlist_image"
+        android:hint="@string/new_name_hint"/>
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/new_playlist_inf_et"
-        app:layout_constraintTop_toBottomOf="@id/new_playlist_name_et"
+        style="@style/new_playlist_ets"
         android:layout_marginTop="@dimen/_17dp"
-        android:layout_marginHorizontal="@dimen/_16dp"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/new_playlist_name_et"
+        android:hint="@string/new_info_hint"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_name_hint"
+        app:layout_constraintStart_toStartOf="@id/new_playlist_name_et"
+        app:layout_constraintBottom_toBottomOf="@id/new_playlist_name_et"
+        android:layout_marginStart="@dimen/_12dp"
+        android:layout_marginBottom="46dp"
+        android:paddingHorizontal="@dimen/_4dp"
+        android:background="@color/white"
+        android:textColor="@color/back_blue"
+        android:visibility="gone"
+        android:id="@+id/new_name_title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_info_hint"
+        app:layout_constraintStart_toStartOf="@id/new_playlist_inf_et"
+        app:layout_constraintBottom_toBottomOf="@id/new_playlist_inf_et"
+        android:layout_marginStart="@dimen/_12dp"
+        android:layout_marginBottom="46dp"
+        android:paddingHorizontal="@dimen/_4dp"
+        android:background="@color/white"
+        android:textColor="@color/back_blue"
+        android:visibility="gone"
+        android:id="@+id/new_info_title"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="@dimen/_44dp"
-        android:backgroundTint="@color/back_blue"
+        android:backgroundTint="@color/yp_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginHorizontal="@dimen/_17dp"
         android:layout_marginBottom="@dimen/_32dp"
@@ -68,5 +98,6 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:letterSpacing="0"
-        android:enabled="false"/>
+        android:enabled="false"
+        android:id="@+id/create_playlist_but"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

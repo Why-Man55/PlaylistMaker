@@ -31,7 +31,11 @@ class MediaRepositoryImpl(
         appDatabase.trackDao().insertTrack(converter.map(track))
     }
 
-    override suspend fun updatePlaylists(playlist: Playlist) {
+    override suspend fun insertPlaylists(playlist: Playlist) {
+        appDatabase.playlistDao().insertPlaylist(converter.map(playlist))
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(converter.map(playlist))
     }
  }

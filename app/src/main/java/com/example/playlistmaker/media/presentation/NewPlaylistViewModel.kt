@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 class NewPlaylistViewModel(private val interactor:MediaInteractor):ViewModel() {
     fun updatePlaylists(playlist: Playlist){
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.updatePlaylists(playlist)
+            interactor.insertPlaylists(playlist)
         }
     }
 }

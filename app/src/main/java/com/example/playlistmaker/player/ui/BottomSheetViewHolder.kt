@@ -1,21 +1,20 @@
-package com.example.playlistmaker.media.ui.playlists
+package com.example.playlistmaker.player.ui
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.PlaylistViewBinding
+import com.example.playlistmaker.databinding.SimplePlaylistViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 
-class PlaylistFragmentViewHolder(private val binding: PlaylistViewBinding): RecyclerView.ViewHolder(binding.root) {
-
-    private val radius: Float = 8 * itemView.resources.displayMetrics.density
-    fun bind(model:Playlist) = with(binding){
-        playlistTitleName.text = model.name
-        playlistTrackCount.text = bindTracks(model.count)
+class BottomSheetViewHolder(private val binding:SimplePlaylistViewBinding):RecyclerView.ViewHolder(binding.root) {
+    private val radius: Float = 2 * itemView.resources.displayMetrics.density
+    fun bind(model:Playlist){
+        binding.playlistName.text = model.name
+        binding.playlistCount.text = bindTracks(model.count)
         Glide.with(itemView).load(model.image).centerCrop().transform(RoundedCorners(radius.toInt())).placeholder(
             R.drawable.empty_av
-        ).into(playlistTitleImage)
+        ).into(binding.playlistUrl)
     }
 
     private fun bindTracks(count:Int):String{

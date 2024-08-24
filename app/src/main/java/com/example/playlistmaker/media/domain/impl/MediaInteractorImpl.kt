@@ -26,7 +26,11 @@ class MediaInteractorImpl(private val repository: MediaRepository): MediaInterac
         repository.deleteTrack(track)
     }
 
-    override suspend fun updatePlaylists(playlist: Playlist) {
-        repository.updatePlaylists(playlist)
+    override suspend fun insertPlaylists(playlist: Playlist) {
+        repository.insertPlaylists(playlist)
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        repository.updatePlaylist(playlist)
     }
 }

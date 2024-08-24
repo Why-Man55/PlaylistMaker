@@ -10,5 +10,6 @@ interface MediaInteractor {
     fun getPlaylists():Flow<List<Playlist>>
     suspend fun changeFavorites(track: Track)
     suspend fun deleteTrack(track: Track)
-    suspend fun updatePlaylists(playlist: Playlist)
+    suspend fun insertPlaylists(playlist: Playlist)
+    suspend fun updatePlaylist(playlist: Playlist)
 }
