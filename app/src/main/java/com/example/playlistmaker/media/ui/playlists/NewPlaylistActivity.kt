@@ -71,7 +71,7 @@ class NewPlaylistActivity : AppCompatActivity() {
 
         binding.createPlaylistBut.setOnClickListener{
             val newName = binding.newPlaylistNameEt.text.toString()
-            viewModel.updatePlaylists(Playlist(newName, imageUri.toString(), 0, binding.newPlaylistInfEt.text.toString(), ""))
+            viewModel.updatePlaylists(Playlist(newName, imageUri.toString(), 0, binding.newPlaylistInfEt.text.toString(), "", null))
             Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
             finish()
         }

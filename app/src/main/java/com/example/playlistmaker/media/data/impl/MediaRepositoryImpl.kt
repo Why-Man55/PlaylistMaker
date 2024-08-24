@@ -36,6 +36,6 @@ class MediaRepositoryImpl(
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
-        appDatabase.playlistDao().updatePlaylist(converter.map(playlist))
+        appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
     }
  }

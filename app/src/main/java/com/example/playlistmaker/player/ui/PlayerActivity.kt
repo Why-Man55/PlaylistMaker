@@ -65,7 +65,7 @@ class PlayerActivity : AppCompatActivity()  {
                     }
                     else{
                         Toast.makeText(this@PlayerActivity, "Добавлено в плейлист ${playlist.name}", Toast.LENGTH_LONG).show()
-                        viewModel.updatePlaylists(Playlist(playlist.name, playlist.image, playlist.count + 1, playlist.info, playlist.content + "${thisTrack.trackID}, "))
+                        viewModel.updatePlaylists(Playlist(playlist.name, playlist.image, playlist.count + 1, playlist.info, playlist.content + "${thisTrack.trackID}, ", playlist.id))
                     }
                 }
             }
