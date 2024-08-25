@@ -148,7 +148,6 @@ class PlayerActivity : AppCompatActivity()  {
         viewModel.playRelease()
         callBack()
     }
-
     private fun playbackControl() {
         if(viewModel.isPlaying()){
             setPlay()
