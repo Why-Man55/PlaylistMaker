@@ -35,7 +35,7 @@ class TrackConvertor {
     }
 
     fun map(playlist: Playlist): PlaylistEntity{
-        return PlaylistEntity(playlist.id!!,
+        return PlaylistEntity(0L,
             playlist.name,
             playlist.image,
             playlist.count,
@@ -54,7 +54,7 @@ class TrackConvertor {
     }
 
     fun mapUpdate(playlist: Playlist):PlaylistEntity{
-        return PlaylistEntity(0L,
+        return PlaylistEntity(playlist.id!!,
             playlist.name,
             playlist.image,
             playlist.count,
