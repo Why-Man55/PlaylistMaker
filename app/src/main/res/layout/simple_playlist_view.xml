@@ -9,7 +9,7 @@
     android:orientation="horizontal"
     android:layout_marginStart="@dimen/_13dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/playlist_url"
         android:layout_width="@dimen/_45dp"
         android:layout_height="@dimen/_45dp"
@@ -19,7 +19,9 @@
         android:layout_marginTop="@dimen/_8dp"
         android:layout_marginBottom="@dimen/_8dp"
         android:layout_marginEnd="@dimen/_8dp"
-        android:importantForAccessibility="no" />
+        android:importantForAccessibility="no"
+        app:srcCompat="@drawable/empty_av"
+        style="roundedImageView"/>
     <TextView
         android:id="@+id/playlist_name"
         android:layout_width="wrap_content"

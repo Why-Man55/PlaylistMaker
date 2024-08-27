@@ -1,5 +1,11 @@
 package com.example.playlistmaker.media.data.impl
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
+import androidx.core.net.toUri
 import com.example.playlistmaker.media.data.MediaRepository
 import com.example.playlistmaker.media.data.converters.TrackConvertor
 import com.example.playlistmaker.media.data.db.AppDatabase
@@ -7,6 +13,10 @@ import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.Date
 
 class MediaRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -38,4 +48,26 @@ class MediaRepositoryImpl(
     override suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
     }
- }
+
+    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date) {
+        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
+        if (!filePath.exists()){
+            filePath.mkdirs()
+        }
+        val file = File(filePath, "${time}_playlist_image.jpg")
+        val outputStream = FileOutputStream(file)
+        BitmapFactory
+            .decodeStream(inputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+    }
+
+    override suspend fun loadImage(context: Context, time:Date, name: String):Uri {
+        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
+        val file = File(filePath, "${time}_playlist_image.jpg")
+        return file.toUri()
+    }
+
+    override suspend fun savePlaylistTrack(track: Track) {
+        appDatabase.playlistTrackDao().insertPlaylistTrack(converter.map(track))
+    }
+}

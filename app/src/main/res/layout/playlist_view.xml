@@ -3,7 +3,8 @@
     android:layout_width="@dimen/_160dp"
     android:layout_height="@dimen/_196dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/playlist_view">
+    android:id="@+id/playlist_view"
+    android:layout_marginTop="@dimen/_16dp">
 
     <ImageView
         android:layout_width="match_parent"

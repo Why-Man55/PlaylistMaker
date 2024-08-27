@@ -149,6 +149,12 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(), track, playlistList))
     }
 
+    fun insertPlaylistTrack(track: Track){
+        viewModelScope.launch(Dispatchers.IO) {
+            db.insertPlaylistTrack(track)
+        }
+    }
+
     companion object{
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1

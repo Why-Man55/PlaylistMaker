@@ -24,7 +24,7 @@ class SettingsFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.themeSwitcher.isChecked = (activity?.applicationContext as App).darkTheme
-        binding.themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
+        binding.themeSwitcher.setOnCheckedChangeListener{ _, checked ->
             (activity?.applicationContext as App).switchTheme(checked)
             viewModel.editSP(checked)
         }

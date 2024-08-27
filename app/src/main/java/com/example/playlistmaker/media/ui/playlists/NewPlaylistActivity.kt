@@ -1,10 +1,7 @@
 package com.example.playlistmaker.media.ui.playlists
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
@@ -15,14 +12,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityNewPlaylistBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
+import java.util.Calendar
+import java.util.Date
 
 class NewPlaylistActivity : AppCompatActivity() {
     private val viewModel by viewModel<NewPlaylistViewModel>()
@@ -40,14 +40,13 @@ class NewPlaylistActivity : AppCompatActivity() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
+                    Glide.with(this).load(uri).centerCrop().transform(CenterCrop(),RoundedCorners(16)).into(binding.newPlaylistImage)
                     imageUri = uri
-                    binding.newPlaylistImage.setImageURI(imageUri)
-                    saveImage(imageUri!!)
                     isChanged = true
                 }
             }
 
-        val quiteDialoge = MaterialAlertDialogBuilder(this)
+        val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
             .setTitle(getString(R.string.new_playlist_quite_title))
             .setMessage(getString(R.string.new_playlist_quite_massage))
             .setNeutralButton(getString(R.string.new_playlist_resume)) { _, _ ->
@@ -78,8 +77,12 @@ class NewPlaylistActivity : AppCompatActivity() {
 
         binding.createPlaylistBut.setOnClickListener{
             val newName = binding.newPlaylistNameEt.text.toString()
+            val currentTime: Date = Calendar.getInstance().time
             viewModel.updatePlaylists(Playlist(newName, imageUri.toString(), 0, binding.newPlaylistInfEt.text.toString(), "", null))
             Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
+            if(imageUri.toString().isNotEmpty()){
+                saveImage(imageUri!!,currentTime, newName)
+            }
             finish()
         }
 
@@ -91,7 +94,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val empty = !binding.newPlaylistNameEt.text.isNullOrEmpty()
                 if(empty){
-                    binding.createPlaylistBut.setBackgroundResource(R.color.back_blue)
+                    binding.createPlaylistBut.setBackgroundResource(R.drawable.create_playlist_but_bg)
                 }
                 else{
                     binding.createPlaylistBut.setBackgroundResource(R.color.yp_gray)
@@ -114,11 +117,6 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     private fun bindET(b:Boolean, view: EditText, text: TextView){
         val boolean = b or view.text.isNotEmpty()
         text.isVisible = boolean
@@ -130,16 +128,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveImage(uri: Uri) {
-        val filePath = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-        if (!filePath.exists()){
-            filePath.mkdirs()
-        }
-        val file = File(filePath, binding.newPlaylistNameEt.text.toString() + "_playlist_image.jpg")
-        val inputStream = contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+    private fun saveImage(uri: Uri, time:Date, name:String) {
+        viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
     }
 }

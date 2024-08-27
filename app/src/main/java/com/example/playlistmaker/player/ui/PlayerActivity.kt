@@ -64,8 +64,10 @@ class PlayerActivity : AppCompatActivity()  {
                         Toast.makeText(this@PlayerActivity, "Трек уже добавлен в плейлист ${playlist.name}", Toast.LENGTH_LONG).show()
                     }
                     else{
+                        viewModel.insertPlaylistTrack(thisTrack)
                         Toast.makeText(this@PlayerActivity, "Добавлено в плейлист ${playlist.name}", Toast.LENGTH_LONG).show()
                         viewModel.updatePlaylists(Playlist(playlist.name, playlist.image, playlist.count + 1, playlist.info, playlist.content + "${thisTrack.trackID}, ", playlist.id))
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
                 }
             }
