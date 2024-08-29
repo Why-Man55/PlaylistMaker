@@ -16,7 +16,7 @@ interface MediaInteractor {
     suspend fun deleteTrack(track: Track)
     suspend fun insertPlaylists(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
-    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date)
+    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri
     suspend fun loadImage(context: Context, time:Date, name: String): Uri
     suspend fun insertPlaylistTrack(track: Track)
 }

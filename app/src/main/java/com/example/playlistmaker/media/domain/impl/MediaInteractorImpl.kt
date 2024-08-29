@@ -38,8 +38,8 @@ class MediaInteractorImpl(private val repository: MediaRepository): MediaInterac
         repository.updatePlaylist(playlist)
     }
 
-    override fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date) {
-        repository.saveImage(context, name, inputStream, time)
+    override fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri {
+        return repository.saveImage(context, name, inputStream, time)
     }
 
     override suspend fun loadImage(context: Context, time: Date, name: String): Uri {

@@ -49,7 +49,7 @@ class MediaRepositoryImpl(
         appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
     }
 
-    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date) {
+    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date):Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
         if (!filePath.exists()){
             filePath.mkdirs()
@@ -59,6 +59,7 @@ class MediaRepositoryImpl(
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        return file.toUri()
     }
 
     override suspend fun loadImage(context: Context, time:Date, name: String):Uri {

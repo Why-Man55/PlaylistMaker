@@ -78,11 +78,12 @@ class NewPlaylistActivity : AppCompatActivity() {
         binding.createPlaylistBut.setOnClickListener{
             val newName = binding.newPlaylistNameEt.text.toString()
             val currentTime: Date = Calendar.getInstance().time
-            viewModel.updatePlaylists(Playlist(newName, imageUri.toString(), 0, binding.newPlaylistInfEt.text.toString(), "", null))
-            Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
-            if(imageUri.toString().isNotEmpty()){
-                saveImage(imageUri!!,currentTime, newName)
+            var savedImageUri = imageUri.toString()
+            if (imageUri.toString().isNotEmpty()){
+                savedImageUri = saveImage(imageUri!!,currentTime, newName).toString()
             }
+            viewModel.updatePlaylists(Playlist(newName, savedImageUri, 0, binding.newPlaylistInfEt.text.toString(), "", null))
+            Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
             finish()
         }
 
