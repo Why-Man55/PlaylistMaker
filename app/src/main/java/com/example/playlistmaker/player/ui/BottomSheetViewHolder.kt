@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.SimplePlaylistViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 
@@ -13,9 +12,12 @@ class BottomSheetViewHolder(private val binding:SimplePlaylistViewBinding):Recyc
     fun bind(model:Playlist){
         binding.playlistName.text = model.name
         binding.playlistCount.text = bindTracks(model.count)
-        Glide.with(itemView).load(model.image).transform(CenterCrop(), RoundedCorners(radius.toInt())).placeholder(
-            R.drawable.empty_av
-        ).into(binding.playlistUrl)
+//        Glide.with(itemView).load(model.image).transform(CenterCrop(), RoundedCorners(radius.toInt())).placeholder(
+//            R.drawable.empty_av
+//        ).into(binding.playlistUrl)
+
+        Glide.with(itemView).load(model.image)
+            .transform(CenterCrop(), RoundedCorners(radius.toInt())).into(binding.playlistUrl)
     }
 
     private fun bindTracks(count:Int):String{

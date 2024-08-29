@@ -26,8 +26,8 @@ class NewPlaylistViewModel(private val interactor:MediaInteractor):ViewModel() {
         }
     }
 
-    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date){
-        interactor.saveImage(context,name,inputStream,time)
+    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri{
+        return interactor.saveImage(context,name,inputStream,time)
     }
 
     fun loadImage(context: Context, time:Date, name: String){

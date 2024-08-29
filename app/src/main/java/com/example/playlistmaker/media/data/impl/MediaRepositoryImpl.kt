@@ -49,7 +49,7 @@ class MediaRepositoryImpl(
         appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
     }
 
-    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date):Uri {
+    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
         if (!filePath.exists()){
             filePath.mkdirs()

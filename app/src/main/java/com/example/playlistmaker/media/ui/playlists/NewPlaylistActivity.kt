@@ -93,14 +93,14 @@ class NewPlaylistActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val empty = !binding.newPlaylistNameEt.text.isNullOrEmpty()
+                val empty = binding.newPlaylistNameEt.text.isEmpty()
                 if(empty){
-                    binding.createPlaylistBut.setBackgroundResource(R.drawable.create_playlist_but_bg)
+                    binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
                 }
                 else{
-                    binding.createPlaylistBut.setBackgroundResource(R.color.yp_gray)
+                    binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
                 }
-                binding.createPlaylistBut.isEnabled = empty
+                binding.createPlaylistBut.isEnabled = !empty
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -129,7 +129,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveImage(uri: Uri, time:Date, name:String) {
-        viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
+    private fun saveImage(uri: Uri, time:Date, name:String) : Uri {
+        return viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
     }
 }
