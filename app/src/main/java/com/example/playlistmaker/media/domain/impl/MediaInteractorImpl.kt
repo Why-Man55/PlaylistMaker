@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.Flow
 import java.io.InputStream
 import java.util.Date
 
-class MediaInteractorImpl(private val repository: MediaRepository): MediaInteractor {
+class MediaInteractorImpl(private val repository: MediaRepository) : MediaInteractor {
     override fun getFavID(): List<Int> {
         return repository.getFavID()
     }
+
     override fun getTracks(): Flow<List<Track>> {
         return repository.getFavorites()
     }
@@ -38,12 +39,13 @@ class MediaInteractorImpl(private val repository: MediaRepository): MediaInterac
         repository.updatePlaylist(playlist)
     }
 
-    override fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri {
+    override fun saveImage(
+        context: Context,
+        name: String,
+        inputStream: InputStream?,
+        time: Date
+    ): Uri {
         return repository.saveImage(context, name, inputStream, time)
-    }
-
-    override suspend fun loadImage(context: Context, time: Date, name: String): Uri {
-        return repository.loadImage(context, time, name)
     }
 
     override suspend fun insertPlaylistTrack(track: Track) {

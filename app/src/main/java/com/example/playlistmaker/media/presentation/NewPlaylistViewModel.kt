@@ -13,26 +13,20 @@ import kotlinx.coroutines.launch
 import java.io.InputStream
 import java.util.Date
 
-class NewPlaylistViewModel(private val interactor:MediaInteractor):ViewModel() {
+class NewPlaylistViewModel(private val interactor: MediaInteractor) : ViewModel() {
     private var fileLiveData = MutableLiveData<Uri>()
 
-    fun getFile():LiveData<Uri>{
+    fun getFile(): LiveData<Uri> {
         return fileLiveData
     }
 
-    fun updatePlaylists(playlist: Playlist){
+    fun updatePlaylists(playlist: Playlist) {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.insertPlaylists(playlist)
         }
     }
 
-    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri{
-        return interactor.saveImage(context,name,inputStream,time)
-    }
-
-    fun loadImage(context: Context, time:Date, name: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            fileLiveData.postValue(interactor.loadImage(context,time,name))
-        }
+    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date) {
+        fileLiveData.postValue(interactor.saveImage(context, name, inputStream, time))
     }
 }

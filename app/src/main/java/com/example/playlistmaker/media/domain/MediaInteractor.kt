@@ -11,12 +11,11 @@ import java.util.Date
 interface MediaInteractor {
     fun getFavID(): List<Int>
     fun getTracks(): Flow<List<Track>>
-    fun getPlaylists():Flow<List<Playlist>>
+    fun getPlaylists(): Flow<List<Playlist>>
     suspend fun changeFavorites(track: Track)
     suspend fun deleteTrack(track: Track)
     suspend fun insertPlaylists(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
-    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri
-    suspend fun loadImage(context: Context, time:Date, name: String): Uri
+    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date): Uri
     suspend fun insertPlaylistTrack(track: Track)
 }

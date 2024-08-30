@@ -26,10 +26,11 @@ import java.util.Date
 
 class NewPlaylistActivity : AppCompatActivity() {
     private val viewModel by viewModel<NewPlaylistViewModel>()
-    private var _binding:ActivityNewPlaylistBinding? = null
+    private var _binding: ActivityNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
-    private var imageUri:Uri? = null
+    private lateinit var newName: String
+    private var imageUri: Uri? = null
     private var isChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,8 @@ class NewPlaylistActivity : AppCompatActivity() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    Glide.with(this).load(uri).centerCrop().transform(CenterCrop(),RoundedCorners(16)).into(binding.newPlaylistImage)
+                    Glide.with(this).load(uri).centerCrop()
+                        .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
                     imageUri = uri
                     isChanged = true
                 }
@@ -56,35 +58,37 @@ class NewPlaylistActivity : AppCompatActivity() {
                 finish()
             }
 
-        binding.newPlaylistQuiteBut.setOnClickListener{
-            if(isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()){
+        viewModel.getFile().observe(this) {
+            updatePlaylists(it.toString())
+        }
+
+        binding.newPlaylistQuiteBut.setOnClickListener {
+            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
                 quiteDialoge.show()
-            }
-            else{
+            } else {
                 finish()
             }
         }
 
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 quiteDialoge.show()
             }
         })
 
-        binding.newPlaylistImage.setOnClickListener{
+        binding.newPlaylistImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        binding.createPlaylistBut.setOnClickListener{
-            val newName = binding.newPlaylistNameEt.text.toString()
+        binding.createPlaylistBut.setOnClickListener {
+            newName = binding.newPlaylistNameEt.text.toString()
             val currentTime: Date = Calendar.getInstance().time
-            var savedImageUri = imageUri.toString()
-            if (imageUri.toString().isNotEmpty()){
-                savedImageUri = saveImage(imageUri!!,currentTime, newName).toString()
+            if (imageUri.toString().isNotEmpty()) {
+                saveImage(imageUri!!, currentTime, newName).toString()
+            } else {
+                updatePlaylists(imageUri.toString())
             }
-            viewModel.updatePlaylists(Playlist(newName, savedImageUri, 0, binding.newPlaylistInfEt.text.toString(), "", null))
-            Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
-            finish()
+
         }
 
         val nameWatcher = object : TextWatcher {
@@ -94,10 +98,9 @@ class NewPlaylistActivity : AppCompatActivity() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val empty = binding.newPlaylistNameEt.text.isEmpty()
-                if(empty){
+                if (empty) {
                     binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
-                }
-                else{
+                } else {
                     binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
                 }
                 binding.createPlaylistBut.isEnabled = !empty
@@ -118,18 +121,32 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindET(b:Boolean, view: EditText, text: TextView){
+    private fun updatePlaylists(savedImageUri: String) {
+        viewModel.updatePlaylists(
+            Playlist(
+                newName,
+                savedImageUri,
+                0,
+                binding.newPlaylistInfEt.text.toString(),
+                "",
+                null
+            )
+        )
+        Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
+        finish()
+    }
+
+    private fun bindET(b: Boolean, view: EditText, text: TextView) {
         val boolean = b or view.text.isNotEmpty()
         text.isVisible = boolean
-        if(boolean){
+        if (boolean) {
             view.setBackgroundResource(R.drawable.new_playlist_et_focus_back)
-        }
-        else{
+        } else {
             view.setBackgroundResource(R.drawable.new_playlist_et_back)
         }
     }
 
-    private fun saveImage(uri: Uri, time:Date, name:String) : Uri {
-        return viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
+    private fun saveImage(uri: Uri, time: Date, name: String) {
+        viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
     }
 }

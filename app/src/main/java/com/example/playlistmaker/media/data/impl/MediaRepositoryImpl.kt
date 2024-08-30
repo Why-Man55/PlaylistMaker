@@ -20,21 +20,25 @@ import java.util.Date
 
 class MediaRepositoryImpl(
     private val appDatabase: AppDatabase,
-    private val converter: TrackConvertor): MediaRepository {
+    private val converter: TrackConvertor
+) : MediaRepository {
 
     override fun getFavID(): List<Int> {
         return appDatabase.trackDao().getTrackID()
     }
+
     override fun getFavorites(): Flow<List<Track>> {
-        return appDatabase.trackDao().getTracks().map{entityList -> entityList.map(converter::map)}
+        return appDatabase.trackDao().getTracks()
+            .map { entityList -> entityList.map(converter::map) }
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> {
-        return appDatabase.playlistDao().getPlaylists().map { playlist -> playlist.map(converter::map)}
+        return appDatabase.playlistDao().getPlaylists()
+            .map { playlist -> playlist.map(converter::map) }
     }
 
-    override suspend fun deleteTrack(track: Track){
-        appDatabase.trackDao().deleteTrack(converter.map(track).id )
+    override suspend fun deleteTrack(track: Track) {
+        appDatabase.trackDao().deleteTrack(converter.map(track).id)
     }
 
     override suspend fun changeFavorites(track: Track) {
@@ -49,9 +53,14 @@ class MediaRepositoryImpl(
         appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
     }
 
-    override fun saveImage(context: Context, name: String,inputStream: InputStream?, time: Date): Uri {
+    override fun saveImage(
+        context: Context,
+        name: String,
+        inputStream: InputStream?,
+        time: Date
+    ): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
-        if (!filePath.exists()){
+        if (!filePath.exists()) {
             filePath.mkdirs()
         }
         val file = File(filePath, "${time}_playlist_image.jpg")
@@ -59,12 +68,6 @@ class MediaRepositoryImpl(
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-        return file.toUri()
-    }
-
-    override suspend fun loadImage(context: Context, time:Date, name: String):Uri {
-        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), name)
-        val file = File(filePath, "${time}_playlist_image.jpg")
         return file.toUri()
     }
 

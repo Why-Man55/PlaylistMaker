@@ -16,7 +16,6 @@ interface MediaRepository {
     suspend fun deleteTrack(track: Track)
     suspend fun insertPlaylists(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
-    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date):Uri
-    suspend fun loadImage(context: Context, time:Date, name: String): Uri
+    fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date): Uri
     suspend fun savePlaylistTrack(track: Track)
 }
