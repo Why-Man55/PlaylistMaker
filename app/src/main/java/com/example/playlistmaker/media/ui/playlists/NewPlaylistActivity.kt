@@ -33,6 +33,16 @@ class NewPlaylistActivity : AppCompatActivity() {
     private var imageUri: Uri? = null
     private var isChanged = false
 
+    val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
+        .setTitle(getString(R.string.new_playlist_quite_title))
+        .setMessage(getString(R.string.new_playlist_quite_massage))
+        .setNeutralButton(getString(R.string.new_playlist_resume)) { _, _ ->
+            // empty
+        }
+        .setPositiveButton(getString(R.string.new_playlst_cancel)) { _, _ ->
+            finish()
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityNewPlaylistBinding.inflate(layoutInflater)
@@ -48,31 +58,17 @@ class NewPlaylistActivity : AppCompatActivity() {
                 }
             }
 
-        val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
-            .setTitle(getString(R.string.new_playlist_quite_title))
-            .setMessage(getString(R.string.new_playlist_quite_massage))
-            .setNeutralButton(getString(R.string.new_playlist_resume)) { _, _ ->
-                // empty
-            }
-            .setPositiveButton(getString(R.string.new_playlst_cancel)) { _, _ ->
-                finish()
-            }
-
         viewModel.getFile().observe(this) {
             updatePlaylists(it.toString())
         }
 
         binding.newPlaylistQuiteBut.setOnClickListener {
-            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
-                quiteDialoge.show()
-            } else {
-                finish()
-            }
+            showDialoge()
         }
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                quiteDialoge.show()
+                showDialoge()
             }
         })
 
@@ -86,7 +82,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             if (imageUri.toString().isNotEmpty()) {
                 saveImage(imageUri!!, currentTime, newName).toString()
             } else {
-                updatePlaylists(imageUri.toString())
+                updatePlaylists(null)
             }
 
         }
@@ -121,7 +117,15 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePlaylists(savedImageUri: String) {
+    private fun showDialoge(){
+        if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+            quiteDialoge.show()
+        } else {
+            finish()
+        }
+    }
+
+    private fun updatePlaylists(savedImageUri: String?) {
         viewModel.updatePlaylists(
             Playlist(
                 newName,
