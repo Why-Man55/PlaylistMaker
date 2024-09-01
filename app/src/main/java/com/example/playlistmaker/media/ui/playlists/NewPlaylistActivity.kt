@@ -90,7 +90,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             if (imageUri.isNotEmpty()) {
                 saveImage(imageUri, currentTime, newName)
             } else {
-                updatePlaylists(imageUri.toString())
+                updatePlaylists(imageUri)
             }
 
         }
