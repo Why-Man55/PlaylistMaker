@@ -20,10 +20,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavoritesFragment:Fragment() {
-    companion object{
+class FavoritesFragment : Fragment() {
+    companion object {
         fun newInstance() = FavoritesFragment().apply { }
-        private const val CLICK_DELAY:Long = 1000
+        private const val CLICK_DELAY: Long = 1000
         private const val INTENT_KEY = "track"
     }
 
@@ -34,7 +34,7 @@ class FavoritesFragment:Fragment() {
     private var isClickAllowed = true
 
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -46,8 +46,10 @@ class FavoritesFragment:Fragment() {
         return current
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FavoritesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,11 +58,11 @@ class FavoritesFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val actContext = requireContext()
-        val trackOnClicked = object :TrackOnClicked{
+        val trackOnClicked = object : TrackOnClicked {
             override fun getTrackAndStart(track: Track) {
-                if(clickDebounce()){
+                if (clickDebounce()) {
                     val displayIntent = Intent(actContext, PlayerActivity::class.java)
-                    displayIntent.putExtra(INTENT_KEY,Gson().toJson(track))
+                    displayIntent.putExtra(INTENT_KEY, Gson().toJson(track))
                     startActivity(displayIntent)
                 }
             }
@@ -69,12 +71,11 @@ class FavoritesFragment:Fragment() {
         val favoriteAdapter = TrackAdapter(trackOnClicked)
         favoriteAdapter.submitList(listOf())
 
-        viewModel.getFavorites().observe(this as LifecycleOwner){
-            if(it.error != 1){
+        viewModel.getFavorites().observe(this as LifecycleOwner) {
+            if (it.error != 1) {
                 favoriteAdapter.submitList(it.tracks)
                 binding.favoriteError.isVisible = false
-            }
-            else{
+            } else {
                 favoriteAdapter.submitList(listOf())
                 binding.favoriteError.isVisible = true
             }

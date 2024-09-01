@@ -16,34 +16,35 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:MediaInteractor): ViewModel() {
+class PlayerViewModel(private val playerInter: PlayerInteractor, private val db: MediaInteractor) :
+    ViewModel() {
 
 
     private var playerState = STATE_DEFAULT
     private var playerLiveData = MutableLiveData<PlayerVMObjects>()
 
-    private var timerJob:Job? = null
+    private var timerJob: Job? = null
 
-    private var playlistList:List<Playlist> = listOf()
+    private var playlistList: List<Playlist> = listOf()
     private var linked = false
 
     private lateinit var gsonTrack: Track
-    fun getTrack(intent: Intent):LiveData<PlayerVMObjects> {
+    fun getTrack(intent: Intent): LiveData<PlayerVMObjects> {
         returnTrack(intent)
         return playerLiveData
     }
 
-    private fun returnTrack(intent: Intent){
+    private fun returnTrack(intent: Intent) {
         gsonTrack = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
         checkLiked(gsonTrack.trackID)
         playerLiveData.value = PlayerVMObjects(0, gsonTrack, playlistList, linked)
     }
 
-    private fun returnCurrentPosition(): Int{
+    private fun returnCurrentPosition(): Int {
         return playerInter.returnCurrentPosition()
     }
 
-    private fun runTime(){
+    private fun runTime() {
         timerJob = viewModelScope.launch {
             while (runStatus()) {
                 delay(SET_TIME_WAIT)
@@ -52,21 +53,21 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         }
     }
 
-    private fun runStatus():Boolean{
+    private fun runStatus(): Boolean {
         return playerState == STATE_PLAYING
     }
 
-    private fun startPlayer(){
+    private fun startPlayer() {
         playerInter.startPlayer()
     }
 
-    private fun checkLiked(id:Int){
+    private fun checkLiked(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             linked = id in db.getFavID()
         }
     }
 
-    fun getReadyMedia(){
+    fun getReadyMedia() {
         playerInter.getReadyMedia(gsonTrack.audioUrl)
     }
 
@@ -80,75 +81,82 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         playerState = STATE_PREPARED
     }
 
-    fun isPlaying():Boolean{
-        when(playerState) {
+    fun isPlaying(): Boolean {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
                 playerState = STATE_PAUSED
                 return true
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
                 playerState = STATE_PLAYING
                 runTime()
                 return false
             }
-            else ->{
+
+            else -> {
                 return false
             }
         }
     }
 
-    fun stopTimer(){
+    fun stopTimer() {
         timerJob?.cancel()
     }
 
-    fun pausePlayer(){
+    fun pausePlayer() {
         playerInter.pausePlayer()
         playerState = STATE_PAUSED
     }
 
-    fun playRelease(){
+    fun playRelease() {
         playerInter.playRelease()
     }
 
-    fun isFavClicked(isFav:Boolean){
+    fun isFavClicked(isFav: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            if(isFav){
+            if (isFav) {
                 db.deleteTrack(gsonTrack)
-            }
-            else{
+            } else {
                 db.changeFavorites(gsonTrack)
             }
             checkLiked(gsonTrack.trackID)
         }
     }
 
-    fun getPlaylists(){
+    fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
-            db.getPlaylists().collect{
-                    playlists ->
+            db.getPlaylists().collect { playlists ->
                 playlistList = playlists
                 bind(gsonTrack)
             }
         }
     }
 
-    fun updatePlaylists(playlist: Playlist){
+    fun updatePlaylists(playlist: Playlist) {
         viewModelScope.launch(Dispatchers.IO) { db.updatePlaylist(playlist) }
     }
 
-    fun bind(track:Track){
-        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(), track, playlistList, linked))
+    fun bind(track: Track) {
+        playerLiveData.postValue(
+            PlayerVMObjects(
+                returnCurrentPosition().toLong(),
+                track,
+                playlistList,
+                linked
+            )
+        )
     }
 
-    fun insertPlaylistTrack(track: Track){
+    fun insertPlaylistTrack(track: Track) {
         viewModelScope.launch(Dispatchers.IO) {
             db.insertPlaylistTrack(track)
         }
     }
 
-    companion object{
+    companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2

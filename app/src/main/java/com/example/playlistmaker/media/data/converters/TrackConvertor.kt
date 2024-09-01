@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.data.converters
 
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
+import com.example.playlistmaker.media.data.db.entity.PlaylistsTrackEntity
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
@@ -59,6 +60,21 @@ class TrackConvertor {
             playlist.count,
             playlist.info,
             playlist.content)
+    }
+
+    fun mapPTE(track: Track):PlaylistsTrackEntity{
+        return PlaylistsTrackEntity(0L,
+            track.trackID,
+            track.trackNameItem,
+            track.artistNameItem,
+            track.trackTimeItem,
+            track.trackAvatarItem,
+            track.collectionName,
+            track.rYear,
+            track.genre,
+            track.country,
+            track.audioUrl
+        )
     }
 
 }

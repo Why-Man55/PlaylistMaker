@@ -9,20 +9,20 @@ import com.example.playlistmaker.media.domain.model.Playlist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PlaylistsFragmentViewModel(private val interactor: MediaInteractor):ViewModel() {
+class PlaylistsFragmentViewModel(private val interactor: MediaInteractor) : ViewModel() {
 
     private val playlistsLiveData = MutableLiveData<List<Playlist>>()
-    fun returnPlaylists():LiveData<List<Playlist>> = playlistsLiveData
+    fun returnPlaylists(): LiveData<List<Playlist>> = playlistsLiveData
 
-    fun getPlaylists(){
+    fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getPlaylists().collect{
-                playlists -> bind(playlists)
+            interactor.getPlaylists().collect { playlists ->
+                bind(playlists)
             }
         }
     }
 
-    private fun bind(playlists:List<Playlist>){
+    private fun bind(playlists: List<Playlist>) {
         playlistsLiveData.postValue(playlists)
     }
 }

@@ -8,12 +8,12 @@ data class TrackEntity(
     @PrimaryKey(autoGenerate = true)
     val idKey: Long,
     val id: Int,
-    val trackNameItem:String,
-    val artistNameItem:String,
-    val trackTimeItem:Int,
-    val trackAvatarItem:String,
-    val collectionName:String,
-    val rYear:String?,
-    val genre:String,
-    val country:String,
-    val audioUrl:String?)
+    val trackNameItem: String,
+    val artistNameItem: String,
+    val trackTimeItem: Int,
+    val trackAvatarItem: String,
+    val collectionName: String,
+    val rYear: String?,
+    val genre: String,
+    val country: String,
+    val audioUrl: String?)

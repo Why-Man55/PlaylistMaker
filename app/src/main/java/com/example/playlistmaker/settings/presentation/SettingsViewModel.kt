@@ -8,18 +8,21 @@ import com.example.playlistmaker.sharing.domain.SharingInteractor
 class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingInteractor
-):ViewModel() {
+) : ViewModel() {
 
-    fun editSP(boolean: Boolean){
+    fun editSP(boolean: Boolean) {
         settingsInteractor.updateThemeSetting(ThemeSettings(boolean))
     }
-    fun startShare(){
+
+    fun startShare() {
         sharingInteractor.shareApp()
     }
-    fun startSupport(){
+
+    fun startSupport() {
         sharingInteractor.openSupport()
     }
-    fun startAgreement(){
+
+    fun startAgreement() {
         sharingInteractor.openTerms()
     }
 }

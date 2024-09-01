@@ -13,16 +13,19 @@ import com.example.playlistmaker.databinding.PlaylistsFragmentBinding
 import com.example.playlistmaker.media.presentation.PlaylistsFragmentViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment:Fragment() {
-    companion object{
-        fun newInstance():Fragment = PlaylistFragment().apply {}
+class PlaylistFragment : Fragment() {
+    companion object {
+        fun newInstance(): Fragment = PlaylistFragment().apply {}
     }
+
     private val viewModel by viewModel<PlaylistsFragmentViewModel>()
     private var _binding: PlaylistsFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = PlaylistsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,19 +35,18 @@ class PlaylistFragment:Fragment() {
 
         val adapter = PlaylistFragmentAdapter()
         adapter.submitList(listOf())
-        viewModel.returnPlaylists().observe(viewLifecycleOwner){
+        viewModel.returnPlaylists().observe(viewLifecycleOwner) {
             adapter.submitList(it)
             binding.playlistList.layoutManager = GridLayoutManager(requireActivity(), 2)
             binding.playlistList.adapter = adapter
-            if(it.isEmpty()){
+            if (it.isEmpty()) {
                 setError(true)
-            }
-            else{
+            } else {
                 setError(false)
             }
         }
 
-        binding.newPlaylistBut.setOnClickListener{
+        binding.newPlaylistBut.setOnClickListener {
             findNavController().navigate(R.id.action_mediatekFragment_to_newPlaylistActivity)
         }
         viewModel.getPlaylists()
@@ -55,7 +57,7 @@ class PlaylistFragment:Fragment() {
         _binding = null
     }
 
-    private fun setError(boolean: Boolean){
+    private fun setError(boolean: Boolean) {
         binding.playlistErrorMassage.isVisible = boolean
     }
 }

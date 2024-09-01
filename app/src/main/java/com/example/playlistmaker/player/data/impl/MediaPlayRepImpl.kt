@@ -3,17 +3,17 @@ package com.example.playlistmaker.player.data.impl
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.MediaPlayRepository
 
-class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer): MediaPlayRepository {
+class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer) : MediaPlayRepository {
 
     override fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
         mediaPlayer.setOnPreparedListener(listener)
     }
 
     override fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
-        mediaPlayer.setOnCompletionListener (listener)
+        mediaPlayer.setOnCompletionListener(listener)
     }
 
-    override fun getReadyMedia(url: String?){
+    override fun getReadyMedia(url: String?) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
     }
@@ -26,11 +26,11 @@ class MediaPlayRepImpl(private val mediaPlayer: MediaPlayer): MediaPlayRepositor
         mediaPlayer.pause()
     }
 
-    override fun returnCurrentPosition(): Int{
+    override fun returnCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }
 
-    override fun playRelease(){
+    override fun playRelease() {
         mediaPlayer.reset()
     }
 }

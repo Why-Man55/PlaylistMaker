@@ -72,6 +72,6 @@ class MediaRepositoryImpl(
     }
 
     override suspend fun savePlaylistTrack(track: Track) {
-        appDatabase.playlistTrackDao().insertPlaylistTrack(converter.map(track))
+        appDatabase.playlistTrackDao().insertPlaylistTrack(converter.mapPTE(track))
     }
 }

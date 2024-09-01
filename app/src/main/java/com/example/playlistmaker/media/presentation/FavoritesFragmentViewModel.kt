@@ -9,28 +9,27 @@ import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FavoritesFragmentViewModel(private val interactor: MediaInteractor): ViewModel() {
+class FavoritesFragmentViewModel(private val interactor: MediaInteractor) : ViewModel() {
     private val favoriteLiveData = MutableLiveData<FFVMObject>()
-    fun getFavorites():LiveData<FFVMObject> = favoriteLiveData
+    fun getFavorites(): LiveData<FFVMObject> = favoriteLiveData
 
-    fun getTracks(){
+    fun getTracks() {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getTracks().collect{
-                    tracks -> processTracks(tracks)
+            interactor.getTracks().collect { tracks ->
+                processTracks(tracks)
             }
         }
     }
 
-    private fun processTracks(tracks: List<Track>){
-        if(tracks.isEmpty()){
+    private fun processTracks(tracks: List<Track>) {
+        if (tracks.isEmpty()) {
             bind(emptyList(), 1)
-        }
-        else{
+        } else {
             bind(tracks, null)
         }
     }
 
-    private fun bind(tracks: List<Track>, error:Int?){
+    private fun bind(tracks: List<Track>, error: Int?) {
         favoriteLiveData.postValue(FFVMObject(tracks, error))
     }
 }

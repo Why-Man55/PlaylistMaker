@@ -5,14 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
-import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
-import com.example.playlistmaker.media.presentation.PlaylistsFragmentViewModel
 
-class PlaylistFragmentAdapter: ListAdapter<Playlist, PlaylistFragmentViewHolder>(PlaylistItemComparator()) {
+class PlaylistFragmentAdapter :
+    ListAdapter<Playlist, PlaylistFragmentViewHolder>(PlaylistItemComparator()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistFragmentViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
-        return PlaylistFragmentViewHolder(PlaylistViewBinding.inflate(layoutInspector, parent, false))
+        return PlaylistFragmentViewHolder(
+            PlaylistViewBinding.inflate(
+                layoutInspector,
+                parent,
+                false
+            )
+        )
     }
+
     override fun onBindViewHolder(holder: PlaylistFragmentViewHolder, position: Int) {
         holder.bind(getItem(position))
     }

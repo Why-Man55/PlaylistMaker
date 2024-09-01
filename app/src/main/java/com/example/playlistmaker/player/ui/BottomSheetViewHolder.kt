@@ -7,9 +7,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.SimplePlaylistViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 
-class BottomSheetViewHolder(private val binding:SimplePlaylistViewBinding):RecyclerView.ViewHolder(binding.root) {
+class BottomSheetViewHolder(private val binding: SimplePlaylistViewBinding) :
+    RecyclerView.ViewHolder(binding.root) {
     private val radius: Float = 2 * itemView.resources.displayMetrics.density
-    fun bind(model:Playlist){
+    fun bind(model: Playlist) {
         binding.playlistName.text = model.name
         binding.playlistCount.text = bindTracks(model.count)
 //        Glide.with(itemView).load(model.image).transform(CenterCrop(), RoundedCorners(radius.toInt())).placeholder(
@@ -20,17 +21,14 @@ class BottomSheetViewHolder(private val binding:SimplePlaylistViewBinding):Recyc
             .transform(CenterCrop(), RoundedCorners(radius.toInt())).into(binding.playlistUrl)
     }
 
-    private fun bindTracks(count:Int):String{
-        return if(count == 11 or 12 or 13 or 14){
+    private fun bindTracks(count: Int): String {
+        return if (count == 11 or 12 or 13 or 14) {
             "$count треков"
-        }
-        else if(count % 10 == 1){
+        } else if (count % 10 == 1) {
             "$count трек"
-        }
-        else if(count % 10 == 2 or 3 or 4){
+        } else if (count % 10 == 2 or 3 or 4) {
             "$count трека"
-        }
-        else{
+        } else {
             "$count треков"
         }
     }

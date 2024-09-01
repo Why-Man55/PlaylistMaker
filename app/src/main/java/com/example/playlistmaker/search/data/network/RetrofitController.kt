@@ -9,7 +9,8 @@ import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RetrofitController(private val iTunesService:ITunesApi,private val context: Context): NetworkClient {
+class RetrofitController(private val iTunesService: ITunesApi, private val context: Context) :
+    NetworkClient {
 
     override suspend fun doSearch(dto: Any): Response {
         if (!isConnected()) {
@@ -18,11 +19,11 @@ class RetrofitController(private val iTunesService:ITunesApi,private val context
         if (dto !is TrackSearchRequest) {
             return Response().apply { searchState = 400 }
         }
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val resp = iTunesService.search(dto.expression)
                 resp.apply { searchState = 200 }
-            } catch (e:Throwable){
+            } catch (e: Throwable) {
                 Response().apply { searchState = 500 }
             }
         }
@@ -30,8 +31,10 @@ class RetrofitController(private val iTunesService:ITunesApi,private val context
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            Context.CONNECTIVITY_SERVICE
+        ) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
