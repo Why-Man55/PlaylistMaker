@@ -30,8 +30,7 @@ class TrackConvertor {
             trackEntity.rYear,
             trackEntity.genre,
             trackEntity.country,
-            trackEntity.audioUrl,
-            true)
+            trackEntity.audioUrl)
     }
 
     fun map(playlist: Playlist): PlaylistEntity{

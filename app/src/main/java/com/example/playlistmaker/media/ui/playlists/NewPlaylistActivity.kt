@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -30,30 +31,30 @@ class NewPlaylistActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var newName: String
-    private var imageUri: Uri? = null
+    private var imageUri: String = ""
     private var isChanged = false
-
-    val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
-        .setTitle(getString(R.string.new_playlist_quite_title))
-        .setMessage(getString(R.string.new_playlist_quite_massage))
-        .setNeutralButton(getString(R.string.new_playlist_resume)) { _, _ ->
-            // empty
-        }
-        .setPositiveButton(getString(R.string.new_playlst_cancel)) { _, _ ->
-            finish()
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityNewPlaylistBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
+            .setTitle(getString(R.string.new_playlist_quite_title))
+            .setMessage(getString(R.string.new_playlist_quite_massage))
+            .setNeutralButton(getString(R.string.new_playlist_resume)) { _, _ ->
+                // empty
+            }
+            .setPositiveButton(getString(R.string.new_playlst_cancel)) { _, _ ->
+                finish()
+            }
+
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     Glide.with(this).load(uri).centerCrop()
                         .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
-                    imageUri = uri
+                    imageUri = uri.toString()
                     isChanged = true
                 }
             }
@@ -63,12 +64,20 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
 
         binding.newPlaylistQuiteBut.setOnClickListener {
-            showDialoge()
+            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+                quiteDialoge.show()
+            } else {
+                finish()
+            }
         }
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showDialoge()
+                if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+                    quiteDialoge.show()
+                } else {
+                    finish()
+                }
             }
         })
 
@@ -79,10 +88,10 @@ class NewPlaylistActivity : AppCompatActivity() {
         binding.createPlaylistBut.setOnClickListener {
             newName = binding.newPlaylistNameEt.text.toString()
             val currentTime: Date = Calendar.getInstance().time
-            if (imageUri.toString().isNotEmpty()) {
-                saveImage(imageUri!!, currentTime, newName).toString()
+            if (imageUri.isNotEmpty()) {
+                saveImage(imageUri, currentTime, newName)
             } else {
-                updatePlaylists(null)
+                updatePlaylists(imageUri.toString())
             }
 
         }
@@ -117,15 +126,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialoge(){
-        if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
-            quiteDialoge.show()
-        } else {
-            finish()
-        }
-    }
-
-    private fun updatePlaylists(savedImageUri: String?) {
+    private fun updatePlaylists(savedImageUri: String) {
         viewModel.updatePlaylists(
             Playlist(
                 newName,
@@ -150,7 +151,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveImage(uri: Uri, time: Date, name: String) {
-        viewModel.saveImage(this, name, contentResolver.openInputStream(uri), time)
+    private fun saveImage(uri: String, time: Date, name: String) {
+        viewModel.saveImage(this, name, contentResolver.openInputStream(uri.toUri()), time)
     }
 }

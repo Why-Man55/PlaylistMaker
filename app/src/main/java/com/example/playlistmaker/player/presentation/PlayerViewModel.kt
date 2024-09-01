@@ -25,6 +25,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
     private var timerJob:Job? = null
 
     private var playlistList:List<Playlist> = listOf()
+    private var linked = false
 
     private lateinit var gsonTrack: Track
     fun getTrack(intent: Intent):LiveData<PlayerVMObjects> {
@@ -34,7 +35,8 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
 
     private fun returnTrack(intent: Intent){
         gsonTrack = Gson().fromJson(intent.extras?.getString("track"), Track::class.java)
-        playerLiveData.value = PlayerVMObjects(0, gsonTrack, playlistList)
+        checkLiked(gsonTrack.trackID)
+        playerLiveData.value = PlayerVMObjects(0, gsonTrack, playlistList, linked)
     }
 
     private fun returnCurrentPosition(): Int{
@@ -58,9 +60,10 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         playerInter.startPlayer()
     }
 
-    fun checkLiked(id:Int):Boolean{
-        return id in db.getFavID()
-
+    private fun checkLiked(id:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            linked = id in db.getFavID()
+        }
     }
 
     fun getReadyMedia(){
@@ -117,18 +120,8 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
             else{
                 db.changeFavorites(gsonTrack)
             }
+            checkLiked(gsonTrack.trackID)
         }
-        bind(Track(gsonTrack.trackNameItem,
-            gsonTrack.artistNameItem,
-            gsonTrack.trackTimeItem,
-            gsonTrack.trackAvatarItem,
-            gsonTrack.trackID,
-            gsonTrack.collectionName,
-            gsonTrack.rYear,
-            gsonTrack.genre,
-            gsonTrack.country,
-            gsonTrack.audioUrl,
-            !isFav))
     }
 
     fun getPlaylists(){
@@ -146,7 +139,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
     }
 
     fun bind(track:Track){
-        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(), track, playlistList))
+        playerLiveData.postValue(PlayerVMObjects(returnCurrentPosition().toLong(), track, playlistList, linked))
     }
 
     fun insertPlaylistTrack(track: Track){

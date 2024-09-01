@@ -24,8 +24,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient, private val 
             with(response as TrackResponse) {
                 val data = results.map{
                     Track(it.trackNameItem,it.artistNameItem, it.trackTimeItem, it.trackAvatarItem,
-                        it.trackID, it.collectionName, it.rYear, it.genre, it.country, it.audioUrl,
-                        it.trackID in idList)
+                        it.trackID, it.collectionName, it.rYear, it.genre, it.country, it.audioUrl)
                 }
                 emit(Resource.Success(data))
                 }

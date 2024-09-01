@@ -30,6 +30,7 @@ class PlayerActivity : AppCompatActivity()  {
     private lateinit var binding: ActivityPlayerBinding
 
     private lateinit var thisTrack:Track
+    private var isLoved = false
     private var isClickAllowed = true
 
     private fun clickDebounce() : Boolean {
@@ -80,6 +81,7 @@ class PlayerActivity : AppCompatActivity()  {
         viewModel.getTrack(intent).observe(this){
             bindTime(it.time)
             thisTrack = it.track
+            isLoved = it.isLoved
             viewModel.getPlaylists()
             bindStaticViews(thisTrack)
             bindGlide(thisTrack)
@@ -94,13 +96,11 @@ class PlayerActivity : AppCompatActivity()  {
                 bindAlbumVisible(true)
                 binding.playerAlbumEmpty.text = thisTrack.collectionName
             }
-            lifecycleScope.launch(Dispatchers.IO) {
-                if(viewModel.checkLiked(thisTrack.trackID)){
-                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_active_fav_but)
-                }
-                else{
-                    binding.playerLovedBut.setBackgroundResource(R.drawable.ic_loved_but)
-                }
+            if(isLoved){
+                binding.playerLovedBut.setBackgroundResource(R.drawable.ic_active_fav_but)
+            }
+            else{
+                binding.playerLovedBut.setBackgroundResource(R.drawable.ic_loved_but)
             }
         }
 
@@ -125,7 +125,9 @@ class PlayerActivity : AppCompatActivity()  {
         }
 
         binding.playerLovedBut.setOnClickListener{
-            viewModel.isFavClicked(thisTrack.isFavorite)
+            if(clickDebounce()){
+                viewModel.isFavClicked(isLoved)
+            }
         }
 
         binding.playerColBut.setOnClickListener{
