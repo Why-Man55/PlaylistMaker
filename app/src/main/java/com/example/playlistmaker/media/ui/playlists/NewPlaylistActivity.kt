@@ -38,6 +38,8 @@ class NewPlaylistActivity : AppCompatActivity() {
         _binding = ActivityNewPlaylistBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.createPlaylistBut.isEnabled = false
+
         val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
             .setTitle(getString(R.string.new_playlist_quite_title))
             .setMessage(getString(R.string.new_playlist_quite_massage))
