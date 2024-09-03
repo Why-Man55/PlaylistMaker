@@ -1,16 +1,26 @@
 package com.example.playlistmaker.media.domain.impl
 
+import android.content.Context
+import android.net.Uri
 import com.example.playlistmaker.media.data.MediaRepository
 import com.example.playlistmaker.media.domain.MediaInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import java.io.InputStream
+import java.util.Date
 
-class MediaInteractorImpl(private val repository: MediaRepository): MediaInteractor {
+class MediaInteractorImpl(private val repository: MediaRepository) : MediaInteractor {
     override fun getFavID(): List<Int> {
         return repository.getFavID()
     }
+
     override fun getTracks(): Flow<List<Track>> {
         return repository.getFavorites()
+    }
+
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return repository.getPlaylists()
     }
 
     override suspend fun changeFavorites(track: Track) {
@@ -19,5 +29,26 @@ class MediaInteractorImpl(private val repository: MediaRepository): MediaInterac
 
     override suspend fun deleteTrack(track: Track) {
         repository.deleteTrack(track)
+    }
+
+    override suspend fun insertPlaylists(playlist: Playlist) {
+        repository.insertPlaylists(playlist)
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        repository.updatePlaylist(playlist)
+    }
+
+    override fun saveImage(
+        context: Context,
+        name: String,
+        inputStream: InputStream?,
+        time: Date
+    ): Uri {
+        return repository.saveImage(context, name, inputStream, time)
+    }
+
+    override suspend fun insertPlaylistTrack(track: Track) {
+        repository.savePlaylistTrack(track)
     }
 }

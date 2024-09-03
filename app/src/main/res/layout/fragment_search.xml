@@ -37,7 +37,8 @@
             android:drawablePadding="@dimen/_8dp"
             android:importantForAutofill="no"
             android:imeOptions="actionDone"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/cursor_edittext"/>
 
         <Button
             android:layout_width="@dimen/_48dp"

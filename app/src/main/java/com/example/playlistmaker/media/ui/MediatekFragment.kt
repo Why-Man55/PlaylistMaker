@@ -9,7 +9,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatekBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MediatekFragment: Fragment() {
+class MediatekFragment : Fragment() {
 
     private lateinit var binding: FragmentMediatekBinding
     private lateinit var tabMediator: TabLayoutMediator
@@ -18,7 +18,7 @@ class MediatekFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMediatekBinding.inflate(inflater,container,false)
+        binding = FragmentMediatekBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -27,7 +27,7 @@ class MediatekFragment: Fragment() {
         binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when(position) {
+            when (position) {
                 0 -> tab.text = getString(R.string.favorites)
                 1 -> tab.text = getString(R.string.playlists)
             }

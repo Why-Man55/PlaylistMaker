@@ -12,8 +12,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SearchViewModel(private val tracksInteractor: TrackInteractor, private val searchHistoryInt: SearchHistoryInteractor):ViewModel() {
-    companion object{
+class SearchViewModel(
+    private val tracksInteractor: TrackInteractor,
+    private val searchHistoryInt: SearchHistoryInteractor
+) : ViewModel() {
+    companion object {
         private const val SEARCH_DELAY = 2000L
     }
 
@@ -21,8 +24,8 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor, private val
     private var searchJob: Job? = null
     private var liveDataSearchRes = MutableLiveData<SearchVMObjects>()
 
-    fun searchTrack(text: String){
-        if (text == lastRequest){
+    fun searchTrack(text: String) {
+        if (text == lastRequest) {
             return
         }
 
@@ -35,8 +38,8 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor, private val
         }
     }
 
-    private fun searchRequest(newSearchText: String){
-        if(newSearchText.isNotEmpty()){
+    private fun searchRequest(newSearchText: String) {
+        if (newSearchText.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
                 tracksInteractor
                     .searchTrack(newSearchText)
@@ -58,28 +61,29 @@ class SearchViewModel(private val tracksInteractor: TrackInteractor, private val
             errorMessage == null -> {
                 renderSearch(SearchVMObjects(persons, 200, listOf()))
             }
+
             else -> {
                 renderSearch(SearchVMObjects(listOf(), -1, listOf()))
             }
         }
     }
 
-    fun loadHistory(){
+    fun loadHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             renderSearch(SearchVMObjects(listOf(), -2, searchHistoryInt.getHistory()))
         }
     }
 
-    fun saveTrack(track: Track){
+    fun saveTrack(track: Track) {
         searchHistoryInt.saveTrack(track)
     }
 
     fun getSearchRes(): LiveData<SearchVMObjects> = liveDataSearchRes
-    fun clearHistory(){
+    fun clearHistory() {
         searchHistoryInt.clearHistory()
     }
 
-    private fun renderSearch(searchObject: SearchVMObjects){
+    private fun renderSearch(searchObject: SearchVMObjects) {
         liveDataSearchRes.postValue(searchObject)
     }
 }

@@ -13,7 +13,7 @@ val searchRepositoryModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepImpl(get(), get())
+        SearchHistoryRepImpl(get())
     }
 
 }
