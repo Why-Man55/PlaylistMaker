@@ -23,6 +23,10 @@ class MediaInteractorImpl(private val repository: MediaRepository) : MediaIntera
         return repository.getPlaylists()
     }
 
+    override fun getPlaylist(id: Long): Flow<Playlist> {
+        return repository.getPlaylist(id)
+    }
+
     override suspend fun changeFavorites(track: Track) {
         repository.changeFavorites(track)
     }

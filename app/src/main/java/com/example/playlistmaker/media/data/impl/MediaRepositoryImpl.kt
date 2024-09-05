@@ -37,6 +37,11 @@ class MediaRepositoryImpl(
             .map { playlist -> playlist.map(converter::map) }
     }
 
+    override fun getPlaylist(id:Long): Flow<Playlist> {
+        return appDatabase.playlistDao().getPlaylist(id)
+            .map(converter::map)
+    }
+
     override suspend fun deleteTrack(track: Track) {
         appDatabase.trackDao().deleteTrack(converter.map(track).id)
     }

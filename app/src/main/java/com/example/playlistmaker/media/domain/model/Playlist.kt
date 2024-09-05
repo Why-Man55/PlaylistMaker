@@ -7,5 +7,5 @@ data class Playlist(
     val count: Int = 0,
     val info: String?,
     val content: String,
-    val id: Long?
+    val id: Long
 )

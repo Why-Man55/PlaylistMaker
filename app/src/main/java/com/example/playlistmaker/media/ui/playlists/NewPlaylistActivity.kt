@@ -135,7 +135,7 @@ class NewPlaylistActivity : AppCompatActivity() {
                 0,
                 binding.newPlaylistInfEt.text.toString(),
                 "",
-                null
+                0L
             )
         )
         Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
