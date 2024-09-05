@@ -10,12 +10,14 @@ import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsFragment:Fragment() {
+class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -24,20 +26,20 @@ class SettingsFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.themeSwitcher.isChecked = (activity?.applicationContext as App).darkTheme
-        binding.themeSwitcher.setOnCheckedChangeListener{ switcher, checked ->
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (activity?.applicationContext as App).switchTheme(checked)
             viewModel.editSP(checked)
         }
 
-        binding.ShareBut.setOnClickListener{
+        binding.ShareBut.setOnClickListener {
             viewModel.startShare()
         }
 
-        binding.HelpBut.setOnClickListener{
+        binding.HelpBut.setOnClickListener {
             viewModel.startSupport()
         }
 
-        binding.AgreementBut.setOnClickListener{
+        binding.AgreementBut.setOnClickListener {
             viewModel.startAgreement()
         }
     }

@@ -14,10 +14,34 @@
         android:id="@+id/mediatekFragment"
         android:name="com.example.playlistmaker.media.ui.MediatekFragment"
         android:label="MediatekFragment"
-        tools:layout="@layout/fragment_mediatek" />
+        tools:layout="@layout/fragment_mediatek" >
+        <action
+            android:id="@+id/action_mediatekFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+        <action
+            android:id="@+id/action_mediatekFragment_to_newPlaylistActivity"
+            app:destination="@id/newPlaylistActivity" />
+        <action
+            android:id="@+id/action_mediatekFragment_to_playlistActivity"
+            app:destination="@id/playlistActivity" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player" />
+    <activity
+        android:id="@+id/newPlaylistActivity"
+        android:name="com.example.playlistmaker.media.ui.playlists.NewPlaylistActivity"
+        android:label="NewPlaylistActivity" />
+    <activity
+        android:id="@+id/playlistActivity"
+        android:name="com.example.playlistmaker.media.ui.playlistPlayer.PlaylistActivity"
+        android:label="activity_playlist"
+        tools:layout="@layout/activity_playlist" />
 </navigation>

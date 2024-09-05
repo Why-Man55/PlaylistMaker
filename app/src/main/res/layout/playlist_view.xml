@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_160dp"
+    android:layout_height="@dimen/_196dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playlist_view"
+    android:layout_marginTop="@dimen/_16dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:src="@drawable/ic_empty_player_img"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/playlist_title_image"/>
+
+    <TextView
+        android:id="@+id/playlist_title_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4dp"
+        android:text="@string/empty"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playlist_title_image"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="@dimen/_12sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/playlist_track_count"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playlist_title_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/empty"
+        android:textSize="@dimen/_12sp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

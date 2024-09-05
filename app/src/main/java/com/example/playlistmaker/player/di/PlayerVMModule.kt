@@ -4,8 +4,8 @@ import com.example.playlistmaker.player.presentation.PlayerViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val playerViewModelModule = module{
+val playerViewModelModule = module {
     viewModel {
-        PlayerViewModel(get())
+        PlayerViewModel(get(), get())
     }
 }

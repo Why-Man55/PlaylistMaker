@@ -6,7 +6,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val sharingsRepModule = module {
-    single<ExternalNavigatorRepository>{
+    single<ExternalNavigatorRepository> {
         ExternalNavigatorRepImpl(androidContext())
     }
 }

@@ -7,7 +7,7 @@ import android.net.Uri
 import com.example.playlistmaker.sharing.data.ExternalNavigatorRepository
 import com.example.playlistmaker.sharing.domain.model.EmailData
 
-class ExternalNavigatorRepImpl(private val context: Context): ExternalNavigatorRepository {
+class ExternalNavigatorRepImpl(private val context: Context) : ExternalNavigatorRepository {
     override fun shareLink(text: String) {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND

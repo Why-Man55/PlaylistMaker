@@ -2,6 +2,9 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.media.di.mediaDataModule
+import com.example.playlistmaker.media.di.mediaInteractorModule
+import com.example.playlistmaker.media.di.mediaRepositoryModule
 import com.example.playlistmaker.media.di.mediaViewModule
 import com.example.playlistmaker.player.di.playerInteractorModule
 import com.example.playlistmaker.player.di.playerRepositoryModule
@@ -20,14 +23,15 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App: Application() {
-    var darkTheme:Boolean = false
+    var darkTheme = false
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
             androidContext(this@App)
             modules(searchDataModule, searchInteractorModule, searchRepositoryModule, searchViewModelModule,playerInteractorModule, playerRepositoryModule, playerViewModelModule,
-                settingsaIntModule, settingsViewModelModule, settingsRepositoryModule,sharingsRepModule, sharingIntModule,mediaViewModule)
+                settingsaIntModule, settingsViewModelModule, settingsRepositoryModule,sharingsRepModule, sharingIntModule,mediaViewModule,
+                mediaDataModule, mediaRepositoryModule, mediaInteractorModule)
         }
 
         val themeSP = getSharedPreferences(THEME_PRETEXT, MODE_PRIVATE)
@@ -39,7 +43,7 @@ class App: Application() {
 
     fun switchTheme(isDark: Boolean)
     {
-        darkTheme = isDark
+        this.darkTheme = isDark
         AppCompatDelegate.setDefaultNightMode(
             if (isDark) {
                 AppCompatDelegate.MODE_NIGHT_YES
