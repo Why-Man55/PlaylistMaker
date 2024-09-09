@@ -29,9 +29,11 @@ class NewPlaylistActivity : AppCompatActivity() {
     private var _binding: ActivityNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var newName: String
+    private lateinit var thisPlaylist:Playlist
+    private var newName = ""
     private var imageUri: String = ""
     private var isChanged = false
+    private var isNew = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +62,15 @@ class NewPlaylistActivity : AppCompatActivity() {
                 }
             }
 
-        viewModel.getFile().observe(this) {
-            updatePlaylists(it.toString())
+        viewModel.getFile(intent).observe(this) {
+            if(it.playlist != null){
+                isNew = false
+                bindStandart(it.playlist)
+                thisPlaylist = it.playlist
+            }
+            else{
+                isNew = true
+            }
         }
 
         binding.newPlaylistQuiteBut.setOnClickListener {
@@ -94,7 +103,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             } else {
                 updatePlaylists(imageUri)
             }
-
+            finish()
         }
 
         val nameWatcher = object : TextWatcher {
@@ -128,18 +137,31 @@ class NewPlaylistActivity : AppCompatActivity() {
     }
 
     private fun updatePlaylists(savedImageUri: String) {
-        viewModel.updatePlaylists(
-            Playlist(
-                newName,
-                savedImageUri,
-                0,
-                binding.newPlaylistInfEt.text.toString(),
-                "",
-                0L
+        if(isNew){
+            viewModel.insertPlaylist(
+                Playlist(
+                    newName,
+                    savedImageUri,
+                    0,
+                    binding.newPlaylistInfEt.text.toString(),
+                    "",
+                    0L
+                )
             )
-        )
-        Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
-        finish()
+            Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
+        }
+        else{
+            viewModel.updatePlaylists(
+                Playlist(
+                    newName,
+                    savedImageUri,
+                    0,
+                    binding.newPlaylistInfEt.text.toString(),
+                    "",
+                    thisPlaylist.id
+                )
+            )
+        }
     }
 
     private fun bindET(b: Boolean, view: EditText, text: TextView) {
@@ -150,6 +172,13 @@ class NewPlaylistActivity : AppCompatActivity() {
         } else {
             view.setBackgroundResource(R.drawable.new_playlist_et_back)
         }
+    }
+
+    private fun bindStandart(playlist: Playlist){
+        Glide.with(this).load(playlist.image).centerCrop()
+            .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
+        binding.newPlaylistNameEt.setText(playlist.name)
+        binding.newPlaylistInfEt.setText(playlist.info)
     }
 
     private fun saveImage(uri: String, time: Date, name: String) {

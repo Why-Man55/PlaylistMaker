@@ -18,6 +18,6 @@ val mediaViewModule = module {
         NewPlaylistViewModel(get())
     }
     viewModel{
-        PlaylistActivityViewModel(get())
+        PlaylistActivityViewModel(get(), get())
     }
 }

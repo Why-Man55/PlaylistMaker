@@ -50,7 +50,6 @@ class SearchViewModel(
         }
     }
 
-
     private fun processResult(foundNames: List<Track>?, errorMessage: Int?) {
         val persons = mutableListOf<Track>()
         if (foundNames != null) {

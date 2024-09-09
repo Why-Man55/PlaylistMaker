@@ -45,4 +45,11 @@
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="new_name_hint">Название*</string>
     <string name="new_info_hint">Описание</string>
+    <string name="options_share">Поделиться</string>
+    <string name="rename_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="delete_title">Удалить плейлист</string>
+    <string name="delete_text">Хотите удалить плейлист?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
 </resources>

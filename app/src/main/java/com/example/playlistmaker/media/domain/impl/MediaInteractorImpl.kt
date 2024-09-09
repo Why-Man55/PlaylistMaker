@@ -7,6 +7,7 @@ import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.InputStream
 import java.util.Date
 
@@ -27,6 +28,10 @@ class MediaInteractorImpl(private val repository: MediaRepository) : MediaIntera
         return repository.getPlaylist(id)
     }
 
+    override fun getPlaylistTracks(): Flow<List<Track>>{
+        return repository.getPlaylistTracks()
+    }
+
     override suspend fun changeFavorites(track: Track) {
         repository.changeFavorites(track)
     }
@@ -41,6 +46,10 @@ class MediaInteractorImpl(private val repository: MediaRepository) : MediaIntera
 
     override suspend fun updatePlaylist(playlist: Playlist) {
         repository.updatePlaylist(playlist)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        repository.deletePlaylist(playlist)
     }
 
     override fun saveImage(

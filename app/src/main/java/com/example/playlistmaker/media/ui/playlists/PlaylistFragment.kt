@@ -82,7 +82,9 @@ class PlaylistFragment : Fragment() {
         }
 
         binding.newPlaylistBut.setOnClickListener {
-            findNavController().navigate(R.id.action_mediatekFragment_to_newPlaylistActivity)
+            val displayIntent = Intent(requireContext(), NewPlaylistActivity::class.java)
+            displayIntent.putExtra("playlist", "")
+            startActivity(displayIntent)
         }
         viewModel.getPlaylists()
     }

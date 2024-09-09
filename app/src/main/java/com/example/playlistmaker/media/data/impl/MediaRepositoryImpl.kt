@@ -12,6 +12,7 @@ import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
@@ -42,6 +43,12 @@ class MediaRepositoryImpl(
             .map(converter::map)
     }
 
+    override fun getPlaylistTracks(): Flow<List<Track>>{
+        return appDatabase.playlistTrackDao().getPlaylistTracks()
+            .map{ track -> track.map(converter::map)
+        }
+    }
+
     override suspend fun deleteTrack(track: Track) {
         appDatabase.trackDao().deleteTrack(converter.map(track).id)
     }
@@ -56,6 +63,10 @@ class MediaRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(converter.mapUpdate(playlist))
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        appDatabase.playlistDao().deletePlaylist(playlist.id)
     }
 
     override fun saveImage(

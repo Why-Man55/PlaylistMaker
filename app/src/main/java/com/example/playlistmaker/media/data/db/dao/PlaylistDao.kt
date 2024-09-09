@@ -22,4 +22,7 @@ interface PlaylistDao {
 
     @Query("Select * FROM playlists_table WHERE idKey = :id")
     fun getPlaylist(id:Long): Flow<PlaylistEntity>
+
+    @Query("DELETE FROM playlists_table WHERE idKey = :idPlaylist")
+    fun deletePlaylist(idPlaylist: Long)
 }
