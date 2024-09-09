@@ -4,13 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlaylistBinding
 import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.media.domain.model.PlaylistLongClicked
 import com.example.playlistmaker.media.presentation.PlaylistActivityViewModel
 import com.example.playlistmaker.media.ui.playlists.NewPlaylistActivity
 import com.example.playlistmaker.player.ui.PlayerActivity
@@ -31,7 +31,9 @@ class PlaylistActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private var isClickAllowed = true
-    private lateinit var playlist:Playlist
+    private lateinit var playlist: Playlist
+
+    private lateinit var trackDelete: String
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
@@ -56,15 +58,15 @@ class PlaylistActivity : AppCompatActivity() {
         val optionsBottomSheet = BottomSheetBehavior.from(binding.playlistOptionsBottomSheet)
         optionsBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
 
-        val trackOnClicked = object : TrackOnClicked {
-            override fun getTrackAndStart(track: Track) {
-                if (clickDebounce()) {
-                    val displayIntent = Intent(this@PlaylistActivity, PlayerActivity::class.java)
-                    displayIntent.putExtra("track", Gson().toJson(track))
-                    startActivity(displayIntent)
-                }
+        val trackDeleteDialog = MaterialAlertDialogBuilder(this, R.style.dialog)
+            .setMessage(getString(R.string.track_delete_dialog))
+            .setNegativeButton(getString(R.string.no)) { _, _ ->
+                // empty
             }
-        }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                viewModel.updatePlaylist(trackDelete)
+                viewModel.bindAgain(playlist.id)
+            }
 
         val deleteDialog = MaterialAlertDialogBuilder(this, R.style.dialog)
             .setTitle(getString(R.string.delete_title))
@@ -77,16 +79,34 @@ class PlaylistActivity : AppCompatActivity() {
                 finish()
             }
 
-        val adapter = PlaylistActivityAdapter(trackOnClicked)
+        val trackOnClicked = object : TrackOnClicked {
+            override fun getTrackAndStart(track: Track) {
+                if (clickDebounce()) {
+                    val displayIntent = Intent(this@PlaylistActivity, PlayerActivity::class.java)
+                    displayIntent.putExtra("track", Gson().toJson(track))
+                    startActivity(displayIntent)
+                }
+            }
+        }
+
+        val playlistLongClick = object : PlaylistLongClicked {
+            override fun deleteTrack(track: Track) {
+                trackDelete = track.trackID.toString()
+                trackDeleteDialog.show()
+            }
+        }
+
+        val adapter = PlaylistActivityAdapter(trackOnClicked, playlistLongClick)
         adapter.submitList(listOf())
         binding.playlistSheetRv.adapter = adapter
 
-        viewModel.returnPlaylist(intent).observe(this){
+        viewModel.returnPlaylist(intent).observe(this) {
             playlist = it.playlist
 
             adapter.submitList(it.tracks)
             bindStates(it.playlist)
-            binding.playlistTime.text = SimpleDateFormat("mm", Locale.getDefault()).format(it.tracksTime)
+            binding.playlistTime.text =
+                SimpleDateFormat("mm", Locale.getDefault()).format(it.tracksTime)
             Glide.with(this)
                 .load(playlist.image)
                 .transform(CenterCrop())
@@ -98,11 +118,11 @@ class PlaylistActivity : AppCompatActivity() {
             viewModel.sharePlaylist()
         }
 
-        binding.playlistOptionsBut.setOnClickListener{
+        binding.playlistOptionsBut.setOnClickListener {
             optionsBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        binding.optionShare.setOnClickListener{
+        binding.optionShare.setOnClickListener {
             viewModel.sharePlaylist()
         }
 
@@ -116,12 +136,12 @@ class PlaylistActivity : AppCompatActivity() {
             deleteDialog.show()
         }
 
-        binding.playlistBack.setOnClickListener{
+        binding.playlistBack.setOnClickListener {
             finish()
         }
     }
 
-    private fun bindStates(playlist: Playlist){
+    private fun bindStates(playlist: Playlist) {
         binding.playlistNameView.text = playlist.name
         binding.playlistInfoView.text = playlist.info
         binding.playlistTrackCount.text = playlist.count.toString()
@@ -134,7 +154,7 @@ class PlaylistActivity : AppCompatActivity() {
             .into(binding.optionsImage)
     }
 
-    companion object{
+    companion object {
         private const val CLICK_DELAY = 1000L
     }
 }

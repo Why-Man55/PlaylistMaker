@@ -36,6 +36,27 @@ class PlaylistActivityViewModel(private val interactor: MediaInteractor, private
         }
     }
 
+    fun updatePlaylist(id:String){
+        viewModelScope.launch {
+            interactor.updatePlaylist(Playlist(thisPlaylist.name,
+                thisPlaylist.image,
+                thisPlaylist.count - 1,
+                thisPlaylist.info,
+                thisPlaylist.content.replace("$id, ", ""),
+                thisPlaylist.id))
+        }
+    }
+
+    fun bindAgain(id:Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.getPlaylist(id).collect{
+                thisPlaylist = it
+                getPlaylistTracks(it.content)
+            }
+        }
+        bind()
+    }
+
     private fun getPlaylist(intent: Intent){
         thisPlaylist = Gson().fromJson(intent.extras?.getString("playlist"), Playlist::class.java)
         getPlaylistTracks(thisPlaylist.content)
