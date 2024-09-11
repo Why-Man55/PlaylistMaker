@@ -120,9 +120,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/sheet_background"
         android:orientation="vertical"
-        app:behavior_peekHeight="0dp"
         app:behavior_hideable="false"
-        android:visibility="visible"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/playlist_share_but">
