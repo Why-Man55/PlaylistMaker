@@ -3,6 +3,7 @@ package com.example.playlistmaker.media.ui.playlistPlayer
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -32,7 +33,7 @@ class PlaylistActivity : AppCompatActivity() {
 
     private var isClickAllowed = true
     private lateinit var playlist: Playlist
-
+    private lateinit var tracks: List<Track>
     private lateinit var trackDelete: String
 
     private fun clickDebounce(): Boolean {
@@ -58,12 +59,16 @@ class PlaylistActivity : AppCompatActivity() {
         val optionsBottomSheet = BottomSheetBehavior.from(binding.playlistOptionsBottomSheet)
         optionsBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
 
+        val emptyTracksMes = MaterialAlertDialogBuilder(this, R.style.dialog)
+            .setMessage(getString(R.string.empty_tracks_message))
+
         val trackDeleteDialog = MaterialAlertDialogBuilder(this, R.style.dialog)
-            .setMessage(getString(R.string.track_delete_dialog))
-            .setNegativeButton(getString(R.string.no)) { _, _ ->
+            .setTitle(getString(R.string.delete_track_title))
+            .setMessage(getString(R.string.track_delete_message))
+            .setNeutralButton(getString(R.string.cancel)) { _, _ ->
                 // empty
             }
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 viewModel.updatePlaylist(trackDelete)
                 viewModel.bindAgain(playlist.id)
             }
@@ -102,20 +107,21 @@ class PlaylistActivity : AppCompatActivity() {
 
         viewModel.returnPlaylist(intent).observe(this) {
             playlist = it.playlist
+            tracks = it.tracks
 
-            adapter.submitList(it.tracks)
+            adapter.submitList(tracks.reversed())
             bindStates(it.playlist)
-            binding.playlistTime.text =
-                SimpleDateFormat("mm", Locale.getDefault()).format(it.tracksTime)
-            Glide.with(this)
-                .load(playlist.image)
-                .transform(CenterCrop())
-                .placeholder(R.drawable.empty_av)
-                .into(binding.playlistImage)
+
+            binding.emptyPlaylistMessage.isVisible = tracks.isEmpty()
+            binding.playlistTime.text = returnTime(it.tracksTime)
         }
 
         binding.playlistShareBut.setOnClickListener {
-            viewModel.sharePlaylist()
+            if (tracks.isEmpty()) {
+                emptyTracksMes.show()
+            } else {
+                viewModel.sharePlaylist()
+            }
         }
 
         binding.playlistOptionsBut.setOnClickListener {
@@ -123,7 +129,11 @@ class PlaylistActivity : AppCompatActivity() {
         }
 
         binding.optionShare.setOnClickListener {
-            viewModel.sharePlaylist()
+            if (tracks.isEmpty()) {
+                emptyTracksMes.show()
+            } else {
+                viewModel.sharePlaylist()
+            }
         }
 
         binding.optionRename.setOnClickListener {
@@ -142,16 +152,48 @@ class PlaylistActivity : AppCompatActivity() {
     }
 
     private fun bindStates(playlist: Playlist) {
-        binding.playlistNameView.text = playlist.name
         binding.playlistInfoView.text = playlist.info
-        binding.playlistTrackCount.text = playlist.count.toString()
+        binding.playlistTrackCount.text = returnCount(playlist.count)
+        binding.playlistNameView.text = playlist.name
         binding.optionsName.text = playlist.name
-        binding.optionsCount.text = playlist.count.toString()
-        Glide.with(this)
+        binding.optionsCount.text = returnCount(playlist.count)
+        Glide.with(binding.root)
             .load(playlist.image)
             .transform(CenterCrop(), RoundedCorners(2))
             .placeholder(R.drawable.empty_av)
             .into(binding.optionsImage)
+        Glide.with(binding.root).load(playlist.image)
+            .transform(CenterCrop()).placeholder(
+                R.drawable.empty_av
+            ).into(binding.playlistImage)
+    }
+
+    private fun returnCount(count: Int): String {
+        return when {
+            count == 11 or 12 or 13 or 14 -> {
+                "$count треков"
+            }
+            count % 10 == 1 -> {
+                "$count трек"
+            }
+            (count % 10 == 2) or (count % 10 == 3) or (count % 10 == 4) -> {
+                "$count трека"
+            }
+            else -> {
+                "$count треков"
+            }
+        }
+    }
+
+    private fun returnTime(time: Long): String {
+        val currentTime = SimpleDateFormat("mm", Locale.getDefault()).format(time).toInt()
+        return if (currentTime == 11) {
+            "$currentTime минут"
+        } else if (currentTime % 10 == 1) {
+            "$currentTime минута"
+        } else {
+            "$currentTime минут"
+        }
     }
 
     companion object {

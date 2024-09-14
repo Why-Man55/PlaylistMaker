@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.MediaInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.media.presentation.objects.NPVMObject
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -19,6 +19,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityNewPlaylistBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
+import com.example.playlistmaker.media.presentation.objects.NPVMInputObject
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
@@ -67,6 +68,7 @@ class NewPlaylistActivity : AppCompatActivity() {
                 isNew = false
                 bindStandart(it.playlist)
                 thisPlaylist = it.playlist
+                imageUri = it.uri!!
             }
             else{
                 isNew = true
@@ -100,10 +102,8 @@ class NewPlaylistActivity : AppCompatActivity() {
             val currentTime: Date = Calendar.getInstance().time
             if (imageUri.isNotEmpty()) {
                 saveImage(imageUri, currentTime, newName)
-            } else {
-                updatePlaylists(imageUri)
             }
-            finish()
+            updatePlaylists()
         }
 
         val nameWatcher = object : TextWatcher {
@@ -136,12 +136,12 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePlaylists(savedImageUri: String) {
+    private fun updatePlaylists() {
         if(isNew){
             viewModel.insertPlaylist(
                 Playlist(
                     newName,
-                    savedImageUri,
+                    imageUri,
                     0,
                     binding.newPlaylistInfEt.text.toString(),
                     "",
@@ -154,14 +154,15 @@ class NewPlaylistActivity : AppCompatActivity() {
             viewModel.updatePlaylists(
                 Playlist(
                     newName,
-                    savedImageUri,
-                    0,
+                    imageUri,
+                    thisPlaylist.count,
                     binding.newPlaylistInfEt.text.toString(),
-                    "",
+                    thisPlaylist.content,
                     thisPlaylist.id
                 )
             )
         }
+        finish()
     }
 
     private fun bindET(b: Boolean, view: EditText, text: TextView) {
