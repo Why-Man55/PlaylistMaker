@@ -76,7 +76,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
 
         binding.newPlaylistQuiteBut.setOnClickListener {
-            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty() and isNew) {
                 quiteDialoge.show()
             } else {
                 finish()
@@ -85,7 +85,7 @@ class NewPlaylistActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+                if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty() and isNew) {
                     quiteDialoge.show()
                 } else {
                     finish()
