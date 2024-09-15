@@ -70,7 +70,7 @@ class PlaylistActivity : AppCompatActivity() {
             }
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 viewModel.updatePlaylist(trackDelete)
-                viewModel.bindAgain(playlist.id)
+                viewModel.bindAgain()
             }
 
         val deleteDialog = MaterialAlertDialogBuilder(this, R.style.dialog)
@@ -151,6 +151,11 @@ class PlaylistActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.bindAgain()
+    }
+
     private fun bindStates(playlist: Playlist) {
         binding.playlistInfoView.text = playlist.info
         binding.playlistTrackCount.text = returnCount(playlist.count)
@@ -187,11 +192,13 @@ class PlaylistActivity : AppCompatActivity() {
 
     private fun returnTime(time: Long): String {
         val currentTime = SimpleDateFormat("mm", Locale.getDefault()).format(time).toInt()
-        return if (currentTime == 11) {
+        return if ((currentTime == 11) or (currentTime == 12) or (currentTime == 13) or (currentTime == 14)) {
             "$currentTime минут"
         } else if (currentTime % 10 == 1) {
             "$currentTime минута"
-        } else {
+        } else if ((currentTime % 10 == 2) or (currentTime % 10 == 3) or (currentTime % 10 == 4)) {
+            "$currentTime минуты"
+        }else {
             "$currentTime минут"
         }
     }

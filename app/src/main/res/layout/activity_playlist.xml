@@ -121,6 +121,7 @@
         android:background="@drawable/sheet_background"
         android:orientation="vertical"
         app:behavior_hideable="false"
+        app:behavior_peekHeight="240dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/playlist_share_but">
@@ -149,9 +150,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlist_sheet_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/track_view" />
     </LinearLayout>

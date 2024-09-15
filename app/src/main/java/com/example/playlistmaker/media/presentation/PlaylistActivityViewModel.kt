@@ -48,14 +48,14 @@ class PlaylistActivityViewModel(private val interactor: MediaInteractor, private
         }
     }
 
-    fun bindAgain(id:Long){
+    fun bindAgain(){
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getPlaylist(id).collect{
+            interactor.getPlaylist(thisPlaylist.id).collect{
                 thisPlaylist = it
                 getPlaylistTracks(it.content)
+                bind()
             }
         }
-        bind()
     }
 
     private fun getPlaylist(intent: Intent){
@@ -72,10 +72,10 @@ class PlaylistActivityViewModel(private val interactor: MediaInteractor, private
                         mutableList.add(track)
                     }
                 }
+                thisTracks = mutableList
+                tracksTime(thisTracks)
             }
         }
-        thisTracks = mutableList
-        tracksTime(thisTracks)
     }
 
     private fun tracksTime(tracks:List<Track>){
