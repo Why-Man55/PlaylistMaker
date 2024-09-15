@@ -58,4 +58,6 @@
     <string name="delete">Удалить</string>
     <string name="delete_track_title">Удалить трек</string>
     <string name="empty_tracks_message">В данном плейлисте нет треков которыми можно поделиться</string>
+    <string name="save">Сохранить</string>
+    <string name="create">Создать</string>
 </resources>

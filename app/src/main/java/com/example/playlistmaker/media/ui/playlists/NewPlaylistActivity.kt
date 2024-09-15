@@ -19,7 +19,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityNewPlaylistBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
-import com.example.playlistmaker.media.presentation.objects.NPVMInputObject
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
@@ -32,7 +31,8 @@ class NewPlaylistActivity : AppCompatActivity() {
 
     private lateinit var thisPlaylist:Playlist
     private var newName = ""
-    private var imageUri: String = ""
+    private var currentUri = ""
+    private var imageForSave = ""
     private var isChanged = false
     private var isNew = true
 
@@ -58,20 +58,22 @@ class NewPlaylistActivity : AppCompatActivity() {
                 if (uri != null) {
                     Glide.with(this).load(uri).centerCrop()
                         .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
-                    imageUri = uri.toString()
+                    imageForSave = uri.toString()
                     isChanged = true
                 }
             }
 
         viewModel.getFile(intent).observe(this) {
-            if(it.playlist != null){
+            if(it.name.isNotEmpty()){
                 isNew = false
-                bindStandart(it.playlist)
-                thisPlaylist = it.playlist
-                imageUri = it.uri!!
+                binding.createButText.text = getString(R.string.save)
+                bindStandart(it)
+                thisPlaylist = it
+                currentUri = it.image
             }
             else{
                 isNew = true
+                binding.createButText.text = getString(R.string.create)
             }
         }
 
@@ -100,8 +102,8 @@ class NewPlaylistActivity : AppCompatActivity() {
         binding.createPlaylistBut.setOnClickListener {
             newName = binding.newPlaylistNameEt.text.toString()
             val currentTime: Date = Calendar.getInstance().time
-            if (imageUri.isNotEmpty()) {
-                saveImage(imageUri, currentTime, newName)
+            if(imageForSave.isNotEmpty()){
+                saveImage(imageForSave, currentTime, newName)
             }
             updatePlaylists()
         }
@@ -141,7 +143,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             viewModel.insertPlaylist(
                 Playlist(
                     newName,
-                    imageUri,
+                    currentUri,
                     0,
                     binding.newPlaylistInfEt.text.toString(),
                     "",
@@ -154,7 +156,7 @@ class NewPlaylistActivity : AppCompatActivity() {
             viewModel.updatePlaylists(
                 Playlist(
                     newName,
-                    imageUri,
+                    currentUri,
                     thisPlaylist.count,
                     binding.newPlaylistInfEt.text.toString(),
                     thisPlaylist.content,
