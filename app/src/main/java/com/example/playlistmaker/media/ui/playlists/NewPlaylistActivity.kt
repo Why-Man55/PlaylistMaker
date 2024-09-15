@@ -19,7 +19,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityNewPlaylistBinding
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
-import com.example.playlistmaker.media.ui.playlistPlayer.PlaylistActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
@@ -30,7 +29,7 @@ class NewPlaylistActivity : AppCompatActivity() {
     private var _binding: ActivityNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var thisPlaylist:Playlist
+    private lateinit var thisPlaylist: Playlist
     private var newName = ""
     private var newInfo = ""
     private var currentUri = ""
@@ -65,7 +64,7 @@ class NewPlaylistActivity : AppCompatActivity() {
                     imageForSave = uri.toString()
                     isChanged = true
                     isUpdated = true
-                    if(isNew){
+                    if (isNew) {
                         activateUpdateBut()
                     }
                 }
@@ -73,17 +72,15 @@ class NewPlaylistActivity : AppCompatActivity() {
 
         viewModel.getFile(intent).observe(this) {
             currentUri = it.playlist.image
-            if(it.isAgain){
+            if (it.isAgain) {
                 update()
-            }
-            else{
-                if(it.playlist.name.isNotEmpty()){
+            } else {
+                if (it.playlist.name.isNotEmpty()) {
                     isNew = false
                     binding.createButText.text = getString(R.string.save)
                     bindStandart(it.playlist)
                     thisPlaylist = it.playlist
-                }
-                else{
+                } else {
                     isNew = true
                     binding.createButText.text = getString(R.string.create)
                 }
@@ -125,10 +122,9 @@ class NewPlaylistActivity : AppCompatActivity() {
                 val empty = binding.newPlaylistNameEt.text.isEmpty()
                 binding.createPlaylistBut.isEnabled = !empty
                 isUpdated = true
-                if(!isNew){
+                if (!isNew) {
                     activateUpdateBut()
-                }
-                else{
+                } else {
                     if (empty) {
                         binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
                     } else {
@@ -150,7 +146,7 @@ class NewPlaylistActivity : AppCompatActivity() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 isUpdated = true
-                if(isNew){
+                if (isNew) {
                     activateUpdateBut()
                 }
             }
@@ -174,16 +170,15 @@ class NewPlaylistActivity : AppCompatActivity() {
         newName = binding.newPlaylistNameEt.text.toString()
         newInfo = binding.newPlaylistInfEt.text.toString()
         val currentTime: Date = Calendar.getInstance().time
-        if(imageForSave.isNotEmpty()){
+        if (imageForSave.isNotEmpty()) {
             saveImage(imageForSave, currentTime, newName)
-        }
-        else{
+        } else {
             update()
         }
     }
 
-    private fun update(){
-        if(isNew){
+    private fun update() {
+        if (isNew) {
             viewModel.insertPlaylist(
                 Playlist(
                     newName,
@@ -195,8 +190,7 @@ class NewPlaylistActivity : AppCompatActivity() {
                 )
             )
             Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
-        }
-        else{
+        } else {
             viewModel.updatePlaylists(
                 Playlist(
                     newName,
@@ -211,11 +205,10 @@ class NewPlaylistActivity : AppCompatActivity() {
         finishCreating()
     }
 
-    private fun finishCreating(){
-        if(!isNew and isUpdated){
+    private fun finishCreating() {
+        if (!isNew and isUpdated) {
             finish()
-        }
-        else if(isNew){
+        } else if (isNew) {
             finish()
         }
     }
@@ -230,11 +223,11 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun activateUpdateBut(){
+    private fun activateUpdateBut() {
         binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
     }
 
-    private fun bindStandart(playlist: Playlist){
+    private fun bindStandart(playlist: Playlist) {
         Glide.with(this).load(playlist.image).centerCrop()
             .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
         binding.newPlaylistNameEt.setText(playlist.name)

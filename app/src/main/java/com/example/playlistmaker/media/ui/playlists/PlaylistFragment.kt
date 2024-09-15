@@ -5,19 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistsFragmentBinding
 import com.example.playlistmaker.media.domain.api.PlaylistOpen
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.PlaylistsFragmentViewModel
 import com.example.playlistmaker.media.ui.playlistPlayer.PlaylistActivity
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,9 +43,9 @@ class PlaylistFragment : Fragment() {
         return current
     }
 
-    private val playlistOpen = object : PlaylistOpen{
+    private val playlistOpen = object : PlaylistOpen {
         override fun startPlaylist(playlist: Playlist) {
-            if(clickDebounce()){
+            if (clickDebounce()) {
                 val displayIntent = Intent(requireContext(), PlaylistActivity::class.java)
                 displayIntent.putExtra("playlist", Gson().toJson(playlist))
                 startActivity(displayIntent)

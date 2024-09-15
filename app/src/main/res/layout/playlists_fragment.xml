@@ -28,7 +28,7 @@
         <ImageView
             style="@style/search_error_image"
             android:importantForAccessibility="no"
-            android:src="@drawable/searcherror"/>
+            android:src="@drawable/searcherror" />
 
         <TextView
             style="@style/search_error_text"

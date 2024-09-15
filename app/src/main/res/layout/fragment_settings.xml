@@ -11,7 +11,7 @@
     <TextView
         style="@style/activities_name"
         android:text="@string/settings_setting"
-        android:paddingTop="4dp"/>
+        android:paddingTop="4dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:gravity="center_vertical"
             android:paddingTop="@dimen/_0dp"
             app:thumbTint="?attr/colorOnSurface"
-            app:trackTint="?attr/colorSurface"/>
+            app:trackTint="?attr/colorSurface" />
     </FrameLayout>
 
     <FrameLayout
@@ -40,11 +40,11 @@
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/light_mode"
             style="@style/setting_but"
-            android:id="@+id/Share_but"/>
+            android:id="@+id/Share_but" />
 
         <TextView
             style="@style/setting_text"
-            android:text="@string/Т_Поделиться_приложением"/>
+            android:text="@string/Т_Поделиться_приложением" />
     </FrameLayout>
 
     <FrameLayout
@@ -54,11 +54,11 @@
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/ic_group"
             style="@style/setting_but"
-            android:id="@+id/Help_but"/>
+            android:id="@+id/Help_but" />
 
         <TextView
             style="@style/setting_text"
-            android:text="@string/Т_Написать_в_поддержку"/>
+            android:text="@string/Т_Написать_в_поддержку" />
     </FrameLayout>
 
     <FrameLayout
@@ -67,11 +67,11 @@
 
         <TextView
             style="@style/setting_text"
-            android:text="@string/T_Пользоватеьское_соглашение"/>
+            android:text="@string/T_Пользоватеьское_соглашение" />
 
         <com.google.android.material.button.MaterialButton
             app:icon="@drawable/ic_arrow"
             style="@style/setting_but"
-            android:id="@+id/Agreement_but"/>
+            android:id="@+id/Agreement_but" />
     </FrameLayout>
 </LinearLayout>

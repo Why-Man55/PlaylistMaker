@@ -22,7 +22,8 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) :
             200 -> {
                 with(response as TrackResponse) {
                     val data = results.map {
-                        Track(it.trackNameItem,
+                        Track(
+                            it.trackNameItem,
                             it.artistNameItem,
                             it.trackTimeItem,
                             it.trackAvatarItem,

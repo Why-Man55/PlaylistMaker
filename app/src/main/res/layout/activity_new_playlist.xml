@@ -19,13 +19,13 @@
             android:layout_width="@dimen/_48dp"
             android:layout_height="@dimen/_48dp"
             android:background="@drawable/ic_back_arrow"
-            android:id="@+id/new_playlist_quite_but"/>
+            android:id="@+id/new_playlist_quite_but" />
 
         <TextView
             style="@style/activities_name"
             android:text="@string/new_playlist_title"
             android:paddingTop="4dp"
-            android:layout_marginStart="@dimen/_12dp"/>
+            android:layout_marginStart="@dimen/_12dp" />
     </LinearLayout>
 
     <ImageView
@@ -47,7 +47,7 @@
         android:layout_marginTop="@dimen/_33dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/new_playlist_image"
-        android:hint="@string/new_name_hint"/>
+        android:hint="@string/new_name_hint" />
 
     <EditText
         android:id="@+id/new_playlist_inf_et"
@@ -55,7 +55,7 @@
         android:layout_marginTop="@dimen/_17dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/new_playlist_name_et"
-        android:hint="@string/new_info_hint"/>
+        android:hint="@string/new_info_hint" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
         android:background="?attr/colorPrimaryVariant"
         android:textColor="@color/back_blue"
         android:visibility="gone"
-        android:id="@+id/new_name_title"/>
+        android:id="@+id/new_name_title" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
         android:background="?attr/colorPrimaryVariant"
         android:textColor="@color/back_blue"
         android:visibility="gone"
-        android:id="@+id/new_info_title"/>
+        android:id="@+id/new_info_title" />
 
     <ImageButton
         android:layout_width="match_parent"
@@ -93,7 +93,7 @@
         android:layout_marginHorizontal="@dimen/_17dp"
         android:layout_marginBottom="@dimen/_32dp"
         android:enabled="false"
-        android:id="@+id/create_playlist_but"/>
+        android:id="@+id/create_playlist_but" />
 
     <TextView
         android:layout_width="match_parent"
@@ -109,5 +109,5 @@
         android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/create_playlist_but"
         app:layout_constraintTop_toTopOf="@id/create_playlist_but"
-        android:id="@+id/create_but_text"/>
+        android:id="@+id/create_but_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

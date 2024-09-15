@@ -17,7 +17,6 @@ import com.example.playlistmaker.player.domain.api.PlaylistOnClicked
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

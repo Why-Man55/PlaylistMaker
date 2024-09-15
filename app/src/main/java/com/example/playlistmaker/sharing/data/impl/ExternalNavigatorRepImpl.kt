@@ -78,12 +78,15 @@ class ExternalNavigatorRepImpl(private val context: Context) : ExternalNavigator
             count == 11 or 12 or 13 or 14 -> {
                 "$count треков"
             }
+
             count % 10 == 1 -> {
                 "$count трек"
             }
+
             (count % 10 == 2) or (count % 10 == 3) or (count % 10 == 4) -> {
                 "$count трека"
             }
+
             else -> {
                 "$count треков"
             }

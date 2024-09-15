@@ -26,7 +26,7 @@ class PlaylistActivityAdapter(
         holder.itemView.setOnClickListener {
             trackOnClicked.getTrackAndStart(item)
         }
-        holder.itemView.setOnLongClickListener{
+        holder.itemView.setOnLongClickListener {
             trackLongClicked.deleteTrack(item)
             true
         }

@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="main_buttons" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-    <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">match_parent</item>
-    <item name="android:layout_weight">1</item>
-    <item name="android:backgroundTint">@color/white</item>
-    <item name="android:layout_gravity">center</item>
-    <item name="android:layout_marginHorizontal">@dimen/_16dp</item>
-    <item name="android:layout_marginTop">@dimen/_8dp</item>
-    <item name="android:layout_marginBottom">@dimen/_8dp</item>
-    <item name="android:paddingHorizontal">@dimen/_16dp</item>
-    <item name="android:textColor">@color/yp_black</item>
-    <item name="android:textSize">@dimen/_26sp</item>
-    <item name="iconTint">@color/yp_black</item>
-    <item name="iconGravity">textStart</item>
-    <item name="iconPadding">0dp</item>
-    <item name="android:fontFamily">@font/ys_display_regular</item>
-    <item name="android:textFontWeight">1000</item>
-    <item name="android:textAllCaps">false</item>
-    <item name="cornerRadius">@dimen/_16dp</item>
-</style>
+
+    <style name="main_buttons" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginHorizontal">@dimen/_16dp</item>
+        <item name="android:layout_marginTop">@dimen/_8dp</item>
+        <item name="android:layout_marginBottom">@dimen/_8dp</item>
+        <item name="android:paddingHorizontal">@dimen/_16dp</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/_26sp</item>
+        <item name="iconTint">@color/yp_black</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">1000</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/_16dp</item>
+    </style>
 
     <style name="main_frames">
         <item name="android:layout_width">match_parent</item>
@@ -40,7 +41,7 @@
         <item name="android:fontWeight">500</item>
     </style>
 
-    <style name="setting_but"  parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="setting_but" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">@dimen/_61dp</item>
         <item name="android:layout_height">@dimen/_61dp</item>
         <item name="android:layout_gravity">end</item>
@@ -78,7 +79,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:fontWeight">500</item>
     </style>
-    
+
     <style name="search_error_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -89,7 +90,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">400</item>
     </style>
-    
+
     <style name="search_error_image">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -106,6 +107,7 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/_13sp</item>
     </style>
+
     <style name="player_empty_states">
         <item name="android:layout_width">@dimen/_0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -122,6 +124,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">end</item>
     </style>
+
     <style name="player_mini_but">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -129,16 +132,19 @@
         <item name="android:layout_marginBottom">@dimen/_75dp</item>
         <item name="layout_constraintVertical_bias">0</item>
     </style>
+
     <style name="myCustomTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
     <style name="playlist_track_strings">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/_12sp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
+
     <style name="new_playlist_but">
         <item name="android:layout_width">@dimen/_128dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -155,6 +161,7 @@
         <item name="android:visibility">visible</item>
         <item name="android:letterSpacing">0</item>
     </style>
+
     <style name="new_playlist_ets">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/_54dp</item>
@@ -170,6 +177,7 @@
         <item name="android:background">@drawable/new_playlist_et_back</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+
     <style name="new_playlist_et_title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -181,20 +189,24 @@
         <item name="android:textColor">@color/back_blue</item>
         <item name="android:visibility">visible</item>
     </style>
+
     <style name="dialog">
         <item name="android:background">@color/white</item>
         <item name="textAllCaps">false</item>
         <item name="android:textColor">@color/yp_black</item>
     </style>
+
     <style name="roundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
+
     <style name="playlist_states">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">@color/yp_black</item>
         <item name="android:textSize">@dimen/_18sp</item>
     </style>
+
     <style name="options">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/_61dp</item>

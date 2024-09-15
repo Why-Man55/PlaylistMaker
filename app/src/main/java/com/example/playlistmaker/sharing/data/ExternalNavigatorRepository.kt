@@ -8,5 +8,5 @@ interface ExternalNavigatorRepository {
     fun shareLink(text: String)
     fun openLink(text: String)
     fun openEmail(email: EmailData)
-    fun sharePlaylist(playlist:Playlist, tracks:List<Track>)
+    fun sharePlaylist(playlist: Playlist, tracks: List<Track>)
 }

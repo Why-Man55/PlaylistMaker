@@ -11,7 +11,7 @@
         android:layout_height="160dp"
         android:src="@drawable/ic_empty_player_img"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/playlist_title_image"/>
+        android:id="@+id/playlist_title_image" />
 
     <TextView
         android:id="@+id/playlist_title_name"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toBottomOf="@id/playlist_title_image"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textSize="@dimen/_12sp"/>
+        android:textSize="@dimen/_12sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -34,6 +34,6 @@
         app:layout_constraintTop_toBottomOf="@id/playlist_title_name"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/empty"
-        android:textSize="@dimen/_12sp"/>
+        android:textSize="@dimen/_12sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

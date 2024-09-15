@@ -27,7 +27,7 @@ class MediaInteractorImpl(private val repository: MediaRepository) : MediaIntera
         return repository.getPlaylist(id)
     }
 
-    override fun getPlaylistTracks(): Flow<List<Track>>{
+    override fun getPlaylistTracks(): Flow<List<Track>> {
         return repository.getPlaylistTracks()
     }
 

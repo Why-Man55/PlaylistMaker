@@ -17,17 +17,17 @@ import java.util.Date
 
 class NewPlaylistViewModel(private val interactor: MediaInteractor) : ViewModel() {
     private var fileLiveData = MutableLiveData<NPVMObject>()
-    private lateinit var thisPlaylist:Playlist
+    private lateinit var thisPlaylist: Playlist
     private var isFirstTime = true
 
     fun getFile(intent: Intent): LiveData<NPVMObject> {
-        if(isFirstTime){
+        if (isFirstTime) {
             getPlaylist(intent)
         }
         return fileLiveData
     }
 
-    private fun getPlaylist(intent: Intent){
+    private fun getPlaylist(intent: Intent) {
         val playlistText = intent.extras?.getString("playlist")!!
         if (playlistText.isEmpty()) {
             thisPlaylist = Playlist("", "", 0, "", "", 0L)
@@ -39,7 +39,7 @@ class NewPlaylistViewModel(private val interactor: MediaInteractor) : ViewModel(
         fileLiveData.postValue(NPVMObject(false, thisPlaylist))
     }
 
-    fun updatePlaylists(playlist: Playlist){
+    fun updatePlaylists(playlist: Playlist) {
         viewModelScope.launch {
             interactor.updatePlaylist(playlist)
         }
@@ -53,13 +53,18 @@ class NewPlaylistViewModel(private val interactor: MediaInteractor) : ViewModel(
 
     fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date) {
         isFirstTime = false
-        fileLiveData.postValue(NPVMObject(true,
-            Playlist(thisPlaylist.name,
-                interactor.saveImage(context, name, inputStream, time).toString(),
-                thisPlaylist.count,
-                thisPlaylist.info,
-                thisPlaylist.content,
-                thisPlaylist.id)
-        ))
+        fileLiveData.postValue(
+            NPVMObject(
+                true,
+                Playlist(
+                    thisPlaylist.name,
+                    interactor.saveImage(context, name, inputStream, time).toString(),
+                    thisPlaylist.count,
+                    thisPlaylist.info,
+                    thisPlaylist.content,
+                    thisPlaylist.id
+                )
+            )
+        )
     }
 }

@@ -26,7 +26,7 @@ class SharingIntractorImpl(
     }
 
     override fun sharePlaylist(playlist: Playlist, tracks: List<Track>) {
-        navigator.sharePlaylist(playlist,tracks)
+        navigator.sharePlaylist(playlist, tracks)
     }
 
     private fun getShareAppLink(): String {

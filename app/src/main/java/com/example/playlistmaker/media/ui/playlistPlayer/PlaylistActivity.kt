@@ -178,12 +178,15 @@ class PlaylistActivity : AppCompatActivity() {
             count == 11 or 12 or 13 or 14 -> {
                 "$count треков"
             }
+
             count % 10 == 1 -> {
                 "$count трек"
             }
+
             (count % 10 == 2) or (count % 10 == 3) or (count % 10 == 4) -> {
                 "$count трека"
             }
+
             else -> {
                 "$count треков"
             }
@@ -198,7 +201,7 @@ class PlaylistActivity : AppCompatActivity() {
             "$currentTime минута"
         } else if ((currentTime % 10 == 2) or (currentTime % 10 == 3) or (currentTime % 10 == 4)) {
             "$currentTime минуты"
-        }else {
+        } else {
             "$currentTime минут"
         }
     }

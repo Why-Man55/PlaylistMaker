@@ -14,43 +14,50 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PlaylistActivityViewModel(private val interactor: MediaInteractor, private val share:SharingInteractor):ViewModel() {
+class PlaylistActivityViewModel(
+    private val interactor: MediaInteractor,
+    private val share: SharingInteractor
+) : ViewModel() {
 
     private val playlistLiveData = MutableLiveData<PAVMObject>()
 
     private lateinit var thisPlaylist: Playlist
-    private var thisTracks:List<Track> = listOf()
+    private var thisTracks: List<Track> = listOf()
     private var trackTime = 0L
 
-    fun returnPlaylist(intent: Intent):LiveData<PAVMObject>{
+    fun returnPlaylist(intent: Intent): LiveData<PAVMObject> {
         getPlaylist(intent)
         return playlistLiveData
     }
 
-    fun sharePlaylist(){
-        share.sharePlaylist(thisPlaylist,thisTracks)
+    fun sharePlaylist() {
+        share.sharePlaylist(thisPlaylist, thisTracks)
     }
 
-    fun deletePlaylist(){
+    fun deletePlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.deletePlaylist(thisPlaylist)
         }
     }
 
-    fun updatePlaylist(id:String){
+    fun updatePlaylist(id: String) {
         viewModelScope.launch {
-            interactor.updatePlaylist(Playlist(thisPlaylist.name,
-                thisPlaylist.image,
-                thisPlaylist.count - 1,
-                thisPlaylist.info,
-                thisPlaylist.content.replace("$id, ", ""),
-                thisPlaylist.id))
+            interactor.updatePlaylist(
+                Playlist(
+                    thisPlaylist.name,
+                    thisPlaylist.image,
+                    thisPlaylist.count - 1,
+                    thisPlaylist.info,
+                    thisPlaylist.content.replace("$id, ", ""),
+                    thisPlaylist.id
+                )
+            )
         }
     }
 
-    fun bindAgain(){
+    fun bindAgain() {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getPlaylist(thisPlaylist.id).collect{
+            interactor.getPlaylist(thisPlaylist.id).collect {
                 thisPlaylist = it
                 getPlaylistTracks(it.content)
                 bind()
@@ -58,17 +65,17 @@ class PlaylistActivityViewModel(private val interactor: MediaInteractor, private
         }
     }
 
-    private fun getPlaylist(intent: Intent){
+    private fun getPlaylist(intent: Intent) {
         thisPlaylist = Gson().fromJson(intent.extras?.getString("playlist"), Playlist::class.java)
         getPlaylistTracks(thisPlaylist.content)
     }
 
-    private fun getPlaylistTracks(id:String){
+    private fun getPlaylistTracks(id: String) {
         val mutableList = mutableListOf<Track>()
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getPlaylistTracks().collect{
-                it.map{ track ->
-                    if(track.trackID.toString() in id){
+            interactor.getPlaylistTracks().collect {
+                it.map { track ->
+                    if (track.trackID.toString() in id) {
                         mutableList.add(track)
                     }
                 }
@@ -78,16 +85,16 @@ class PlaylistActivityViewModel(private val interactor: MediaInteractor, private
         }
     }
 
-    private fun tracksTime(tracks:List<Track>){
+    private fun tracksTime(tracks: List<Track>) {
         var time = 0L
-        tracks.map{
+        tracks.map {
             time += it.trackTimeItem
         }
         trackTime = time
         bind()
     }
 
-    private fun bind(){
+    private fun bind() {
         playlistLiveData.postValue(PAVMObject(thisPlaylist, thisTracks, trackTime))
     }
 }
