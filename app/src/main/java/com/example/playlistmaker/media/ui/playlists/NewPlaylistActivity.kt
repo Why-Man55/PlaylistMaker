@@ -64,9 +64,6 @@ class NewPlaylistActivity : AppCompatActivity() {
                     imageForSave = uri.toString()
                     isChanged = true
                     isUpdated = true
-                    if (isNew) {
-                        activateUpdateBut()
-                    }
                 }
             }
 
@@ -122,14 +119,10 @@ class NewPlaylistActivity : AppCompatActivity() {
                 val empty = binding.newPlaylistNameEt.text.isEmpty()
                 binding.createPlaylistBut.isEnabled = !empty
                 isUpdated = true
-                if (!isNew) {
-                    activateUpdateBut()
+                if (empty) {
+                    binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
                 } else {
-                    if (empty) {
-                        binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
-                    } else {
-                        binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
-                    }
+                    binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
                 }
             }
 
@@ -138,24 +131,6 @@ class NewPlaylistActivity : AppCompatActivity() {
             }
         }
         binding.newPlaylistNameEt.addTextChangedListener(nameWatcher)
-
-        val infoWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //empty
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                isUpdated = true
-                if (isNew) {
-                    activateUpdateBut()
-                }
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-                //empty
-            }
-        }
-        binding.newPlaylistInfEt.addTextChangedListener(infoWatcher)
 
         binding.newPlaylistNameEt.setOnFocusChangeListener { _, b ->
             bindET(b, binding.newPlaylistNameEt, binding.newNameTitle)
@@ -221,10 +196,6 @@ class NewPlaylistActivity : AppCompatActivity() {
         } else {
             view.setBackgroundResource(R.drawable.new_playlist_et_back)
         }
-    }
-
-    private fun activateUpdateBut() {
-        binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
     }
 
     private fun bindStandart(playlist: Playlist) {
