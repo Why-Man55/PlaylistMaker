@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_mediatekFragment_to_newPlaylistActivity"
             app:destination="@id/newPlaylistActivity" />
+        <action
+            android:id="@+id/action_mediatekFragment_to_playlistActivity"
+            app:destination="@id/playlistActivity" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -36,4 +39,9 @@
         android:id="@+id/newPlaylistActivity"
         android:name="com.example.playlistmaker.media.ui.playlists.NewPlaylistActivity"
         android:label="NewPlaylistActivity" />
+    <activity
+        android:id="@+id/playlistActivity"
+        android:name="com.example.playlistmaker.media.ui.playlistPlayer.PlaylistActivity"
+        android:label="activity_playlist"
+        tools:layout="@layout/activity_playlist" />
 </navigation>

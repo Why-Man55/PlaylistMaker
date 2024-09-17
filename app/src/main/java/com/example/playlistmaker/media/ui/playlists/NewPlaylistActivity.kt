@@ -29,9 +29,14 @@ class NewPlaylistActivity : AppCompatActivity() {
     private var _binding: ActivityNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var newName: String
-    private var imageUri: String = ""
+    private lateinit var thisPlaylist: Playlist
+    private var newName = ""
+    private var newInfo = ""
+    private var currentUri = ""
+    private var imageForSave = ""
     private var isChanged = false
+    private var isUpdated = false
+    private var isNew = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.createPlaylistBut.isEnabled = false
+        binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
 
         val quiteDialoge = MaterialAlertDialogBuilder(this, R.style.dialog)
             .setTitle(getString(R.string.new_playlist_quite_title))
@@ -55,17 +61,31 @@ class NewPlaylistActivity : AppCompatActivity() {
                 if (uri != null) {
                     Glide.with(this).load(uri).centerCrop()
                         .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
-                    imageUri = uri.toString()
+                    imageForSave = uri.toString()
                     isChanged = true
+                    isUpdated = true
                 }
             }
 
-        viewModel.getFile().observe(this) {
-            updatePlaylists(it.toString())
+        viewModel.getFile(intent).observe(this) {
+            currentUri = it.playlist.image
+            if (it.isAgain) {
+                update()
+            } else {
+                if (it.playlist.name.isNotEmpty()) {
+                    isNew = false
+                    binding.createButText.text = getString(R.string.save)
+                    bindStandart(it.playlist)
+                    thisPlaylist = it.playlist
+                } else {
+                    isNew = true
+                    binding.createButText.text = getString(R.string.create)
+                }
+            }
         }
 
         binding.newPlaylistQuiteBut.setOnClickListener {
-            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+            if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty() and isNew) {
                 quiteDialoge.show()
             } else {
                 finish()
@@ -74,10 +94,10 @@ class NewPlaylistActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty()) {
+                if (isChanged or binding.newPlaylistInfEt.text.isNotEmpty() or binding.newPlaylistNameEt.text.isNotEmpty() and isNew) {
                     quiteDialoge.show()
                 } else {
-                    finish()
+                    finishCreating()
                 }
             }
         })
@@ -87,14 +107,7 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
 
         binding.createPlaylistBut.setOnClickListener {
-            newName = binding.newPlaylistNameEt.text.toString()
-            val currentTime: Date = Calendar.getInstance().time
-            if (imageUri.isNotEmpty()) {
-                saveImage(imageUri, currentTime, newName)
-            } else {
-                updatePlaylists(imageUri)
-            }
-
+            updatePlaylists()
         }
 
         val nameWatcher = object : TextWatcher {
@@ -104,12 +117,13 @@ class NewPlaylistActivity : AppCompatActivity() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val empty = binding.newPlaylistNameEt.text.isEmpty()
+                binding.createPlaylistBut.isEnabled = !empty
+                isUpdated = true
                 if (empty) {
                     binding.createPlaylistBut.setBackgroundResource(R.drawable.gray_button)
                 } else {
                     binding.createPlaylistBut.setBackgroundResource(R.drawable.blue_button)
                 }
-                binding.createPlaylistBut.isEnabled = !empty
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -127,19 +141,51 @@ class NewPlaylistActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePlaylists(savedImageUri: String) {
-        viewModel.updatePlaylists(
-            Playlist(
-                newName,
-                savedImageUri,
-                0,
-                binding.newPlaylistInfEt.text.toString(),
-                "",
-                null
+    private fun updatePlaylists() {
+        newName = binding.newPlaylistNameEt.text.toString()
+        newInfo = binding.newPlaylistInfEt.text.toString()
+        val currentTime: Date = Calendar.getInstance().time
+        if (imageForSave.isNotEmpty()) {
+            saveImage(imageForSave, currentTime, newName)
+        } else {
+            update()
+        }
+    }
+
+    private fun update() {
+        if (isNew) {
+            viewModel.insertPlaylist(
+                Playlist(
+                    newName,
+                    currentUri,
+                    0,
+                    newInfo,
+                    "",
+                    0L
+                )
             )
-        )
-        Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
-        finish()
+            Toast.makeText(this, "Плейлист $newName создан", Toast.LENGTH_LONG).show()
+        } else {
+            viewModel.updatePlaylists(
+                Playlist(
+                    newName,
+                    currentUri,
+                    thisPlaylist.count,
+                    newInfo,
+                    thisPlaylist.content,
+                    thisPlaylist.id
+                )
+            )
+        }
+        finishCreating()
+    }
+
+    private fun finishCreating() {
+        if (!isNew and isUpdated) {
+            finish()
+        } else if (isNew) {
+            finish()
+        }
     }
 
     private fun bindET(b: Boolean, view: EditText, text: TextView) {
@@ -150,6 +196,13 @@ class NewPlaylistActivity : AppCompatActivity() {
         } else {
             view.setBackgroundResource(R.drawable.new_playlist_et_back)
         }
+    }
+
+    private fun bindStandart(playlist: Playlist) {
+        Glide.with(this).load(playlist.image).centerCrop()
+            .transform(CenterCrop(), RoundedCorners(16)).into(binding.newPlaylistImage)
+        binding.newPlaylistNameEt.setText(playlist.name)
+        binding.newPlaylistInfEt.setText(playlist.info)
     }
 
     private fun saveImage(uri: String, time: Date, name: String) {

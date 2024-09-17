@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_container_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorPrimaryVariant"
-    tools:context="">
+    android:background="?attr/colorPrimaryVariant">
 
     <TextView
         style="@style/activities_name"
         android:text="@string/Media"
-        android:paddingTop="4dp"/>
+        android:paddingTop="4dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -24,10 +22,10 @@
         app:tabIndicatorColor="?attr/colorOnSecondary"
         app:tabIndicator="@drawable/tab_indicator"
         app:tabIndicatorFullWidth="true"
-        app:tabTextAppearance="@style/myCustomTextAppearance"/>
+        app:tabTextAppearance="@style/myCustomTextAppearance" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </LinearLayout>

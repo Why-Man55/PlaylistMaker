@@ -27,6 +27,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
 
     private var playlistList: List<Playlist> = listOf()
     private var linked = false
+    private var isEnded = false
 
     private lateinit var gsonTrack: Track
     fun getTrack(intent: Intent): LiveData<PlayerVMObjects> {
@@ -48,7 +49,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         timerJob = viewModelScope.launch {
             while (runStatus()) {
                 delay(SET_TIME_WAIT)
-                bind(gsonTrack)
+                bind()
             }
         }
     }
@@ -93,6 +94,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
                 startPlayer()
                 playerState = STATE_PLAYING
                 runTime()
+                isEnded = false
                 return false
             }
 
@@ -103,6 +105,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
     }
 
     fun stopTimer() {
+        isEnded = true
         timerJob?.cancel()
     }
 
@@ -130,7 +133,7 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         viewModelScope.launch(Dispatchers.IO) {
             db.getPlaylists().collect { playlists ->
                 playlistList = playlists
-                bind(gsonTrack)
+                bind()
             }
         }
     }
@@ -139,14 +142,24 @@ class PlayerViewModel(private val playerInter: PlayerInteractor, private val db:
         viewModelScope.launch(Dispatchers.IO) { db.updatePlaylist(playlist) }
     }
 
-    fun bind(track: Track) {
+    fun bind() {
         playerLiveData.postValue(
-            PlayerVMObjects(
-                returnCurrentPosition().toLong(),
-                track,
-                playlistList,
-                linked
-            )
+            if(!isEnded){
+                PlayerVMObjects(
+                    returnCurrentPosition().toLong(),
+                    gsonTrack,
+                    playlistList,
+                    linked
+                )
+            }
+            else{
+                PlayerVMObjects(
+                    0L,
+                    gsonTrack,
+                    playlistList,
+                    linked
+                )
+            }
         )
     }
 

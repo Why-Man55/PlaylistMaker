@@ -17,19 +17,27 @@ class PlaylistFragmentViewHolder(private val binding: PlaylistViewBinding) :
         playlistTrackCount.text = bindTracks(model.count)
         Glide.with(itemView).load(model.image)
             .transform(CenterCrop(), RoundedCorners(radius.toInt())).placeholder(
-            R.drawable.empty_av
-        ).into(playlistTitleImage)
+                R.drawable.empty_av
+            ).into(playlistTitleImage)
     }
 
     private fun bindTracks(count: Int): String {
-        return if (count == 11 or 12 or 13 or 14) {
-            "$count треков"
-        } else if (count % 10 == 1) {
-            "$count трек"
-        } else if (count % 10 == 2 or 3 or 4) {
-            "$count трека"
-        } else {
-            "$count треков"
+        return when {
+            count == 11 or 12 or 13 or 14 -> {
+                "$count треков"
+            }
+
+            count % 10 == 1 -> {
+                "$count трек"
+            }
+
+            (count % 10 == 2) or (count % 10 == 3) or (count % 10 == 4) -> {
+                "$count трека"
+            }
+
+            else -> {
+                "$count треков"
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ class TrackViewHolder(private val binding: TrackViewBinding) :
         time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeItem)
         Glide.with(itemView).load(model.trackAvatarItem).centerCrop()
             .transform(RoundedCorners(radius.toInt())).placeholder(
-            R.drawable.empty_av
-        ).into(url)
+                R.drawable.empty_av
+            ).into(url)
     }
 }

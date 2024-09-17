@@ -150,6 +150,7 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.bottomSheetNewBut.setOnClickListener {
             val displayIntent = Intent(this, NewPlaylistActivity::class.java)
+            displayIntent.putExtra("playlist", "")
             startActivity(displayIntent)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }

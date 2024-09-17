@@ -28,6 +28,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SearchFragment : Fragment() {
     private var searchText: String? = TEXT_DEF
     private var isClickAllowed = true
+    private var isSearch = false
 
     private lateinit var binding: FragmentSearchBinding
     private lateinit var trackAdapter: TrackAdapter
@@ -40,7 +41,7 @@ class SearchFragment : Fragment() {
         if (isClickAllowed) {
             isClickAllowed = false
             viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DELAY)
+                delay(SEARCH_DELAY)
                 isClickAllowed = true
             }
         }
@@ -109,6 +110,12 @@ class SearchFragment : Fragment() {
 
         fun searchTrack() {
             viewModel.searchTrack(binding.searchBar.text.toString())
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DELAY)
+                if(isSearch) {
+                    binding.searchLoadingBar.visibility = View.VISIBLE
+                }
+            }
         }
 
         fun getHistory() {
@@ -123,7 +130,6 @@ class SearchFragment : Fragment() {
             binding.searchErrorView.visibility = View.GONE
             binding.internetErrorView.visibility = View.GONE
             searchTrack()
-            binding.searchLoadingBar.visibility = View.VISIBLE
         }
 
         binding.historyClearBut.setOnClickListener {
@@ -174,6 +180,10 @@ class SearchFragment : Fragment() {
                 binding.clearText.visibility = clearButtonVisibility(s)
                 if (s.isNullOrEmpty()) {
                     getHistory()
+                    isSearch = false
+                }
+                else{
+                    isSearch = true
                 }
                 searchDebounce()
             }
@@ -222,5 +232,6 @@ class SearchFragment : Fragment() {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val TEXT_DEF = ""
         private const val CLICK_DELAY = 1000L
+        private const val SEARCH_DELAY = 2000L
     }
 }

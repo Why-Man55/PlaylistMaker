@@ -12,10 +12,13 @@ interface MediaInteractor {
     fun getFavID(): List<Int>
     fun getTracks(): Flow<List<Track>>
     fun getPlaylists(): Flow<List<Playlist>>
+    fun getPlaylist(id: Long): Flow<Playlist>
+    fun getPlaylistTracks(): Flow<List<Track>>
     suspend fun changeFavorites(track: Track)
     suspend fun deleteTrack(track: Track)
     suspend fun insertPlaylists(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
+    suspend fun deletePlaylist(playlist: Playlist)
     fun saveImage(context: Context, name: String, inputStream: InputStream?, time: Date): Uri
     suspend fun insertPlaylistTrack(track: Track)
 }

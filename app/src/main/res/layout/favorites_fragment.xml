@@ -20,6 +20,7 @@
             android:layout_marginTop="@dimen/_106dp"
             android:src="@drawable/searcherror"
             android:importantForAccessibility="no" />
+
         <TextView
             style="@style/search_error_text"
             android:textSize="@dimen/_19sp"
@@ -33,5 +34,5 @@
         android:id="@+id/favorite_rv"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
-        tools:listitem="@layout/track_view"/>
+        tools:listitem="@layout/track_view" />
 </LinearLayout>
